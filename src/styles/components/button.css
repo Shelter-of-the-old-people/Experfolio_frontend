@@ -6,35 +6,44 @@
   position: relative;
   
   /* 크기 */
-  padding: var(--space-3) var(--space-2);
+  padding: var(--space-2) var(--space-4);
   
-  /* 타이포그래피 */
   font-family: inherit;
   font-size: var(--font-size-sm);
-  line-height: 1;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-cjk);
   text-align: center;
   text-decoration: none;
   white-space: nowrap;
   
-  /* 시각 */
   color: var(--color-white);
   background-color: var(--color-black);
-  
-  /* 인터랙션 */
+  border: none;
+
   cursor: pointer;
   user-select: none;
   outline: none;
   
-  /* 기타 */
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 }
+
 .btn-black { }
-.btn-trans { }
-.btn-circle { }
+.btn-trans {
+  color: var(--color-black);
+  background-color: transparent;
+}
+.btn-circle { 
+  padding: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  line-height: 1;
+  flex-shrink: 0;
+}
 .btn-default { }
-.btn-full { }
-.btn-disabled { }
-.btn-icon { }
-.btn-text { }
+.btn-full { 
+  width: 100%;
+  display: flex;
+}

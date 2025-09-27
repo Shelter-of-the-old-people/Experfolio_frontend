@@ -1,0 +1,18 @@
+/* 전역 기본 스타일 */
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
+  color: var(--color-text-primary, #1a1a1a);
+  background-color: var(--color-background, #ffffff);
+}
+
+/* 모든 요소가 부모 폰트를 상속하도록 */
+* {
+  font-family: inherit;
+}
+
+/* 입력 요소들이 폰트를 상속하도록 */
+input, textarea, select, button {
+  font-family: inherit;
+}

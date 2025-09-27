@@ -1,191 +1,11 @@
 import React, { useState } from 'react';
+import { Button, TextInput, PasswordInput, NumberInput } from '../../components/atoms';
 
-// 각 컴포넌트들을 import (실제로는 atoms 폴더에서 import)
-// import { Button, TextInput, PasswordInput, NumberInput } from './components/atoms';
-
-// 임시로 컴포넌트들을 여기에 정의 (실제로는 import해서 사용)
-
-// Button 컴포넌트
-const Button = ({ variant = 'black', size = 'default', type = 'button', icon, children, disabled = false, onClick, ...props }) => {
-  const getClassName = () => {
-    let classes = ['btn'];
-    classes.push(`btn-${variant}`);
-    classes.push(`btn-${size}`);
-    if (disabled) classes.push('btn-disabled');
-    return classes.join(' ');
-  };
-
-  return (
-    <button type={type} className={getClassName()} onClick={onClick} disabled={disabled} {...props}>
-      {icon && <span className="btn-icon">{icon}</span>}
-      {children && <span className="btn-text">{children}</span>}
-    </button>
-  );
+// 폰트 테스트용 인라인 스타일
+const fontTestStyle = {
+  fontFamily: 'Pretendard, -apple-system, BlinkMacSystemFont, sans-serif'
 };
 
-// TextInput 컴포넌트
-const TextInput = ({ variant = 'text', value = '', onChange, placeholder, disabled = false, error = false, errorMessage, label, required = false, maxLength, prefix, suffix, ...props }) => {
-  const getInputClassName = () => {
-    let classes = ['input'];
-    if (error) classes.push('input-error');
-    if (disabled) classes.push('input-disabled');
-    return classes.join(' ');
-  };
-
-  const getInputType = () => {
-    switch(variant) {
-      case 'number': return 'number';
-      case 'password': return 'password';
-      case 'email': return 'email';
-      default: return 'text';
-    }
-  };
-
-  return (
-    <div className="input-wrapper">
-      {label && (
-        <label className="input-label">
-          {label}
-          {required && <span className="input-required">*</span>}
-        </label>
-      )}
-      <div className="input-container">
-        {prefix && <span className="input-prefix">{prefix}</span>}
-        <input
-          type={getInputType()}
-          value={value}
-          onChange={(e) => onChange?.(e.target.value)}
-          placeholder={placeholder}
-          disabled={disabled}
-          maxLength={maxLength}
-          className={getInputClassName()}
-          {...props}
-        />
-        {suffix && <span className="input-suffix">{suffix}</span>}
-      </div>
-      {error && errorMessage && (
-        <span className="input-error-message">{errorMessage}</span>
-      )}
-    </div>
-  );
-};
-
-// PasswordInput 컴포넌트
-const PasswordInput = ({ value = '', onChange, placeholder, disabled = false, error = false, errorMessage, label, required = false, showPasswordToggle = true, strengthIndicator = false, ...props }) => {
-  const [showPassword, setShowPassword] = useState(false);
-
-  const getPasswordStrength = (password) => {
-    if (!password) return { level: 0, text: '' };
-    let score = 0;
-    if (password.length >= 8) score++;
-    if (/[a-z]/.test(password)) score++;
-    if (/[A-Z]/.test(password)) score++;
-    if (/[0-9]/.test(password)) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
-    
-    if (score <= 2) return { level: 1, text: '약함' };
-    if (score <= 3) return { level: 2, text: '보통' };
-    if (score <= 4) return { level: 3, text: '강함' };
-    return { level: 4, text: '매우 강함' };
-  };
-
-  const strength = strengthIndicator ? getPasswordStrength(value) : null;
-
-  const getInputClassName = () => {
-    let classes = ['input'];
-    if (error) classes.push('input-error');
-    if (disabled) classes.push('input-disabled');
-    return classes.join(' ');
-  };
-
-  return (
-    <div className="input-wrapper">
-      {label && (
-        <label className="input-label">
-          {label}
-          {required && <span className="input-required">*</span>}
-        </label>
-      )}
-      <div className="input-container">
-        <input
-          type={showPassword ? 'text' : 'password'}
-          value={value}
-          onChange={(e) => onChange?.(e.target.value)}
-          placeholder={placeholder}
-          disabled={disabled}
-          className={getInputClassName()}
-          {...props}
-        />
-        {showPasswordToggle && (
-          <button
-            type="button"
-            className="password-toggle"
-            onClick={() => setShowPassword(!showPassword)}
-            disabled={disabled}
-          >
-            {showPassword ? '🙈' : '👁️'}
-          </button>
-        )}
-      </div>
-      {strengthIndicator && value && (
-        <div className="password-strength">
-          <div className={`password-strength-bar strength-${strength.level}`}>
-            <div className="password-strength-fill"></div>
-          </div>
-          <span className="password-strength-text">{strength.text}</span>
-        </div>
-      )}
-      {error && errorMessage && (
-        <span className="input-error-message">{errorMessage}</span>
-      )}
-    </div>
-  );
-};
-
-// NumberInput 컴포넌트
-const NumberInput = ({ value, onChange, min, max, step = 1, placeholder, disabled = false, error = false, errorMessage, label, required = false, ...props }) => {
-  const handleChange = (e) => {
-    const numValue = e.target.value === '' ? undefined : Number(e.target.value);
-    onChange?.(numValue);
-  };
-
-  const getInputClassName = () => {
-    let classes = ['input'];
-    if (error) classes.push('input-error');
-    if (disabled) classes.push('input-disabled');
-    return classes.join(' ');
-  };
-
-  return (
-    <div className="input-wrapper">
-      {label && (
-        <label className="input-label">
-          {label}
-          {required && <span className="input-required">*</span>}
-        </label>
-      )}
-      <div className="input-container">
-        <input
-          type="number"
-          value={value ?? ''}
-          onChange={handleChange}
-          min={min}
-          max={max}
-          step={step}
-          placeholder={placeholder}
-          disabled={disabled}
-          className={getInputClassName()}
-          {...props}
-        />
-      </div>
-      {error && errorMessage && (
-        <span className="input-error-message">{errorMessage}</span>
-      )}
-    </div>
-  );
-};
-
-// 스타일 가이드 페이지 메인 컴포넌트
 const StyleGuidePage = () => {
   const [demoValues, setDemoValues] = useState({
     // TextInput values
@@ -268,6 +88,20 @@ const StyleGuidePage = () => {
             <Button variant="black" type="button">Button</Button>
             <Button variant="black" type="submit">Submit</Button>
             <Button variant="black" type="reset">Reset</Button>
+          </div>
+        </div>
+        <div style={{ marginBottom: '40px', padding: '20px', backgroundColor: '#f9fafb', borderRadius: '8px' }}>
+          <h3 style={{ marginBottom: '15px', color: '#4b5563' }}>Font Weight Test - Pretendard</h3>
+          <div style={{ fontFamily: '"Pretendard", sans-serif', fontSize: '18px', lineHeight: '1.8' }}>
+            <div style={{fontWeight: 100}}>100 - Thin (얇은 글꼴)</div>
+            <div style={{fontWeight: 200}}>200 - Extra Light (매우 가벼운 글꼴)</div>
+            <div style={{fontWeight: 300}}>300 - Light (가벼운 글꼴)</div>
+            <div style={{fontWeight: 400}}>400 - Regular (기본 글꼴)</div>
+            <div style={{fontWeight: 500}}>500 - Medium (보통 글꼴)</div>
+            <div style={{fontWeight: 600}}>600 - Semi Bold (약간 굵은 글꼴)</div>
+            <div style={{fontWeight: 700}}>700 - Bold (굵은 글꼴)</div>
+            <div style={{fontWeight: 800}}>800 - Extra Bold (매우 굵은 글꼴)</div>
+            <div style={{fontWeight: 900}}>900 - Black (가장 굵은 글꼴)</div>
           </div>
         </div>
       </section>

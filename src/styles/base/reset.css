@@ -3,6 +3,7 @@
 *::before,
 *::after {
   box-sizing: border-box;
+  font-family: inherit;
 }
 
 /* 기본 여백 제거 */
@@ -19,6 +20,7 @@ footer, header, hgroup, main, menu, nav, section {
 
 /* 기본 글꼴 상속 */
 html {
+  font-family: var(--font-family-base);
   font-size: 16px; /* 기본 rem 단위 설정 */
   -webkit-text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
@@ -28,8 +30,9 @@ html {
 /* Body 기본값 */
 body {
   margin: 0;
-  font-family: inherit;
-  line-height: inherit;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: 1.5;
   color: inherit;
   background-color: transparent;
 }
@@ -111,10 +114,30 @@ table {
 :focus-visible {
   outline: 2px solid currentColor;
   outline-offset: 2px;
+  
 }
-
 /* 비활성화 상태 */
 [disabled] {
   cursor: not-allowed;
   opacity: 0.6;
+}
+
+/* 다른 HTML 속성들도 동일하게 사용 가능 */
+[readonly] {
+  background-color: var(--color-gray-100);
+  cursor: default;
+}
+
+[required] {
+  /* 필수 입력 필드 표시 */
+}
+
+[hidden] {
+  display: none !important;
+}
+
+[data-loading="true"] {
+  /* 커스텀 data 속성 */
+  pointer-events: none;
+  opacity: 0.7;
 }
