@@ -1,0 +1,40 @@
+.btn {
+  /* 구조 */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  
+  /* 크기 */
+  padding: var(--space-3) var(--space-2);
+  
+  /* 타이포그래피 */
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  line-height: 1;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  
+  /* 시각 */
+  color: var(--color-white);
+  background-color: var(--color-black);
+  
+  /* 인터랙션 */
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  
+  /* 기타 */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+.btn-black { }
+.btn-trans { }
+.btn-circle { }
+.btn-default { }
+.btn-full { }
+.btn-disabled { }
+.btn-icon { }
+.btn-text { }

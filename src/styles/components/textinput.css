@@ -1,0 +1,20 @@
+/* 기본 Input 클래스들 (TextInput과 공통) */
+.input-wrapper { }
+.input-label { }
+.input-required { }
+.input-container { }
+.input { }
+.input-error { }
+.input-disabled { }
+.input-error-message { }
+
+/* PasswordInput 전용 클래스들 */
+.password-toggle { }
+.password-strength { }
+.password-strength-bar { }
+.password-strength-fill { }
+.strength-1 { /* 약함 - 빨강 */ }
+.strength-2 { /* 보통 - 주황 */ }
+.strength-3 { /* 강함 - 초록 */ }
+.strength-4 { /* 매우 강함 - 진한 초록 */ }
+.password-strength-text { }
