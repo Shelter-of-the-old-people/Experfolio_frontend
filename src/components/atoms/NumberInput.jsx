@@ -15,7 +15,27 @@ const NumberInput = ({
   ...props
 }) => {
   const handleChange = (e) => {
-    const numValue = e.target.value === '' ? undefined : Number(e.target.value);
+    let inputValue = e.target.value;
+    
+    // 숫자가 아닌 문자 제거
+    inputValue = inputValue.replace(/[^0-9]/g, '');
+    
+    // 자릿수 제한 (maxLength 속성 지원)
+    if (props.maxLength && inputValue.length > props.maxLength) {
+      inputValue = inputValue.slice(0, props.maxLength);
+    }
+    
+    // max 값 제한
+    if (max !== undefined && inputValue !== '' && Number(inputValue) > max) {
+      inputValue = max.toString();
+    }
+    
+    // min 값 제한  
+    if (min !== undefined && inputValue !== '' && Number(inputValue) < min) {
+      inputValue = min.toString();
+    }
+    
+    const numValue = inputValue === '' ? undefined : inputValue;
     onChange?.(numValue);
   };
 
@@ -33,18 +53,35 @@ const NumberInput = ({
     return classes.join(' ');
   };
 
+  const getLabelClassName = () => { 
+    let classes = ['input-label'];
+    
+    if (error) {
+      classes.push('input-label-error');
+    }
+    
+    return classes.join(' ');
+  };
+
   return (
     <div className="input-wrapper">
-      {label && (
-        <label className="input-label">
-          {label}
-          {required && <span className="input-required">*</span>}
-        </label>
-      )}
+      <div className="input-label-wrapper">
+        {label && (
+          <label className={getLabelClassName()}>
+            {label}
+            {required && <span className={`input-required ${error ? 'input-required-error' : ''}`}>*</span>}
+          </label>
+        )}
+        {error && errorMessage && (
+          <span className="input-error-message">{errorMessage}</span>
+        )}
+      </div>
       
       <div className="input-container">
         <input
-          type="number"
+          type="text"
+          inputMode="numeric"
+          pattern="[0-9]*"
           value={value ?? ''}
           onChange={handleChange}
           min={min}
@@ -56,10 +93,7 @@ const NumberInput = ({
           {...props}
         />
       </div>
-      
-      {error && errorMessage && (
-        <span className="input-error-message">{errorMessage}</span>
-      )}
+
     </div>
   );
 };

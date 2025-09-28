@@ -1,0 +1,189 @@
+import { useState, useCallback, useRef, useEffect } from 'react';
+import { BusinessNumberAPIService, BusinessNumberValidationResult } from '../services/BusinessNumberAPIService.js';
+
+/**
+ * 사업자 번호 검증 상태 관리 클래스
+ */
+class ValidationState {
+  constructor() {
+    this.isValidating = false;
+    this.isValidated = false;
+    this.result = null;
+    this.error = null;
+    this.lastValidatedNumber = '';
+  }
+
+  /**
+   * 검증 시작 상태로 설정
+   * @param {string} businessNumber - 검증할 사업자번호
+   */
+  startValidation(businessNumber) {
+    this.isValidating = true;
+    this.isValidated = false;
+    this.error = null;
+    this.lastValidatedNumber = businessNumber;
+  }
+
+  /**
+   * 검증 성공 상태로 설정
+   * @param {BusinessNumberValidationResult} result - 검증 결과
+   */
+  setSuccess(result) {
+    this.isValidating = false;
+    this.isValidated = true;
+    this.result = result;
+    this.error = null;
+  }
+
+  /**
+   * 검증 실패 상태로 설정
+   * @param {Error} error - 에러 객체
+   */
+  setError(error) {
+    this.isValidating = false;
+    this.isValidated = false;
+    this.result = null;
+    this.error = error;
+  }
+
+  /**
+   * 상태 초기화
+   */
+  reset() {
+    this.isValidating = false;
+    this.isValidated = false;
+    this.result = null;
+    this.error = null;
+    this.lastValidatedNumber = '';
+  }
+
+  /**
+   * 현재 상태를 객체로 반환
+   * @returns {Object}
+   */
+  toState() {
+    return {
+      isValidating: this.isValidating,
+      isValidated: this.isValidated,
+      result: this.result,
+      error: this.error,
+      lastValidatedNumber: this.lastValidatedNumber,
+    };
+  }
+}
+
+/**
+ * 사업자 번호 검증 결과 캐시 관리 클래스
+ */
+class ValidationCache {
+  constructor(maxSize = 50, ttl = 5 * 60 * 1000) { // 5분 TTL
+    this.cache = new Map();
+    this.maxSize = maxSize;
+    this.ttl = ttl;
+  }
+
+  /**
+   * 캐시에서 결과 조회
+   * @param {string} businessNumber - 사업자번호
+   * @returns {BusinessNumberValidationResult|null}
+   */
+  get(businessNumber) {
+    const key = BusinessNumberAPIService.extractNumbers(businessNumber);
+    const cached = this.cache.get(key);
+    
+    if (!cached) return null;
+    
+    // TTL 확인
+    if (Date.now() - cached.timestamp > this.ttl) {
+      this.cache.delete(key);
+      return null;
+    }
+    
+    return cached.result;
+  }
+
+  /**
+   * 캐시에 결과 저장
+   * @param {string} businessNumber - 사업자번호
+   * @param {BusinessNumberValidationResult} result - 검증 결과
+   */
+  set(businessNumber, result) {
+    const key = BusinessNumberAPIService.extractNumbers(businessNumber);
+    
+    // 캐시 크기 제한
+    if (this.cache.size >= this.maxSize) {
+      const firstKey = this.cache.keys().next().value;
+      this.cache.delete(firstKey);
+    }
+    
+    this.cache.set(key, {
+      result,
+      timestamp: Date.now(),
+    });
+  }
+
+  /**
+   * 캐시 초기화
+   */
+  clear() {
+    this.cache.clear();
+  }
+
+  /**
+   * 특정 키 삭제
+   * @param {string} businessNumber - 사업자번호
+   */
+  delete(businessNumber) {
+    const key = BusinessNumberAPIService.extractNumbers(businessNumber);
+    this.cache.delete(key);
+  }
+}
+
+/**
+ * 디바운스 관리 클래스
+ */
+class DebounceManager {
+  constructor(delay = 500) {
+    this.delay = delay;
+    this.timeoutId = null;
+  }
+
+  /**
+   * 디바운스된 함수 실행
+   * @param {Function} fn - 실행할 함수
+   * @param {...any} args - 함수 인자들
+   */
+  execute(fn, ...args) {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
+    
+    this.timeoutId = setTimeout(() => {
+      fn(...args);
+      this.timeoutId = null;
+    }, this.delay);
+  }
+
+  /**
+   * 대기 중인 실행 취소
+   */
+  cancel() {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
+    }
+  }
+}
+
+/**
+ * 사업자 번호 검증 Hook
+ * @param {Object} options - 옵션 객체
+ * @param {string} options.apiKey - 공공데이터 API 키
+ * @param {boolean} options.autoValidate - 자동 검증 여부 (기본: false)
+ * @param {number} options.debounceDelay - 디바운스 지연 시간 (기본: 500ms)
+ * @param {Function} options.onValidationComplete - 검증 완료 콜백
+ * @param {Function} options.onValidationError - 검증 에러 콜백
+ * @returns {Object} 검증 상태와 메서드들
+ */
+export const useBusinessNumberValidation = (options = {}) => {
+  const {\n    apiKey = '',\n    autoValidate = false,\n    debounceDelay = 500,\n    onValidationComplete,\n    onValidationError,\n  } = options;\n\n  // 상태 관리 인스턴스들\n  const validationStateRef = useRef(new ValidationState());\n  const cacheRef = useRef(new ValidationCache());\n  const debounceRef = useRef(new DebounceManager(debounceDelay));\n  const apiServiceRef = useRef(new BusinessNumberAPIService(apiKey));\n\n  // React 상태\n  const [state, setState] = useState(validationStateRef.current.toState());\n\n  // API 키 변경 시 서비스 업데이트\n  useEffect(() => {\n    if (apiKey) {\n      apiServiceRef.current.setApiKey(apiKey);\n    }\n  }, [apiKey]);\n\n  /**\n   * 상태 업데이트 헬퍼\n   */\n  const updateState = useCallback(() => {\n    setState(validationStateRef.current.toState());\n  }, []);\n\n  /**\n   * 사업자 번호 검증 실행\n   * @param {string} businessNumber - 검증할 사업자번호\n   * @param {boolean} useCache - 캐시 사용 여부 (기본: true)\n   * @returns {Promise<BusinessNumberValidationResult>}\n   */\n  const validateBusinessNumber = useCallback(async (businessNumber, useCache = true) => {\n    if (!businessNumber) {\n      const error = new Error('사업자등록번호를 입력해주세요.');\n      validationStateRef.current.setError(error);\n      updateState();\n      if (onValidationError) onValidationError(error);\n      throw error;\n    }\n\n    // 캐시 확인\n    if (useCache) {\n      const cachedResult = cacheRef.current.get(businessNumber);\n      if (cachedResult) {\n        validationStateRef.current.setSuccess(cachedResult);\n        updateState();\n        if (onValidationComplete) onValidationComplete(cachedResult);\n        return cachedResult;\n      }\n    }\n\n    try {\n      // 검증 시작\n      validationStateRef.current.startValidation(businessNumber);\n      updateState();\n\n      // API 호출\n      const result = await apiServiceRef.current.validateBusinessNumber(businessNumber);\n\n      // 캐시에 저장\n      cacheRef.current.set(businessNumber, result);\n\n      // 성공 상태 설정\n      validationStateRef.current.setSuccess(result);\n      updateState();\n\n      if (onValidationComplete) onValidationComplete(result);\n      return result;\n    } catch (error) {\n      validationStateRef.current.setError(error);\n      updateState();\n      if (onValidationError) onValidationError(error);\n      throw error;\n    }\n  }, [updateState, onValidationComplete, onValidationError]);\n\n  /**\n   * 디바운스된 자동 검증\n   * @param {string} businessNumber - 검증할 사업자번호\n   */\n  const debouncedValidate = useCallback((businessNumber) => {\n    debounceRef.current.execute(validateBusinessNumber, businessNumber);\n  }, [validateBusinessNumber]);\n\n  /**\n   * 즉시 검증 (디바운스 없음)\n   * @param {string} businessNumber - 검증할 사업자번호\n   * @returns {Promise<BusinessNumberValidationResult>}\n   */\n  const validateImmediately = useCallback((businessNumber) => {\n    debounceRef.current.cancel();\n    return validateBusinessNumber(businessNumber, false); // 캐시 사용 안함\n  }, [validateBusinessNumber]);\n\n  /**\n   * 사업자번호 포맷 검증만 수행\n   * @param {string} businessNumber - 검증할 사업자번호\n   * @returns {boolean}\n   */\n  const validateFormat = useCallback((businessNumber) => {\n    return BusinessNumberAPIService.validateFormat(businessNumber);\n  }, []);\n\n  /**\n   * 사업자번호 포맷팅\n   * @param {string} businessNumber - 포맷팅할 사업자번호\n   * @returns {string}\n   */\n  const formatBusinessNumber = useCallback((businessNumber) => {\n    return BusinessNumberAPIService.formatBusinessNumber(businessNumber);\n  }, []);\n\n  /**\n   * 검증 상태 초기화\n   */\n  const resetValidation = useCallback(() => {\n    debounceRef.current.cancel();\n    validationStateRef.current.reset();\n    updateState();\n  }, [updateState]);\n\n  /**\n   * 캐시 초기화\n   */\n  const clearCache = useCallback(() => {\n    cacheRef.current.clear();\n  }, []);\n\n  /**\n   * 자동 검증 처리 (입력값 변경 시 호출)\n   * @param {string} businessNumber - 현재 입력값\n   */\n  const handleInputChange = useCallback((businessNumber) => {\n    if (autoValidate && businessNumber && validateFormat(businessNumber)) {\n      debouncedValidate(businessNumber);\n    } else if (!businessNumber) {\n      resetValidation();\n    }\n  }, [autoValidate, validateFormat, debouncedValidate, resetValidation]);\n\n  return {\n    // 상태\n    ...state,\n    \n    // 검증 메서드\n    validateBusinessNumber,\n    validateImmediately,\n    validateFormat,\n    \n    // 유틸리티 메서드\n    formatBusinessNumber,\n    handleInputChange,\n    \n    // 상태 관리 메서드\n    resetValidation,\n    clearCache,\n    \n    // 편의 속성\n    isValid: state.result?.isValid || false,\n    isActiveBusiness: state.result?.isActiveBusiness() || false,\n    statusMessage: state.result?.getStatusMessage() || '',\n    companyName: state.result?.companyName || '',\n  };\n};

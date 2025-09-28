@@ -1,0 +1,143 @@
+/* BusinessNumberInput.css */
+
+/* 전체 래퍼 */
+.business-number-input-wrapper {
+  width: 100%;
+}
+
+/* 사업자 번호 입력 필드들 컨테이너 */
+.business-number-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* 구분자 (하이픈) */
+.business-number-separator {
+  font-size: 18px;
+  font-weight: bold;
+  color: #6b7280;
+  margin: 0 4px;
+}
+
+/* 검증 아이콘 */
+.validation-icon {
+  margin-left: 8px;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+}
+
+.validation-icon.validating {
+  color: #f59e0b; /* 주황색 - 검증 중 */
+  animation: spin 1s linear infinite;
+}
+
+.validation-icon.valid {
+  color: #10b981; /* 초록색 - 성공 */
+}
+
+.validation-icon.invalid {
+  color: #ef4444; /* 빨간색 - 실패 */
+}
+
+/* 검증 버튼 */
+.business-validation-button {
+  margin-left: 12px;
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.business-validation-button:hover:not(:disabled) {
+  background-color: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.business-validation-button:active:not(:disabled) {
+  background-color: #f3f4f6;
+}
+
+.business-validation-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 회사 정보 표시 */
+.business-company-info {
+  margin-top: 8px;
+  padding: 8px 12px;
+  background-color: #f0f9ff;
+  border: 1px solid #0ea5e9;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.company-name {
+  display: block;
+  font-weight: 600;
+  color: #0c4a6e;
+  margin-bottom: 4px;
+}
+
+.business-status {
+  display: block;
+  color: #0369a1;
+}
+
+/* 스핀 애니메이션 */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* 반응형 디자인 */
+@media (max-width: 640px) {
+  .business-number-inputs {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+  
+  .business-number-separator {
+    display: none;
+  }
+  
+  .business-validation-button {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+  
+  .validation-icon {
+    margin-left: 0;
+    margin-top: 8px;
+  }
+}
+
+/* 개별 NumberInput 스타일 조정 */
+.business-number-inputs .input-wrapper {
+  flex-shrink: 0;
+}
+
+/* 첫 번째 필드 (3자리) */
+.business-number-inputs .input-wrapper:nth-child(1) {
+  width: 80px;
+}
+
+/* 두 번째 필드 (2자리) */
+.business-number-inputs .input-wrapper:nth-child(3) {
+  width: 70px;
+}
+
+/* 세 번째 필드 (5자리) */
+.business-number-inputs .input-wrapper:nth-child(5) {
+  width: 100px;
+}

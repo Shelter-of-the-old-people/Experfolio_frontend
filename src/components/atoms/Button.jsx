@@ -2,7 +2,7 @@ import React from 'react';
 
 const Button = ({ 
   variant = 'black',    // 'black', 'trans', 'circle'
-  size = 'default',     // 'default', 'full'
+  size = 'default',     // 'default', 'full', 'allfull'
   type = 'button',      // 'button', 'submit', 'reset'
   icon,
   children,

@@ -1,0 +1,403 @@
+import { BaseAPIService } from './BaseAPIService.js';
+
+/**
+ * 사업자 번호 검증 결과 클래스
+ */
+class BusinessNumberValidationResult {
+  constructor(data) {
+    this.businessNumber = data.businessNumber;
+    this.isValid = data.isValid;
+    this.status = data.status; // '01': 계속사업자, '02': 휴업자, '03': 폐업자
+    this.companyName = data.companyName || '';
+    this.establishmentDate = data.establishmentDate || '';
+    this.errorMessage = data.errorMessage || '';
+    this.validatedAt = new Date();
+  }
+
+  /**
+   * 사업자가 활성 상태인지 확인
+   * @returns {boolean}
+   */
+  isActiveBusiness() {
+    return this.isValid && this.status === '01';
+  }
+
+  /**
+   * 휴업 상태인지 확인
+   * @returns {boolean}
+   */
+  isSuspended() {
+    return this.isValid && this.status === '02';
+  }
+
+  /**
+   * 폐업 상태인지 확인
+   * @returns {boolean}
+   */
+  isClosed() {
+    return this.isValid && this.status === '03';
+  }
+
+  /**
+   * 상태 메시지 반환
+   * @returns {string}
+   */
+  getStatusMessage() {
+    if (!this.isValid) {
+      return this.errorMessage || '유효하지 않은 사업자등록번호입니다.';
+    }
+
+    switch (this.status) {
+      case '01':
+        return '계속사업자 (정상)';
+      case '02':
+        return '휴업자';
+      case '03':
+        return '폐업자';
+      default:
+        return '알 수 없는 상태';
+    }
+  }
+
+  /**
+   * 검증 결과를 JSON으로 변환
+   * @returns {Object}
+   */
+  toJSON() {
+    return {
+      businessNumber: this.businessNumber,
+      isValid: this.isValid,
+      status: this.status,
+      companyName: this.companyName,
+      establishmentDate: this.establishmentDate,
+      statusMessage: this.getStatusMessage(),
+      isActiveBusiness: this.isActiveBusiness(),
+      validatedAt: this.validatedAt.toISOString(),
+    };
+  }
+}
+
+/**
+ * 사업자 번호 API 서비스 클래스
+ * 공공데이터포털의 사업자등록번호 상태조회 API 활용
+ */
+class BusinessNumberAPIService extends BaseAPIService {
+  constructor(apiKey = '') {
+    // 국세청 사업자등록상태 조회 API 엔드포인트
+    super('https://api.odcloud.kr/api/nts-businessman/v1');
+    this.apiKey = apiKey;
+    this.setHeaders({
+      'Authorization': apiKey ? `Infuser ${apiKey}` : '',
+    });
+  }
+
+  /**
+   * 사업자등록번호 포맷 검증
+   * @param {string} businessNumber - 사업자등록번호
+   * @returns {boolean}
+   */
+  static validateFormat(businessNumber) {
+    if (!businessNumber) return false;
+    
+    // 숫자만 추출
+    const numbers = businessNumber.replace(/[^0-9]/g, '');
+    
+    // 10자리 숫자 확인
+    if (numbers.length !== 10) return false;
+    
+    // 체크섬 검증
+    const checksum = BusinessNumberAPIService.calculateChecksum(numbers);
+    return checksum === parseInt(numbers[9]);
+  }
+
+  /**
+   * 사업자등록번호 체크섬 계산
+   * @param {string} numbers - 10자리 숫자 문자열
+   * @returns {number}
+   */
+  static calculateChecksum(numbers) {
+    const weights = [1, 3, 7, 1, 3, 7, 1, 3, 5];
+    let sum = 0;
+    
+    for (let i = 0; i < 9; i++) {
+      sum += parseInt(numbers[i]) * weights[i];
+    }
+    
+    return (10 - (sum % 10)) % 10;
+  }
+
+  /**
+   * 사업자등록번호 포맷팅 (XXX-XX-XXXXX)
+   * @param {string} businessNumber - 포맷팅할 사업자등록번호
+   * @returns {string}
+   */
+  static formatBusinessNumber(businessNumber) {
+    const numbers = businessNumber.replace(/[^0-9]/g, '');
+    if (numbers.length !== 10) return businessNumber;
+    
+    return `${numbers.slice(0, 3)}-${numbers.slice(3, 5)}-${numbers.slice(5)}`;
+  }
+
+  /**
+   * 포맷에서 숫자만 추출
+   * @param {string} formattedNumber - 포맷된 사업자등록번호
+   * @returns {string}
+   */
+  static extractNumbers(formattedNumber) {
+    return formattedNumber.replace(/[^0-9]/g, '');
+  }
+
+  /**
+   * API 키 설정
+   * @param {string} apiKey - 공공데이터 API 키
+   */
+  setApiKey(apiKey) {
+    this.apiKey = apiKey;
+    this.setHeaders({
+      'Authorization': `Infuser ${apiKey}`,
+    });
+  }
+
+  /**
+   * 사업자등록번호 상태 조회 (기본 검증)
+   * @param {string} businessNumber - 조회할 사업자등록번호
+   * @returns {Promise<BusinessNumberValidationResult>}
+   */
+  async validateBusinessNumber(businessNumber) {
+    try {
+      // 포맷 검증
+      if (!BusinessNumberAPIService.validateFormat(businessNumber)) {
+        return new BusinessNumberValidationResult({
+          businessNumber,
+          isValid: false,
+          errorMessage: '사업자등록번호 형식이 올바르지 않습니다.',
+        });
+      }
+
+      const numbers = BusinessNumberAPIService.extractNumbers(businessNumber);
+      
+      // API 호출
+      const response = await this.post('/status', {
+        b_no: [numbers], // 사업자등록번호 배열로 전송
+      });
+
+      // 응답 처리
+      return this.parseValidationResponse(businessNumber, response);
+    } catch (error) {
+      return new BusinessNumberValidationResult({
+        businessNumber,
+        isValid: false,
+        errorMessage: `검증 중 오류가 발생했습니다: ${error.message}`,
+      });
+    }
+  }
+
+  /**
+   * 사업자등록번호 상태 조회 (정밀 검증 - 대표자명, 개업일자 포함)
+   * @param {string} businessNumber - 조회할 사업자등록번호
+   * @param {string} representativeName - 대표자명
+   * @param {string} startDate - 개업일자 (YYYYMMDD)
+   * @returns {Promise<BusinessNumberValidationResult>}
+   */
+  async validateBusinessNumberDetailed(businessNumber, representativeName, startDate) {
+    try {
+      // 포맷 검증
+      if (!BusinessNumberAPIService.validateFormat(businessNumber)) {
+        return new BusinessNumberValidationResult({
+          businessNumber,
+          isValid: false,
+          errorMessage: '사업자등록번호 형식이 올바르지 않습니다.',
+        });
+      }
+
+      const numbers = BusinessNumberAPIService.extractNumbers(businessNumber);
+      
+      // 상세 정보를 포함한 API 호출
+      const response = await this.post('/status', {
+        b_no: [numbers],
+        p_nm: representativeName,    // 대표자명
+        p_nm2: '',                   // 대표자명(영문)
+        b_nm: '',                    // 상호명
+        corp_no: '',                 // 법인등록번호
+        b_stt: '',                   // 사업자상태구분
+        b_stt_cd: '',                // 사업자상태코드
+        tax_type: '',                // 과세유형구분
+        tax_type_cd: '',             // 과세유형코드
+        end_dt: '',                  // 폐업일자
+        utcc_yn: '',                 // 단위과세전환여부
+        tax_type_change_dt: '',      // 과세유형전환일자
+        invoice_apply_dt: startDate, // 세금계산서신청일자(개업일자)
+      });
+
+      return this.parseDetailedValidationResponse(businessNumber, response);
+    } catch (error) {
+      return new BusinessNumberValidationResult({
+        businessNumber,
+        isValid: false,
+        errorMessage: `상세 검증 중 오류가 발생했습니다: ${error.message}`,
+      });
+    }
+  }
+
+  /**
+   * 여러 사업자등록번호 일괄 조회
+   * @param {string[]} businessNumbers - 조회할 사업자등록번호 배열
+   * @returns {Promise<BusinessNumberValidationResult[]>}
+   */
+  async validateMultipleBusinessNumbers(businessNumbers) {
+    try {
+      const validNumbers = businessNumbers
+        .filter(num => BusinessNumberAPIService.validateFormat(num))
+        .map(num => BusinessNumberAPIService.extractNumbers(num));
+
+      if (validNumbers.length === 0) {
+        return businessNumbers.map(num => new BusinessNumberValidationResult({
+          businessNumber: num,
+          isValid: false,
+          errorMessage: '유효하지 않은 사업자등록번호 형식입니다.',
+        }));
+      }
+
+      const response = await this.post('/status', {
+        b_no: validNumbers,
+      });
+
+      return this.parseMultipleValidationResponse(businessNumbers, response);
+    } catch (error) {
+      return businessNumbers.map(num => new BusinessNumberValidationResult({
+        businessNumber: num,
+        isValid: false,
+        errorMessage: `검증 중 오류가 발생했습니다: ${error.message}`,
+      }));
+    }
+  }
+
+  /**
+   * 단일 검증 응답 파싱
+   * @param {string} businessNumber - 원본 사업자등록번호
+   * @param {Object} response - API 응답
+   * @returns {BusinessNumberValidationResult}
+   */
+  parseValidationResponse(businessNumber, response) {
+    try {
+      const data = response.data && response.data[0];
+      
+      if (!data) {
+        return new BusinessNumberValidationResult({
+          businessNumber,
+          isValid: false,
+          errorMessage: 'API 응답 형식이 올바르지 않습니다.',
+        });
+      }
+
+      return new BusinessNumberValidationResult({
+        businessNumber,
+        isValid: data.b_stt_cd !== '',
+        status: data.b_stt_cd,
+        companyName: data.tax_type || '',
+        establishmentDate: data.utcc_yn || '',
+      });
+    } catch (error) {
+      return new BusinessNumberValidationResult({
+        businessNumber,
+        isValid: false,
+        errorMessage: '응답 파싱 중 오류가 발생했습니다.',
+      });
+    }
+  }
+
+  /**
+   * 상세 검증 응답 파싱
+   * @param {string} businessNumber - 원본 사업자등록번호
+   * @param {Object} response - API 응답
+   * @returns {BusinessNumberValidationResult}
+   */
+  parseDetailedValidationResponse(businessNumber, response) {
+    try {
+      const data = response.data && response.data[0];
+      
+      if (!data) {
+        return new BusinessNumberValidationResult({
+          businessNumber,
+          isValid: false,
+          errorMessage: 'API 응답 형식이 올바르지 않습니다.',
+        });
+      }
+
+      // 상세 정보 매칭 여부 확인
+      const isDetailedMatch = data.valid === 'Y'; // 상세 정보 일치 여부
+      
+      return new BusinessNumberValidationResult({
+        businessNumber,
+        isValid: data.b_stt_cd !== '' && isDetailedMatch,
+        status: data.b_stt_cd,
+        companyName: data.b_nm || data.tax_type || '',
+        establishmentDate: data.invoice_apply_dt || '',
+        representativeName: data.p_nm || '',
+        detailedMatch: isDetailedMatch,
+        errorMessage: !isDetailedMatch ? '대표자명 또는 개업일자가 일치하지 않습니다.' : '',
+      });
+    } catch (error) {
+      return new BusinessNumberValidationResult({
+        businessNumber,
+        isValid: false,
+        errorMessage: '상세 응답 파싱 중 오류가 발생했습니다.',
+      });
+    }
+  }
+
+  /**
+   * 다중 검증 응답 파싱
+   * @param {string[]} businessNumbers - 원본 사업자등록번호 배열
+   * @param {Object} response - API 응답
+   * @returns {BusinessNumberValidationResult[]}
+   */
+  parseMultipleValidationResponse(businessNumbers, response) {
+    try {
+      const responseData = response.data || [];
+      
+      return businessNumbers.map((businessNumber, index) => {
+        const data = responseData[index];
+        
+        if (!data) {
+          return new BusinessNumberValidationResult({
+            businessNumber,
+            isValid: false,
+            errorMessage: '해당 사업자등록번호에 대한 응답이 없습니다.',
+          });
+        }
+
+        return new BusinessNumberValidationResult({
+          businessNumber,
+          isValid: data.b_stt_cd !== '',
+          status: data.b_stt_cd,
+          companyName: data.tax_type || '',
+          establishmentDate: data.utcc_yn || '',
+        });
+      });
+    } catch (error) {
+      return businessNumbers.map(num => new BusinessNumberValidationResult({
+        businessNumber: num,
+        isValid: false,
+        errorMessage: '다중 응답 파싱 중 오류가 발생했습니다.',
+      }));
+    }
+  }
+
+  /**
+   * 서비스 상태 확인
+   * @returns {Promise<boolean>}
+   */
+  async checkServiceStatus() {
+    try {
+      // 더미 요청으로 서비스 상태 확인
+      await this.post('/status', { b_no: ['0000000000'] });
+      return true;
+    } catch (error) {
+      // API 키 오류가 아닌 경우에만 서비스 장애로 판단
+      return !error.isStatus(401) && !error.isStatus(403);
+    }
+  }
+}
+
+export { BusinessNumberAPIService, BusinessNumberValidationResult };

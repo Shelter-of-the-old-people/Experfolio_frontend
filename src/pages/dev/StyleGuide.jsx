@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Button, TextInput, PasswordInput, NumberInput } from '../../components/atoms';
+import { Button, TextInput, PasswordInput, NumberInput, BusinessNumberInput } from '../../components/atoms';
+import '../../components/atoms/BusinessNumberInput.css';
 
 // 폰트 테스트용 인라인 스타일
 const fontTestStyle = {
@@ -23,15 +24,30 @@ const StyleGuidePage = () => {
     passwordError: '',
     
     // NumberInput values
-    number1: 25,
+    number1: '25',
     number2: '',
     numberPrice: '',
     numberRating: '',
-    numberError: ''
+    numberError: '',
+    
+    // BusinessNumber values (3개 필드로 분리)
+    businessNumber1: { part1: '', part2: '', part3: '' },
+    businessNumber2: { part1: '', part2: '', part3: '' }
   });
 
   const updateValue = (key, value) => {
     setDemoValues(prev => ({ ...prev, [key]: value }));
+  };
+
+  // 사업자 번호 검증 콜백 함수들
+  const handleValidationComplete = (result) => {
+    console.log('검증 완료:', result.toJSON());
+    alert(`검증 결과: ${result.getStatusMessage()}\n회사명: ${result.companyName || '없음'}`);
+  };
+
+  const handleValidationError = (error) => {
+    console.error('검증 에러:', error);
+    alert(`검증 에러: ${error.message}`);
   };
 
   return (
@@ -57,9 +73,15 @@ const StyleGuidePage = () => {
 
         <div style={{ marginBottom: '20px' }}>
           <h3 style={{ marginBottom: '15px', color: '#4b5563' }}>Sizes</h3>
-          <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
-            <Button variant="black" size="default">Default Size</Button>
-            <Button variant="black" size="full">Full Width Button</Button>
+          <div style={{ display: 'flex', gap: '15px', height: '120px' }}>
+            <div style={{ flex: '1', display: 'flex' }}>
+              <Button variant="black" size="allfull">All Full Button</Button>
+            </div>
+            
+            <div style={{ flex: '1', display: 'flex', flexDirection: 'column', gap: '15px', alignItems: 'flex-start' }}>
+              <Button variant="black" size="default">Default Size</Button>
+              <Button variant="black" size="full">Full Width Button</Button>
+            </div>
           </div>
         </div>
 
@@ -351,6 +373,115 @@ const StyleGuidePage = () => {
         </div>
       </section>
 
+      {/* BusinessNumberInput 섹션 (3개 NumberInput 방식) */}
+      <section style={{ marginBottom: '60px' }}>
+        <h2 style={{ borderBottom: '2px solid #e5e7eb', paddingBottom: '8px', marginBottom: '30px' }}>
+          🏢 BusinessNumberInput 컴포넌트 (3개 NumberInput)
+        </h2>
+        
+        <div style={{ 
+          backgroundColor: '#fef3c7', 
+          padding: '15px', 
+          borderRadius: '8px', 
+          marginBottom: '30px',
+          border: '1px solid #f59e0b'
+        }}>
+          <p style={{ margin: 0, fontSize: '14px', color: '#92400e' }}>
+            ⚠️ <strong>주의:</strong> 실제 API 호출을 위해서는 공공데이터포털에서 발급받은 유효한 API 키가 필요합니다.
+            <br />아래 예시는 UI 동작만 확인할 수 있습니다.
+          </p>
+        </div>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '25px' }}>
+          
+          {/* 기본 사업자 번호 입력 */}
+          <div>
+            <h3 style={{ marginBottom: '15px', color: '#4b5563' }}>기본 사업자 번호 입력</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <BusinessNumberInput
+                label="사업자등록번호"
+                value={demoValues.businessNumber1}
+                onChange={(value) => updateValue('businessNumber1', value)}
+                required
+                businessNumberApiKey="demo-api-key"
+                onValidationComplete={handleValidationComplete}
+                onValidationError={handleValidationError}
+              />
+              
+              <div style={{ 
+                fontSize: '12px', 
+                color: '#6b7280', 
+                backgroundColor: '#f9fafb', 
+                padding: '8px', 
+                borderRadius: '4px' 
+              }}>
+                • 3개의 NumberInput으로 구성 (XXX-XX-XXXXX)<br/>
+                • 각 필드별 자릿수 제한 (3-2-5자리)<br/>
+                • '검증' 버튼으로 수동 검증
+              </div>
+            </div>
+          </div>
+
+          {/* 자동 검증 */}
+          <div>
+            <h3 style={{ marginBottom: '15px', color: '#4b5563' }}>자동 검증 (모든 필드 입력 시 자동)</h3>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <BusinessNumberInput
+                label="사업자등록번호 (자동검증)"
+                value={demoValues.businessNumber2}
+                onChange={(value) => updateValue('businessNumber2', value)}
+                required
+                businessNumberApiKey="demo-api-key"
+                autoValidate={true}
+                showValidationButton={false}
+                onValidationComplete={handleValidationComplete}
+                onValidationError={handleValidationError}
+              />
+              
+              <div style={{ 
+                fontSize: '12px', 
+                color: '#6b7280', 
+                backgroundColor: '#f9fafb', 
+                padding: '8px', 
+                borderRadius: '4px' 
+              }}>
+                • 모든 필드 (10자리) 입력 시 자동 API 호출<br/>
+                • 검증 아이콘 표시: ⏳ ✓ ✗<br/>
+                • 간단하고 직관적인 UI
+              </div>
+            </div>
+          </div>
+
+          {/* 테스트 데이터 */}
+          <div>
+            <h3 style={{ marginBottom: '15px', color: '#4b5563' }}>테스트 데이터</h3>
+            <div style={{ 
+              backgroundColor: '#f3f4f6', 
+              padding: '15px', 
+              borderRadius: '8px',
+              fontSize: '14px',
+              lineHeight: '1.6'
+            }}>
+              <p style={{ margin: '0 0 10px 0', fontWeight: '600' }}>테스트용 사업자 번호:</p>
+              <div style={{ fontFamily: 'monospace', color: '#374151' }}>
+                • 123-45-67890 (각각 123, 45, 67890 입력)<br/>
+                • 000-00-00000 (무효한 체크섬)<br/>
+                • 각 필드는 길이 제한이 있어 자동 자르기
+              </div>
+              
+              <p style={{ margin: '15px 0 5px 0', fontWeight: '600' }}>장점:</p>
+              <div style={{ color: '#6b7280', fontSize: '12px' }}>
+                • 포맷팅 로직 불필요<br/>
+                • 각 필드별 유효성 검사 쉬움<br/>
+                • 사용자 경험 직관적<br/>
+                • 코드 유지보수 용이
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
       {/* CSS 클래스 참조 */}
       <section>
         <h2 style={{ borderBottom: '2px solid #e5e7eb', paddingBottom: '8px', marginBottom: '30px' }}>
@@ -402,6 +533,23 @@ const StyleGuidePage = () => {
 .strength-3 { /* 강함 */ }
 .strength-4 { /* 매우 강함 */ }
 .password-strength-text { }`}
+            </pre>
+          </div>
+
+          <div>
+            <h3 style={{ marginBottom: '10px', color: '#4b5563' }}>BusinessNumber Classes</h3>
+            <pre style={{ background: '#f3f4f6', padding: '12px', fontSize: '12px', borderRadius: '4px', overflow: 'auto' }}>
+{`.business-number-input-wrapper { }
+.business-number-inputs { }
+.business-number-separator { }
+.validation-icon { }
+.validation-icon.validating { }
+.validation-icon.valid { }
+.validation-icon.invalid { }
+.business-validation-button { }
+.business-company-info { }
+.company-name { }
+.business-status { }`}
             </pre>
           </div>
 
