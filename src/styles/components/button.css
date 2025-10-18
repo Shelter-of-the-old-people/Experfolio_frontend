@@ -45,7 +45,6 @@
 .btn-default { }
 .btn-full { 
   width: 100%;
-  /* display: flex; 제거 - inline-flex 유지 */
 }
 
 .btn-allfull { 
