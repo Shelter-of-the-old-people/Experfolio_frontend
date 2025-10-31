@@ -2,7 +2,7 @@
     display:flex;
     flex-direction: column;
     gap:var(--space-2-5);
-    width: fit-content;
+    flex:1;
     height: fit-content;
 }
 
@@ -13,13 +13,37 @@
     font-family: inherit;
     font-size: var(--font-size-sm);
     line-height: var( --line-height-loose);
-    color: var(--color-black);
+    color: var(--color-gray-400);
     border-bottom: 1px solid var(--color-gray-400);
     outline: none;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
 }
+
+.input:active{
+    color:var(--color-black);
+    font-weight: var(--font-weight-medium);
+    border-bottom: 1.2px solid var(--color-black);
+}
+
+.input:focus:active{
+    font-weight: var(--font-weight-medium);
+    color:var(--color-black);
+    border-bottom: 1.2px solid var(--color-black);
+}
+
+.input:focus{
+    color:var(--color-gray-800);
+    border-bottom: 1px solid var(--color-gray-800);
+}
+
+.input:not(:placeholder-shown) {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-black);
+    border-bottom: 1.2px solid var(--color-black);
+}
+
 .input-label { 
     display:flex;
     gap: var(--space-1);
@@ -35,10 +59,34 @@
     display:flex;
     gap:var(--space-2-5);
 }
-.input-error, .input-label-error{ 
+.input-error, .input-label-error, .input-error::placeholder{ 
     color:var(--color-error);
     border-color: var(--color-error);
 }
+
+.input-error:active{
+    color:var(--color-error);
+    font-weight: var(--font-weight-medium);
+    border-bottom: 1.2px solid var(--color-error);
+}
+
+.input-error:focus:active{
+    font-weight: var(--font-weight-medium);
+    color:var(--color-error);
+    border-bottom: 1.2px solid var(--color-error);
+}
+
+.input-error:focus{
+    color:var(--color-error);
+    border-bottom: 1px solid var(--color-error);
+}
+
+.input-error:not(:placeholder-shown) {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-error);
+    border-bottom: 1.2px solid var(--color-error);
+}
+
 .input-disabled { }
 .input-error-message { 
     color:var(--color-error);
@@ -56,7 +104,8 @@ input[type="number"] {
     gap: var(--space-1);
 }
 
-.password-toggle { }
+.password-toggle {
+ }
 .password-strength { }
 .password-strength-bar { }
 .password-strength-fill { }

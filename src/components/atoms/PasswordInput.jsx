@@ -15,24 +15,6 @@ const PasswordInput = ({
 }) => {
   const [showPassword, setShowPassword] = useState(false);
 
-  const getPasswordStrength = (password) => {
-    if (!password) return { level: 0, text: '' };
-    
-    let score = 0;
-    if (password.length >= 8) score++;
-    if (/[a-z]/.test(password)) score++;
-    if (/[A-Z]/.test(password)) score++;
-    if (/[0-9]/.test(password)) score++;
-    if (/[^A-Za-z0-9]/.test(password)) score++;
-    
-    if (score <= 2) return { level: 1, text: '약함' };
-    if (score <= 3) return { level: 2, text: '보통' };
-    if (score <= 4) return { level: 3, text: '강함' };
-    return { level: 4, text: '매우 강함' };
-  };
-
-  const strength = strengthIndicator ? getPasswordStrength(value) : null;
-
   const getInputClassName = () => {
     let classes = ['input'];
     
@@ -96,17 +78,6 @@ const PasswordInput = ({
           </button>
         )}
       </div>
-      
-      {strengthIndicator && value && (
-        <div className="password-strength">
-          <div className={`password-strength-bar strength-${strength.level}`}>
-            <div className="password-strength-fill"></div>
-          </div>
-          <span className="password-strength-text">{strength.text}</span>
-        </div>
-      )}
-      
-
     </div>
   );
 };

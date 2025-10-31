@@ -1,18 +1,27 @@
-/* 전역 기본 스타일 */
+/* 전역 기본 스타일 및 폰트 설정 */
+
 body {
   font-family: var(--font-family-base);
   font-size: var(--font-size-base);
-  line-height: 1.5;
-  color: var(--color-text-primary, #1a1a1a);
-  background-color: var(--color-background, #ffffff);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-normal);
+  color: var(--text-primary, #1a1a1a);
+  background-color: var(--bg-page, #ffffff);
 }
 
-/* 모든 요소가 부모 폰트를 상속하도록 */
+/* 모든 요소가 부모 폰트 속성을 상속 */
 * {
   font-family: inherit;
 }
 
-/* 입력 요소들이 폰트를 상속하도록 */
-input, textarea, select, button {
+/* 폼 요소들이 폰트 속성을 상속하도록 명시적 설정 */
+input,
+textarea,
+select,
+button {
   font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
 }

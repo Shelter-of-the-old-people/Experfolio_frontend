@@ -2,11 +2,6 @@ import React, { useState } from 'react';
 import { Button, TextInput, PasswordInput, NumberInput, BusinessNumberInput } from '../../components/atoms';
 import '../../components/atoms/BusinessNumberInput.css';
 
-// 폰트 테스트용 인라인 스타일
-const fontTestStyle = {
-  fontFamily: 'Pretendard, -apple-system, BlinkMacSystemFont, sans-serif'
-};
-
 const StyleGuidePage = () => {
   const [demoValues, setDemoValues] = useState({
     // TextInput values
@@ -51,7 +46,7 @@ const StyleGuidePage = () => {
   };
 
   return (
-    <div style={{ padding: '40px', fontFamily: 'system-ui, -apple-system, sans-serif', lineHeight: 1.5 }}>
+    <div style={{ padding: '40px', lineHeight: 1.5 }}>
       <h1 style={{ textAlign: 'center', marginBottom: '40px', color: '#1a1a1a' }}>
         🎨 Experfolio 컴포넌트 스타일 가이드
       </h1>
@@ -321,29 +316,6 @@ const StyleGuidePage = () => {
                 placeholder="점수 입력"
                 value={demoValues.number2}
                 onChange={(value) => updateValue('number2', value)}
-              />
-            </div>
-          </div>
-
-          <div>
-            <h3 style={{ marginBottom: '15px', color: '#4b5563' }}>With Min/Max/Step</h3>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
-              <NumberInput
-                label="가격 (1000원 단위)"
-                placeholder="가격 입력"
-                min={0}
-                step={1000}
-                value={demoValues.numberPrice}
-                onChange={(value) => updateValue('numberPrice', value)}
-              />
-              <NumberInput
-                label="평점 (0.0 - 5.0)"
-                placeholder="평점 입력"
-                min={0}
-                max={5}
-                step={0.1}
-                value={demoValues.numberRating}
-                onChange={(value) => updateValue('numberRating', value)}
               />
             </div>
           </div>
