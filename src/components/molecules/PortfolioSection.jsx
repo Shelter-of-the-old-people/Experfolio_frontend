@@ -96,12 +96,6 @@ const PortfolioSection = ({ section, onUpdate, onDelete }) => {
         <Button
           variant="trans"
           onClick={() => onDelete(section.id)}
-          style={{ 
-            color: 'var(--color-gray-500)', 
-            marginLeft: '16px', 
-            flexShrink: 0,
-            padding: '4px 8px'
-          }}
           title="섹션 삭제"
         >
           삭제
