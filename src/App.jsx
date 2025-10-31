@@ -39,13 +39,13 @@ function AppRoutes() {
       
       <Route path={routes.SIGNUP_COMPANY} element={
         <PublicLayout>
-          <div>기업 회원가입 페이지 (구현 예정)</div>
+          <CompanySignupPage />
         </PublicLayout>
       } />
       
       <Route path={routes.SIGNUP_STUDENT} element={
         <PublicLayout>
-          <div>학생 회원가입 페이지 (구현 예정)</div>
+          <StudentSignupPage />
         </PublicLayout>
       } />
       

@@ -15,6 +15,8 @@ import './styles/components/BusinessNumberInput.css'
 import './styles/components/TextEditor.css' 
 import './styles/components/FileUpload.css' 
 import './styles/components/PortfolioSection.css' 
+import './styles/components/profileimageupload.css'
+import './styles/components/linkcard.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

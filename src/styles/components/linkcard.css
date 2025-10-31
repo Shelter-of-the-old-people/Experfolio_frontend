@@ -1,0 +1,84 @@
+/* Link Card Component */
+.link-card {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  background-color: var(--color-gray-100);
+  border-radius: var(--radius-md);
+  padding: var(--space-2) var(--space-3);
+  transition: background-color 0.2s;
+}
+
+.link-card:hover:not(.link-card-disabled) {
+  background-color: var(--color-gray-200);
+}
+
+.link-card-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.link-card-content {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-black);
+}
+
+.link-card-content:disabled {
+  cursor: not-allowed;
+}
+
+.link-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  font-size: 16px;
+}
+
+.link-card-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.link-card-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.link-card-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--color-gray-600);
+  transition: all 0.2s;
+  padding: 0;
+  margin-left: var(--space-1);
+}
+
+.link-card-remove:hover {
+  background-color: var(--color-gray-300);
+  color: var(--color-black);
+}
+
+.link-card-remove:active {
+  transform: scale(0.95);
+}
