@@ -24,7 +24,6 @@ class BusinessNumberValidationResult {
     this.businessNumber = data.businessNumber;
     this.isValid = data.isValid;
     this.status = data.status; // '01': 계속사업자, '02': 휴업자, '03': 폐업자
-    this.companyName = data.companyName || '';
     this.establishmentDate = data.establishmentDate || '';
     this.errorMessage = data.errorMessage || '';
     this.validatedAt = new Date();
@@ -44,10 +43,12 @@ class BusinessNumberValidationResult {
 
   getStatusMessage() {
     if (!this.isValid) {
+      // 2. '폐업자' 또는 '휴업자' 메시지가 errorMessage로 전달됨
       return this.errorMessage || '유효하지 않은 사업자등록번호입니다.';
     }
     switch (this.status) {
       case '01': return '계속사업자 (정상)';
+      // (isValid가 false일 것이므로 이 코드는 사실상 도달하지 않음)
       case '02': return '휴업자';
       case '03': return '폐업자';
       default: return '알 수 없는 상태';
@@ -59,7 +60,8 @@ class BusinessNumberValidationResult {
       businessNumber: this.businessNumber,
       isValid: this.isValid,
       status: this.status,
-      companyName: this.companyName,
+      // --- 1. 회사명 속성 제거 ---
+      // companyName: this.companyName,
       establishmentDate: this.establishmentDate,
       statusMessage: this.getStatusMessage(),
       isActiveBusiness: this.isActiveBusiness(),
@@ -69,14 +71,12 @@ class BusinessNumberValidationResult {
 }
 
 /**
- * 사업자 번호 API 서비스 클래스 (Axios 기반으로 수정)
- * 공공데이터포털의 사업자등록번호 상태조회 API 활용
+ * 사업자 번호 API 서비스 클래스
  */
 class BusinessNumberAPIService {
   constructor(apiKey = '') {
     const baseURL = 'https://api.odcloud.kr/api/nts-businessman/v1';
     
-    // 이 서비스 전용 Axios 인스턴스 생성 (인증 인터셉터 없음)
     this.client = axios.create({
       baseURL: baseURL,
       timeout: 10000,
@@ -85,17 +85,18 @@ class BusinessNumberAPIService {
       }
     });
 
+    this.apiKey = apiKey;
+    
     if (apiKey) {
       this.setApiKey(apiKey);
     }
     
-    // Axios 에러 핸들링 인터셉터
     this.client.interceptors.response.use(
       (response) => response,
       (error) => {
         if (error.response) {
           const { data, status } = error.response;
-          const message = data?.message || error.message || `HTTP ${status}`;
+          const message = data?.message || data?.status_desc || error.message || `HTTP ${status}`;
           return Promise.reject(new APIError(message, status, data));
         } else if (error.request) {
           return Promise.reject(new APIError('네트워크 오류: 서버에서 응답이 없습니다.', 0, null));
@@ -106,16 +107,11 @@ class BusinessNumberAPIService {
     );
   }
 
-  /**
-   * API 키 설정
-   * @param {string} apiKey - 공공데이터 API 키
-   */
   setApiKey(apiKey) {
     this.apiKey = apiKey;
-    this.client.defaults.headers.common['Authorization'] = `Infuser ${apiKey}`;
   }
 
-  // --- static 메서드들은 로직 변경 없음 (validateFormat, calculateChecksum 등) ---
+  // --- (static 메서드들은 변경 없음) ---
   static validateFormat(businessNumber) {
     if (!businessNumber) return false;
     const numbers = businessNumber.replace(/[^0-9]/g, '');
@@ -144,43 +140,45 @@ class BusinessNumberAPIService {
   }
   // --- static 메서드 끝 ---
 
-  /**
-   * 사업자등록번호 상태 조회 (기본 검증)
-   * @param {string} businessNumber - 조회할 사업자등록번호
-   * @returns {Promise<BusinessNumberValidationResult>}
-   */
   async validateBusinessNumber(businessNumber) {
     try {
-      if (!BusinessNumberAPIService.validateFormat(businessNumber)) {
+      if (!this.apiKey) {
+        throw new Error('API 키가 설정되지 않았습니다. .env.local 파일을 확인하세요.');
+      }
+      
+      const numbers = BusinessNumberAPIService.extractNumbers(businessNumber);
+
+      // (사전 로컬 체크섬 제거됨)
+      if (!numbers || numbers.length !== 10) {
         return new BusinessNumberValidationResult({
           businessNumber,
           isValid: false,
-          errorMessage: '사업자등록번호 형식이 올바르지 않습니다.',
+          errorMessage: '사업자등록번호 10자리를 입력해주세요.',
         });
       }
 
-      const numbers = BusinessNumberAPIService.extractNumbers(businessNumber);
-      
-      // Axios POST 요청으로 변경
-      const response = await this.client.post('/status', {
-        b_no: [numbers],
-      });
+      const response = await this.client.post(
+        '/status',         
+        { b_no: [numbers] }, 
+        {                  
+          params: {
+            serviceKey: this.apiKey 
+          }
+        }
+      );
       
       return this.parseValidationResponse(businessNumber, response.data);
     } catch (error) {
       return new BusinessNumberValidationResult({
         businessNumber,
         isValid: false,
-        errorMessage: `검증 중 오류가 발생했습니다: ${error.message}`,
+        errorMessage: `검증 실패: ${error.message}`,
       });
     }
   }
 
   /**
    * 단일 검증 응답 파싱
-   * @param {string} businessNumber - 원본 사업자등록번호
-   * @param {Object} responseData - API 응답 (response.data)
-   * @returns {BusinessNumberValidationResult}
    */
   parseValidationResponse(businessNumber, responseData) {
     try {
@@ -193,12 +191,26 @@ class BusinessNumberAPIService {
         });
       }
 
+      // --- 3. 비즈니스 로직 수정 ---
+      const isValid = data.b_stt_cd === '01';
+      let errorMessage = '';
+
+      if (!isValid) {
+        if (data.b_stt_cd === '02') {
+          errorMessage = '휴업 상태인 사업자입니다.';
+        } else if (data.b_stt_cd === '03') {
+          errorMessage = '폐업 상태인 사업자입니다.';
+        } else {
+          errorMessage = data.tax_type || '등록되지 않은 사업자입니다.'; 
+        }
+      }
+
       return new BusinessNumberValidationResult({
         businessNumber,
-        isValid: data.b_stt_cd !== '',
-        status: data.b_stt_cd,
-        companyName: data.tax_type || '', // API 응답에 따라 필드명 조정 필요
-        establishmentDate: '', // 기본 응답에는 이 정보가 없을 수 있음
+        isValid: isValid,
+        status: data.b_stt_cd,         
+        errorMessage: errorMessage,
+        establishmentDate: '', 
       });
     } catch (error) {
       return new BusinessNumberValidationResult({
@@ -208,8 +220,6 @@ class BusinessNumberAPIService {
       });
     }
   }
-
-  // ... (validateBusinessNumberDetailed, validateMultipleBusinessNumbers 등도 유사하게 axios로 수정)
 }
 
 export { BusinessNumberAPIService, BusinessNumberValidationResult, APIError };

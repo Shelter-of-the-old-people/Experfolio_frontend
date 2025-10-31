@@ -10,7 +10,7 @@ import StyleGuide from './pages/dev/StyleGuide';
 import { HomePage, NotFoundPage } from './pages/common';
 import { LoginPage, SignupPage } from './pages/auth';
 import { SearchPage } from './pages/company';
-import { PortfolioPage } from './pages/student';
+import { PortfolioPage, PortfolioEditPage } from './pages/student';
 
 
 function AppRoutes() {
@@ -63,6 +63,14 @@ function AppRoutes() {
         <ProtectedRoute requiredRole="STUDENT" currentUser={currentUser}>
           <AuthenticatedLayout userRole="STUDENT">
             <PortfolioPage />
+          </AuthenticatedLayout>
+        </ProtectedRoute>
+      } />
+      
+      <Route path={routes.PORTFOLIO_EDIT} element={
+        <ProtectedRoute requiredRole="STUDENT" currentUser={currentUser}>
+          <AuthenticatedLayout userRole="STUDENT">
+            <PortfolioEditPage />
           </AuthenticatedLayout>
         </ProtectedRoute>
       } />
