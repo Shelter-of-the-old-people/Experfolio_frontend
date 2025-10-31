@@ -37,17 +37,17 @@ function AppRoutes() {
         </PublicLayout>
       } />
       
-      <Route path={routes.SIGNUP_COMPANY} element={
+      {/* <Route path={routes.SIGNUP_COMPANY} element={
         <PublicLayout>
           <CompanySignupPage />
         </PublicLayout>
-      } />
+      } /> */}
       
-      <Route path={routes.SIGNUP_STUDENT} element={
+      {/* <Route path={routes.SIGNUP_STUDENT} element={
         <PublicLayout>
           <StudentSignupPage />
         </PublicLayout>
-      } />
+      } /> */}
       
       {/* Company Routes */}
       <Route path={routes.SEARCH} element={
@@ -59,12 +59,18 @@ function AppRoutes() {
       } />
       
       {/* Student Routes */}
-      <Route path={routes.PORTFOLIO} element={
+      {/* <Route path={routes.PORTFOLIO} element={
         <ProtectedRoute requiredRole="STUDENT" currentUser={currentUser}>
           <AuthenticatedLayout userRole="STUDENT">
             <PortfolioPage />
           </AuthenticatedLayout>
         </ProtectedRoute>
+      } /> */}
+
+        <Route path={routes.PORTFOLIO} element={
+        <PublicLayout>
+          <PortfolioPage />
+        </PublicLayout>
       } />
       
       <Route path={routes.PORTFOLIO_EDIT} element={
