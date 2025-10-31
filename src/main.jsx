@@ -16,6 +16,7 @@ import './styles/components/TextEditor.css'
 import './styles/components/FileUpload.css' 
 import './styles/components/PortfolioSection.css' 
 import './styles/components/LayoutSelector.css'
+import './styles/components/PortfolioEditor.css'
 
 // 6. 페이지별 스타일
 import './styles/pages/PortfolioEditPage.css'

@@ -27,6 +27,15 @@ const Button = ({
     return classes.join(' ');
   };
 
+  const renderIcon = () => {
+    if (!icon) return null;
+    if (typeof icon === 'string') {
+      return <img src={icon} alt="" className="btn-icon-svg" />;
+    }
+    return <span className="btn-icon">{icon}</span>;
+  };
+  // ---
+
   return (
     <button 
       type={type}
@@ -35,7 +44,7 @@ const Button = ({
       disabled={disabled}
       {...props}
     >
-      {icon && <span className="btn-icon">{icon}</span>}
+      {renderIcon()}
       {children && <span className="btn-text">{children}</span>}
     </button>
   );

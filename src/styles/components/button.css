@@ -52,3 +52,9 @@
   height: 100%;
   display: flex;
 }
+
+.btn-section-delete{
+  position: absolute;
+  bottom:100%;
+  left:100%;
+}

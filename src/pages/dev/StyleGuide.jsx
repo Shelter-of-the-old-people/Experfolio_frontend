@@ -8,29 +8,17 @@ import {
   BusinessNumberAPIService, 
   BusinessNumberValidationResult 
 } from '../../services/BusinessNumberAPIService'; 
-
-// --- 1. Vite 환경 변수에서 실제 API 키를 읽어옵니다. ---
 const apiKey = import.meta.env.VITE_BUSINESS_API_KEY;
-
-// --- 2. 읽어온 키로 실제 서비스 인스턴스를 생성합니다. ---
 const businessNumberService = new BusinessNumberAPIService(apiKey);
-
-// --- 3. 실제 API를 호출하는 래퍼 함수를 정의합니다. ---
-// (mockValidateApi 함수는 이 함수로 대체되었습니다)
 const validateApi = (businessNumber) => {
-  // .env.local 파일에 키가 설정되었는지 확인합니다.
   if (!apiKey) {
     console.error("VITE_BUSINESS_API_KEY is not set in .env.local");
-    // 키가 없으면 즉시 에러를 반환합니다.
     return Promise.reject(new Error("API 키가 .env.local에 설정되지 않았습니다."));
   }
-  
-  // 실제 서비스의 API 호출 메서드를 실행합니다.
   return businessNumberService.validateBusinessNumber(businessNumber);
 };
 
 
-// --- StyleGuide 컴포넌트 ---
 const StyleGuidePage = () => {
   const [demoValues, setDemoValues] = useState({
     // TextInput values
@@ -63,32 +51,27 @@ const StyleGuidePage = () => {
     setDemoValues(prev => ({ ...prev, [key]: value }));
   };
 
-  // --- 4. API 검증 로직 1 (수동 검증용) ---
   const { 
     data: validationData1, 
     loading: isValidating1, 
     error: validationError1,
     execute: executeValidation1 
-  } = useLazyApi(validateApi); // <-- mockValidateApi에서 validateApi로 변경
+  } = useLazyApi(validateApi);
 
-  // 수동 검증 버튼 핸들러
   const handleValidation1 = (businessNumber) => {
     console.log('StyleGuide: (실제 API) 수동 검증 시작', businessNumber);
     executeValidation1(businessNumber);
   };
   
-  // --- 5. API 검증 로직 2 (자동 검증용) ---
   const { 
     data: validationData2, 
     loading: isValidating2, 
     error: validationError2,
     execute: executeValidation2 
-  } = useLazyApi(validateApi); // <-- mockValidateApi에서 validateApi로 변경
+  } = useLazyApi(validateApi);
 
-  // 자동 검증을 위한 useEffect
   useEffect(() => {
     const { part1, part2, part3 } = demoValues.businessNumber2;
-    // 10자리를 모두 채웠는지 확인
     if (part1.length === 3 && part2.length === 2 && part3.length === 5) {
       const fullNumber = `${part1}${part2}${part3}`;
       console.log('StyleGuide: (실제 API) 자동 검증 시작', fullNumber);
@@ -97,22 +80,18 @@ const StyleGuidePage = () => {
   }, [demoValues.businessNumber2, executeValidation2]);
 
 
-  // 검증 결과를 컴포넌트 prop에 맞게 가공하는 헬퍼 함수
   const getValidationProps = (data, error, loading) => {
-    // data는 BusinessNumberValidationResult 객체, error는 Error 객체
     const result = data; 
     const message = error ? (error.message || '알 수 없는 오류') : (result ? result.getStatusMessage() : '');
     
     return {
       isValidating: loading,
-      // API 에러가 발생했거나, 결과가 유효하지 않으면 false
       isValid: !error && result?.isValid, 
       validationMessage: message,
       companyName: result?.companyName || '',
     };
   };
 
-  // 각 입력 필드에 전달할 props 계산
   const validationProps1 = getValidationProps(validationData1, validationError1, isValidating1);
   const validationProps2 = getValidationProps(validationData2, validationError2, isValidating2);
 
@@ -120,15 +99,12 @@ const StyleGuidePage = () => {
   return (
     <div style={{ padding: '40px', lineHeight: 1.5 }}>
       <h1 style={{ textAlign: 'center', marginBottom: '40px', color: '#1a1a1a' }}>
-        🎨 Experfolio 컴포넌트 스타일 가이드
+        Experfolio 컴포넌트 스타일 가이드
       </h1>
       
-      {/* ... (Button, TextInput, PasswordInput, NumberInput 섹션은 이전과 동일) ... */}
-
-      {/* Button 섹션 */}
       <section style={{ marginBottom: '60px' }}>
         <h2 style={{ borderBottom: '2px solid #e5e7eb', paddingBottom: '8px', marginBottom: '30px' }}>
-          🔘 Button 컴포넌트
+          Button 컴포넌트
         </h2>
         
         <div style={{ marginBottom: '20px' }}>
@@ -153,15 +129,13 @@ const StyleGuidePage = () => {
             </div>
           </div>
         </div>
-        {/* ... (이하 Button 섹션 동일) ... */}
       </section>
 
       {/* TextInput 섹션 */}
       <section style={{ marginBottom: '60px' }}>
         <h2 style={{ borderBottom: '2px solid #e5e7eb', paddingBottom: '8px', marginBottom: '30px' }}>
-          📝 TextInput 컴포넌트
+          TextInput 컴포넌트
         </h2>
-        {/* ... (TextInput 섹션 동일) ... */}
       </section>
 
       {/* PasswordInput 섹션 */}
@@ -169,7 +143,6 @@ const StyleGuidePage = () => {
         <h2 style={{ borderBottom: '2px solid #e5e7eb', paddingBottom: '8px', marginBottom: '30px' }}>
           🔒 PasswordInput 컴포넌트
         </h2>
-        {/* ... (PasswordInput 섹션 동일) ... */}
       </section>
 
       {/* NumberInput 섹션 */}
@@ -177,7 +150,6 @@ const StyleGuidePage = () => {
         <h2 style={{ borderBottom: '2px solid #e5e7eb', paddingBottom: '8px', marginBottom: '30px' }}>
           🔢 NumberInput 컴포넌트
         </h2>
-        {/* ... (NumberInput 섹션 동일) ... */}
       </section>
 
       {/* BusinessNumberInput 섹션 (리팩토링 반영) */}
@@ -186,9 +158,8 @@ const StyleGuidePage = () => {
           🏢 BusinessNumberInput 컴포넌트 (실제 API 연동됨)
         </h2>
         
-        {/* --- 6. API 키 상태에 따라 동적인 안내 메시지 표시 --- */}
         <div style={{ 
-          backgroundColor: apiKey ? '#e0f2fe' : '#fef3c7', // 키 존재시 파란색, 없으면 노란색
+          backgroundColor: apiKey ? '#e0f2fe' : '#fef3c7',
           padding: '15px', 
           borderRadius: '8px', 
           marginBottom: '30px',

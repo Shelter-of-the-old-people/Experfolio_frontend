@@ -17,7 +17,7 @@ const PortfolioEditor = ({ sections, onUpdateSection, onDeleteSection, onAddSect
         ))}
       </div>
 
-      <div className="add-section-container" style={{ marginTop: '30px' }}>
+      <div className="add-section-container">
         <Button
           variant="black"
           size="full"
