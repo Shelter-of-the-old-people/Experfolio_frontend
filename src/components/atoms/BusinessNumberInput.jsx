@@ -2,37 +2,34 @@ import React, { useState, useEffect, useCallback } from 'react';
 import NumberInput from './NumberInput.jsx';
 
 /**
- * 사업자 번호 입력 컴포넌트 (3개의 NumberInput으로 구성)
- * 형식: XXX-XX-XXXXX
+ * 사업자 번호 입력 컴포넌트 (3개의 NumberInput으로 구성) - (Refactored)
+ * (UI만 담당하며, 검증 로직은 props로 주입받습니다)
  */
 const BusinessNumberInput = ({
-  value = { part1: '', part2: '', part3: '' }, // { part1: "123", part2: "45", part3: "67890" }
+  value = { part1: '', part2: '', part3: '' },
   onChange,
   label = '사업자등록번호',
   required = false,
   disabled = false,
-  error = false,
-  errorMessage,
-  // API 관련 props (단순화)
-  businessNumberApiKey = '',
+  error = false, // 외부에서 주입된 기본 에러
+  errorMessage, // 외부에서 주입된 기본 에러 메시지
+  
+  // --- 검증 관련 Props (상위에서 주입) ---
+  isValidating = false, // 검증 API 호출 중인지 여부
+  isValid = false, // 검증이 완료되었고 유효한지 여부
+  validationMessage, // 검증 결과 메시지 (예: '유효한 사업자입니다', '폐업한 사업자입니다')
+  companyName, // 검증을 통해 확인된 회사명
   showValidationButton = true,
   showCompanyName = true,
-  autoValidate = false,
-  onValidationComplete,
-  onValidationError,
+  onValidate, // '검증' 버튼 클릭 시 호출될 함수 (상위에서 주입)
+  // ---
+  
   ...props
 }) => {
   const [localValues, setLocalValues] = useState({
     part1: value?.part1 || '',
     part2: value?.part2 || '',
     part3: value?.part3 || ''
-  });
-
-  const [validationState, setValidationState] = useState({
-    isValidating: false,
-    isValid: false,
-    companyName: '',
-    statusMessage: ''
   });
 
   // 외부 value prop이 변경되면 로컬 상태 업데이트
@@ -45,27 +42,6 @@ const BusinessNumberInput = ({
       });
     }
   }, [value]);
-
-  // 사업자 번호 조합 함수
-  const combineBusinessNumber = useCallback((part1, part2, part3) => {
-    if (!part1 && !part2 && !part3) return '';
-    return `${part1 || ''}${part2 || ''}${part3 || ''}`;
-  }, []);
-
-  // 간단한 체크섬 검증 (실제 API 없이도 사용 가능)
-  const validateChecksum = useCallback((businessNumber) => {
-    if (businessNumber.length !== 10) return false;
-    
-    const weights = [1, 3, 7, 1, 3, 7, 1, 3, 5];
-    let sum = 0;
-    
-    for (let i = 0; i < 9; i++) {
-      sum += parseInt(businessNumber[i]) * weights[i];
-    }
-    
-    const checksum = (10 - (sum % 10)) % 10;
-    return checksum === parseInt(businessNumber[9]);
-  }, []);
 
   // 개별 필드 변경 핸들러
   const handlePartChange = useCallback((partName, newValue) => {
@@ -80,77 +56,33 @@ const BusinessNumberInput = ({
     if (onChange) {
       onChange(updatedValues);
     }
+  }, [localValues, onChange]);
 
-    // 자동 검증 (간단한 체크섬만)
-    if (autoValidate && updatedValues.part1 && updatedValues.part2 && updatedValues.part3) {
-      const fullNumber = combineBusinessNumber(updatedValues.part1, updatedValues.part2, updatedValues.part3);
-      if (fullNumber.length === 10) {
-        const isValid = validateChecksum(fullNumber);
-        setValidationState({
-          isValidating: false,
-          isValid,
-          companyName: isValid ? '(예시) 테스트 회사' : '',
-          statusMessage: isValid ? '유효한 사업자등록번호입니다' : '체크섬이 일치하지 않습니다'
-        });
-        
-        if (onValidationComplete && isValid) {
-          onValidationComplete({ isValid, companyName: '(예시) 테스트 회사' });
-        }
-        if (onValidationError && !isValid) {
-          onValidationError(new Error('체크섬이 일치하지 않습니다'));
-        }
-      }
+  // 검증 버튼 클릭 핸들러 (상위로 이벤트 전달)
+  const handleValidateClick = useCallback(() => {
+    if (onValidate) {
+      const fullNumber = `${localValues.part1}${localValues.part2}${localValues.part3}`;
+      onValidate(fullNumber);
     }
-  }, [localValues, onChange, autoValidate, combineBusinessNumber, validateChecksum, onValidationComplete, onValidationError]);
+  }, [localValues, onValidate]);
 
-  // 수동 검증 핸들러
-  const handleValidateClick = useCallback(async () => {
-    const fullNumber = combineBusinessNumber(localValues.part1, localValues.part2, localValues.part3);
-    
-    if (fullNumber.length === 10) {
-      setValidationState(prev => ({ ...prev, isValidating: true }));
-      
-      // 시뮬레이션을 위한 약간의 지연
-      setTimeout(() => {
-        const isValid = validateChecksum(fullNumber);
-        setValidationState({
-          isValidating: false,
-          isValid,
-          companyName: isValid ? '(예시) 테스트 회사' : '',
-          statusMessage: isValid ? '유효한 사업자등록번호입니다' : '체크섬이 일치하지 않습니다'
-        });
-        
-        if (onValidationComplete && isValid) {
-          onValidationComplete({ isValid, companyName: '(예시) 테스트 회사' });
-        }
-        if (onValidationError && !isValid) {
-          onValidationError(new Error('체크섬이 일치하지 않습니다'));
-        }
-      }, 1000);
-    }
-  }, [localValues, combineBusinessNumber, validateChecksum, onValidationComplete, onValidationError]);
+  // 전체 에러 상태 결정 (외부 에러 또는 검증 실패)
+  const hasError = error || (validationMessage && !isValid);
+  const displayErrorMessage = errorMessage || (hasError ? validationMessage : '');
 
-  // 전체 에러 상태 결정
-  const hasError = error || (!validationState.isValid && validationState.statusMessage);
-  const displayErrorMessage = errorMessage || 
-    (!validationState.isValid && validationState.statusMessage ? validationState.statusMessage : '');
-
-  // 검증 가능 여부 확인
-  const canValidate = localValues.part1 && localValues.part2 && localValues.part3 && 
-    localValues.part1.length === 3 && 
+  // 검증 가능 여부 (10자리를 모두 채웠는지)
+  const canValidate = localValues.part1.length === 3 && 
     localValues.part2.length === 2 && 
     localValues.part3.length === 5;
 
   // 검증 상태 아이콘
   const getValidationIcon = () => {
-    if (!canValidate) return null;
-    
-    if (validationState.isValidating) {
+    if (isValidating) {
       return <span className="validation-icon validating">⏳</span>;
     }
     
-    if (validationState.statusMessage) {
-      if (validationState.isValid) {
+    if (validationMessage) { // 검증 메시지가 있다면
+      if (isValid) {
         return <span className="validation-icon valid">✓</span>;
       } else {
         return <span className="validation-icon invalid">✗</span>;
@@ -186,45 +118,32 @@ const BusinessNumberInput = ({
 
       {/* 사업자 번호 입력 필드들 */}
       <div className="business-number-inputs">
-        {/* 첫 번째 필드: 3자리 */}
         <NumberInput
           value={localValues.part1}
           onChange={(newValue) => handlePartChange('part1', newValue)}
           placeholder="123"
-          min={0}
-          max={999}
           maxLength={3}
-          disabled={disabled}
+          disabled={disabled || isValidating}
           error={hasError}
           {...props}
         />
-
         <span className="business-number-separator">-</span>
-
-        {/* 두 번째 필드: 2자리 */}
         <NumberInput
           value={localValues.part2}
           onChange={(newValue) => handlePartChange('part2', newValue)}
           placeholder="45"
-          min={0}
-          max={99}
           maxLength={2}
-          disabled={disabled}
+          disabled={disabled || isValidating}
           error={hasError}
           {...props}
         />
-
         <span className="business-number-separator">-</span>
-
-        {/* 세 번째 필드: 5자리 */}
         <NumberInput
           value={localValues.part3}
           onChange={(newValue) => handlePartChange('part3', newValue)}
           placeholder="67890"
-          min={0}
-          max={99999}
           maxLength={5}
-          disabled={disabled}
+          disabled={disabled || isValidating}
           error={hasError}
           {...props}
         />
@@ -238,18 +157,18 @@ const BusinessNumberInput = ({
             type="button"
             className="business-validation-button"
             onClick={handleValidateClick}
-            disabled={disabled || validationState.isValidating || !canValidate}
+            disabled={disabled || isValidating || !canValidate}
           >
-            {validationState.isValidating ? '검증중...' : '검증'}
+            {isValidating ? '검증중...' : '검증'}
           </button>
         )}
       </div>
 
       {/* 검증 성공 시 회사 정보 표시 */}
-      {showCompanyName && validationState.isValid && validationState.companyName && (
+      {showCompanyName && isValid && companyName && (
         <div className="business-company-info">
-          <span className="company-name">회사명: {validationState.companyName}</span>
-          <span className="business-status">상태: {validationState.statusMessage}</span>
+          <span className="company-name">회사명: {companyName}</span>
+          <span className="business-status">상태: {validationMessage}</span>
         </div>
       )}
     </div>

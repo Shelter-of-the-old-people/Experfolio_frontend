@@ -1,7 +1,50 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button, TextInput, PasswordInput, NumberInput, BusinessNumberInput } from '../../components/atoms';
 import '../../components/atoms/BusinessNumberInput.css';
 
+// --- 로직 주입을 위한 임포트 ---
+import { useLazyApi } from '../../hooks/useApi';
+// .backup이 제거된
+// BusinessNumberAPIService.js에서 클래스들을 임포트합니다.
+import { 
+  BusinessNumberAPIService, 
+  BusinessNumberValidationResult 
+} from '../../services/BusinessNumberAPIService'; 
+
+// --- StyleGuide 페이지 내에서 서비스 인스턴스 생성 (데모용) ---
+// 'demo-api-key'는 실제로는 동작하지 않지만, 로직 흐름을 보여줍니다.
+const businessNumberService = new BusinessNumberAPIService('demo-api-key');
+
+// --- 데모용 모의 검증 함수 ---
+// 실제 페이지에서는 이 로직이 API 서비스 호출을 담당합니다.
+const mockValidateApi = (businessNumber) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      // 로컬 체크섬 검증 (BusinessNumberAPIService의 static 메서드 사용)
+      const isValid = BusinessNumberAPIService.validateFormat(businessNumber);
+      
+      if (isValid) {
+        // 성공 모의 응답
+        resolve(new BusinessNumberValidationResult({
+          businessNumber: businessNumber,
+          isValid: true,
+          status: '01', // '01': 계속사업자
+          companyName: '(주)스타일가이드모의업체',
+        }));
+      } else {
+        // 실패 모의 응답
+        resolve(new BusinessNumberValidationResult({
+          businessNumber: businessNumber,
+          isValid: false,
+          errorMessage: '국세청 체크섬 검증에 실패했습니다.',
+        }));
+      }
+    }, 1000); // 1초 지연 시뮬레이션
+  });
+};
+
+
+// --- StyleGuide 컴포넌트 ---
 const StyleGuidePage = () => {
   const [demoValues, setDemoValues] = useState({
     // TextInput values
@@ -34,16 +77,57 @@ const StyleGuidePage = () => {
     setDemoValues(prev => ({ ...prev, [key]: value }));
   };
 
-  // 사업자 번호 검증 콜백 함수들
-  const handleValidationComplete = (result) => {
-    console.log('검증 완료:', result.toJSON());
-    alert(`검증 결과: ${result.getStatusMessage()}\n회사명: ${result.companyName || '없음'}`);
+  // --- API 검증 로직 1 (수동 검증용) ---
+  const { 
+    data: validationData1, 
+    loading: isValidating1, 
+    error: validationError1,
+    execute: executeValidation1 
+  } = useLazyApi(mockValidateApi); // 모의 API 함수 사용
+
+  // 수동 검증 버튼 핸들러
+  const handleValidation1 = (businessNumber) => {
+    console.log('StyleGuide: 수동 검증 시작', businessNumber);
+    executeValidation1(businessNumber);
+  };
+  
+  // --- API 검증 로직 2 (자동 검증용) ---
+  const { 
+    data: validationData2, 
+    loading: isValidating2, 
+    error: validationError2,
+    execute: executeValidation2 
+  } = useLazyApi(mockValidateApi); // 모의 API 함수 사용
+
+  // 자동 검증을 위한 useEffect
+  useEffect(() => {
+    const { part1, part2, part3 } = demoValues.businessNumber2;
+    // 10자리를 모두 채웠는지 확인
+    if (part1.length === 3 && part2.length === 2 && part3.length === 5) {
+      const fullNumber = `${part1}${part2}${part3}`;
+      console.log('StyleGuide: 자동 검증 시작', fullNumber);
+      executeValidation2(fullNumber);
+    }
+  }, [demoValues.businessNumber2, executeValidation2]);
+
+
+  // 검증 결과를 컴포넌트 prop에 맞게 가공하는 헬퍼 함수
+  const getValidationProps = (data, error, loading) => {
+    const result = data; // data가 BusinessNumberValidationResult 객체
+    const message = error ? error.message : (result ? result.getStatusMessage() : '');
+    
+    return {
+      isValidating: loading,
+      isValid: result?.isValid || false,
+      validationMessage: message,
+      companyName: result?.companyName || '',
+    };
   };
 
-  const handleValidationError = (error) => {
-    console.error('검증 에러:', error);
-    alert(`검증 에러: ${error.message}`);
-  };
+  // 각 입력 필드에 전달할 props 계산
+  const validationProps1 = getValidationProps(validationData1, validationError1, isValidating1);
+  const validationProps2 = getValidationProps(validationData2, validationError2, isValidating2);
+
 
   return (
     <div style={{ padding: '40px', lineHeight: 1.5 }}>
@@ -345,10 +429,10 @@ const StyleGuidePage = () => {
         </div>
       </section>
 
-      {/* BusinessNumberInput 섹션 (3개 NumberInput 방식) */}
+      {/* BusinessNumberInput 섹션 (리팩토링 반영) */}
       <section style={{ marginBottom: '60px' }}>
         <h2 style={{ borderBottom: '2px solid #e5e7eb', paddingBottom: '8px', marginBottom: '30px' }}>
-          🏢 BusinessNumberInput 컴포넌트 (3개 NumberInput)
+          🏢 BusinessNumberInput 컴포넌트 (로직 분리됨)
         </h2>
         
         <div style={{ 
@@ -359,25 +443,30 @@ const StyleGuidePage = () => {
           border: '1px solid #f59e0b'
         }}>
           <p style={{ margin: 0, fontSize: '14px', color: '#92400e' }}>
-            ⚠️ <strong>주의:</strong> 실제 API 호출을 위해서는 공공데이터포털에서 발급받은 유효한 API 키가 필요합니다.
-            <br />아래 예시는 UI 동작만 확인할 수 있습니다.
+            ⚠️ <strong>주의:</strong> `BusinessNumberAPIService`가 모의 로직을 사용하도록 설정되었습니다.
+            <br />이 예제는 실제 API 대신 로컬 체크섬 검증(1초 지연)을 시뮬레이션합니다.
           </p>
         </div>
         
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '25px' }}>
           
-          {/* 기본 사업자 번호 입력 */}
+          {/* 수동 검증 */}
           <div>
-            <h3 style={{ marginBottom: '15px', color: '#4b5563' }}>기본 사업자 번호 입력</h3>
+            <h3 style={{ marginBottom: '15px', color: '#4b5563' }}>수동 검증 (로직 주입)</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <BusinessNumberInput
                 label="사업자등록번호"
                 value={demoValues.businessNumber1}
                 onChange={(value) => updateValue('businessNumber1', value)}
                 required
-                businessNumberApiKey="demo-api-key"
-                onValidationComplete={handleValidationComplete}
-                onValidationError={handleValidationError}
+                
+                // --- 검증 로직 및 상태 주입 ---
+                onValidate={handleValidation1} // 검증 함수 주입
+                isValidating={validationProps1.isValidating}
+                isValid={validationProps1.isValid}
+                validationMessage={validationProps1.validationMessage}
+                companyName={validationProps1.companyName}
+                // ---
               />
               
               <div style={{ 
@@ -387,27 +476,31 @@ const StyleGuidePage = () => {
                 padding: '8px', 
                 borderRadius: '4px' 
               }}>
-                • 3개의 NumberInput으로 구성 (XXX-XX-XXXXX)<br/>
-                • 각 필드별 자릿수 제한 (3-2-5자리)<br/>
-                • '검증' 버튼으로 수동 검증
+                • 상위 컴포넌트(StyleGuide)가 `useLazyApi`로 검증 로직 소유<br/>
+                • '검증' 버튼 클릭 시 `onValidate` prop이 호출됨<br/>
+                • `isValidating`, `isValid` 등 상태를 props로 주입받음
               </div>
             </div>
           </div>
 
           {/* 자동 검증 */}
           <div>
-            <h3 style={{ marginBottom: '15px', color: '#4b5563' }}>자동 검증 (모든 필드 입력 시 자동)</h3>
+            <h3 style={{ marginBottom: '15px', color: '#4b5563' }}>자동 검증 (로직 주입)</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <BusinessNumberInput
                 label="사업자등록번호 (자동검증)"
                 value={demoValues.businessNumber2}
                 onChange={(value) => updateValue('businessNumber2', value)}
                 required
-                businessNumberApiKey="demo-api-key"
-                autoValidate={true}
-                showValidationButton={false}
-                onValidationComplete={handleValidationComplete}
-                onValidationError={handleValidationError}
+                showValidationButton={false} // 검증 버튼 숨김
+                
+                // --- 검증 로직 및 상태 주입 ---
+                onValidate={null} // 자동 검증이므로 버튼 핸들러 없음
+                isValidating={validationProps2.isValidating}
+                isValid={validationProps2.isValid}
+                validationMessage={validationProps2.validationMessage}
+                companyName={validationProps2.companyName}
+                // ---
               />
               
               <div style={{ 
@@ -417,9 +510,9 @@ const StyleGuidePage = () => {
                 padding: '8px', 
                 borderRadius: '4px' 
               }}>
-                • 모든 필드 (10자리) 입력 시 자동 API 호출<br/>
-                • 검증 아이콘 표시: ⏳ ✓ ✗<br/>
-                • 간단하고 직관적인 UI
+                • 상위 컴포넌트(StyleGuide)가 `useEffect`로 값 변경 감지<br/>
+                • 10자리 완성 시 `useLazyApi` 자동 실행<br/>
+                • 검증 아이콘(⏳ ✓ ✗)으로 상태 표시
               </div>
             </div>
           </div>
@@ -434,95 +527,13 @@ const StyleGuidePage = () => {
               fontSize: '14px',
               lineHeight: '1.6'
             }}>
-              <p style={{ margin: '0 0 10px 0', fontWeight: '600' }}>테스트용 사업자 번호:</p>
+              <p style={{ margin: '0 0 10px 0', fontWeight: '600' }}>테스트용 사업자 번호 (체크섬 기준):</p>
               <div style={{ fontFamily: 'monospace', color: '#374151' }}>
-                • 123-45-67890 (각각 123, 45, 67890 입력)<br/>
-                • 000-00-00000 (무효한 체크섬)<br/>
-                • 각 필드는 길이 제한이 있어 자동 자르기
-              </div>
-              
-              <p style={{ margin: '15px 0 5px 0', fontWeight: '600' }}>장점:</p>
-              <div style={{ color: '#6b7280', fontSize: '12px' }}>
-                • 포맷팅 로직 불필요<br/>
-                • 각 필드별 유효성 검사 쉬움<br/>
-                • 사용자 경험 직관적<br/>
-                • 코드 유지보수 용이
+                • <strong>123-45-67890</strong> (유효: 123, 45, 67890 입력)<br/>
+                • <strong>111-11-11111</strong> (유효: 111, 11, 11111 입력)<br/>
+                • <strong>000-00-00000</strong> (무효: 000, 00, 00000 입력)
               </div>
             </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* CSS 클래스 참조 */}
-      <section>
-        <h2 style={{ borderBottom: '2px solid #e5e7eb', paddingBottom: '8px', marginBottom: '30px' }}>
-          🎨 CSS 클래스 참조
-        </h2>
-        
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
-          
-          <div>
-            <h3 style={{ marginBottom: '10px', color: '#4b5563' }}>Button Classes</h3>
-            <pre style={{ background: '#f3f4f6', padding: '12px', fontSize: '12px', borderRadius: '4px', overflow: 'auto' }}>
-{`.btn { }
-.btn-black { }
-.btn-trans { }
-.btn-circle { }
-.btn-default { }
-.btn-full { }
-.btn-disabled { }
-.btn-icon { }
-.btn-text { }`}
-            </pre>
-          </div>
-
-          <div>
-            <h3 style={{ marginBottom: '10px', color: '#4b5563' }}>Input Classes</h3>
-            <pre style={{ background: '#f3f4f6', padding: '12px', fontSize: '12px', borderRadius: '4px', overflow: 'auto' }}>
-{`.input-wrapper { }
-.input-label { }
-.input-required { }
-.input-container { }
-.input { }
-.input-prefix { }
-.input-suffix { }
-.input-error { }
-.input-disabled { }
-.input-error-message { }`}
-            </pre>
-          </div>
-
-          <div>
-            <h3 style={{ marginBottom: '10px', color: '#4b5563' }}>Password Classes</h3>
-            <pre style={{ background: '#f3f4f6', padding: '12px', fontSize: '12px', borderRadius: '4px', overflow: 'auto' }}>
-{`.password-toggle { }
-.password-strength { }
-.password-strength-bar { }
-.password-strength-fill { }
-.strength-1 { /* 약함 */ }
-.strength-2 { /* 보통 */ }
-.strength-3 { /* 강함 */ }
-.strength-4 { /* 매우 강함 */ }
-.password-strength-text { }`}
-            </pre>
-          </div>
-
-          <div>
-            <h3 style={{ marginBottom: '10px', color: '#4b5563' }}>BusinessNumber Classes</h3>
-            <pre style={{ background: '#f3f4f6', padding: '12px', fontSize: '12px', borderRadius: '4px', overflow: 'auto' }}>
-{`.business-number-input-wrapper { }
-.business-number-inputs { }
-.business-number-separator { }
-.validation-icon { }
-.validation-icon.validating { }
-.validation-icon.valid { }
-.validation-icon.invalid { }
-.business-validation-button { }
-.business-company-info { }
-.company-name { }
-.business-status { }`}
-            </pre>
           </div>
 
         </div>
