@@ -1,5 +1,4 @@
 import React from 'react';
-import '../../styles/components/TextEditor.css';
 
 const TextEditor = ({
   value = '',
@@ -26,7 +25,7 @@ const TextEditor = ({
   };
 
   return (
-    <div className="input-wrapper">
+    <div className="input-wrapper text-editor-wrapper">
       <div className="input-label-wrapper">
         {label && (
           <label className={getLabelClassName()}>
@@ -46,7 +45,7 @@ const TextEditor = ({
           placeholder={placeholder}
           disabled={disabled}
           className={getEditorClassName()}
-          rows={10} // 기본 높이 설정
+          rows={10}
           {...props}
         />
       </div>

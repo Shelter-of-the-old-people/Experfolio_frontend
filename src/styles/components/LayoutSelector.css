@@ -1,0 +1,53 @@
+.layout-selector-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  width: 100%;
+  padding: 20px;
+  border: 1px dashed var(--color-gray-300);
+  border-radius: var(--radius-lg);
+}
+
+.layout-grid {
+  display: grid;
+  grid-template-areas:
+    ". top ."
+    "left center right"
+    ". bottom .";
+  gap: 16px;
+  justify-items: center;
+  align-items: center;
+}
+
+.layout-grid-button {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.layout-grid-button:hover {
+  transform: scale(1.05);
+}
+
+.layout-grid-button img {
+  display: block;
+  width: 40px;
+  height: 40px;
+}
+
+.layout-selector-text {
+  margin-top: 24px;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-600);
+  transition: color 0.2s ease;
+}
+
+.layout-selector-container:hover .layout-selector-text {
+  color: var(--color-black);
+}

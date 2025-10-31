@@ -15,6 +15,7 @@ import './styles/components/BusinessNumberInput.css'
 import './styles/components/TextEditor.css' 
 import './styles/components/FileUpload.css' 
 import './styles/components/PortfolioSection.css' 
+import './styles/components/LayoutSelector.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

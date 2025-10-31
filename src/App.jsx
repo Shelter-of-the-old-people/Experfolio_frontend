@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react'; // useState 제거
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts';
+// 1. useAuth 훅을 임포트합니다.
+import { AuthProvider, useAuth } from './contexts'; 
 import { PublicLayout, AuthenticatedLayout } from './layouts';
 import ProtectedRoute from './components/ProtectedRoute';
 import { routes } from './routes';
@@ -14,7 +15,12 @@ import { PortfolioPage, PortfolioEditPage } from './pages/student';
 
 
 function AppRoutes() {
-  const [currentUser, setCurrentUser] = useState(null);
+  // 2. AuthContext에서 실제 사용자 정보를 가져옵니다.
+  //    (user를 currentUser라는 별칭으로 사용합니다.)
+  const { user: currentUser } = useAuth();
+  
+  // 3. [삭제] App.jsx의 자체적인 로컬 상태를 제거합니다.
+  // const [currentUser, setCurrentUser] = useState(null); 
   
   return (
     <Routes>
@@ -49,7 +55,9 @@ function AppRoutes() {
         </PublicLayout>
       } />
       
-      {/* Company Routes */}
+      {/* Company Routes
+        (이제 currentUser는 AuthContext의 MOCK_STUDENT_USER입니다) 
+      */}
       <Route path={routes.SEARCH} element={
         <ProtectedRoute requiredRole="COMPANY" currentUser={currentUser}>
           <AuthenticatedLayout userRole="COMPANY">
@@ -58,7 +66,9 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
       
-      {/* Student Routes */}
+      {/* Student Routes 
+        (currentUser가 MOCK_STUDENT_USER이므로 이 라우트가 정상 동작합니다)
+      */}
       <Route path={routes.PORTFOLIO} element={
         <ProtectedRoute requiredRole="STUDENT" currentUser={currentUser}>
           <AuthenticatedLayout userRole="STUDENT">
