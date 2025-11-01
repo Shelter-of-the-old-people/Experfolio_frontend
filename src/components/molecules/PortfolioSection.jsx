@@ -2,9 +2,10 @@ import React from 'react';
 import { TextInput, TextEditor, Button } from '../atoms';
 import LayoutSelector from './LayoutSelector';
 import FileUpload from './FileUpload';
+import { useDebounce } from '../../hooks/useDebounce';
 
 const SectionContent = ({ 
-  layout, 
+  type, 
   content, 
   file, 
   onContentChange, 
@@ -25,7 +26,7 @@ const SectionContent = ({
   );
 
   const renderLayout = () => {
-    switch (layout) {
+    switch (type) {
       case 'text-only':
         return editorElement;
       case 'file-top':
@@ -77,7 +78,30 @@ const SectionContent = ({
 
 
 const PortfolioSection = ({ section, onUpdate, onDelete }) => {
+  const [internalSection, setInternalSection] = useState(section);
+  const debouncedTitle = useDebounce(internalSection.title, 1000);
+  const debouncedContent = useDebounce(internalSection.content, 1000);
   
+  useEffect(() => {
+    setInternalSection(section);
+  }, [section]);
+
+  useEffect(() => {
+    if (debouncedTitle !== section.title || debouncedContent !== section.content) {
+      onUpdate({ ...internalSection, title: debouncedTitle, content: debouncedContent });
+    }
+  }, [debouncedTitle, debouncedContent]);
+
+  const handleImmediateUpdate = (field, value) => {
+    const updatedSection = { ...internalSection, [field]: value };
+    setInternalSection(updatedSection);
+    onUpdate(updatedSection); 
+  };
+
+  const handleTextUpdate = (field, value) => {
+    setInternalSection(prev => ({ ...prev, [field]: value }));
+  };
+
   const handleUpdate = (field, value) => {
     onUpdate({ ...section, [field]: value });
   };
@@ -95,25 +119,25 @@ const PortfolioSection = ({ section, onUpdate, onDelete }) => {
         <div className="section-header">
             <TextInput
                 value={section.title}
-                onChange={(value) => handleUpdate('title', value)}
+                onChange={(value) => handleTextUpdate('title', value)}
                 placeholder="제목 입력 : 예) 팀 프로젝트 - Experfolio"
                 required
                 />
         </div>
 
         <div className="section-content-wrapper">
-            {section.layout === 'unselected' ? (
+            {section.type === 'unselected' ? (
             <LayoutSelector
-                onSelect={(value) => handleUpdate('layout', value)}
+                onSelect={(value) => handleImmediateUpdate('type', value)}
             />
             ) : (
             <SectionContent
-                layout={section.layout}
+                type={section.type}
                 content={section.content}
                 file={section.file}
-                onContentChange={(value) => handleUpdate('content', value)}
-                onFileChange={(value) => handleUpdate('file', value)}
-                onChangeLayoutClick={() => handleUpdate('layout', 'unselected')}
+                onContentChange={(value) => handleTextUpdate('content', value)}
+                onFileChange={(value) => handleImmediateUpdate('file', value)}
+                onChangeLayoutClick={() => handleImmediateUpdate('type', 'unselected')}
             />
             )}
             
