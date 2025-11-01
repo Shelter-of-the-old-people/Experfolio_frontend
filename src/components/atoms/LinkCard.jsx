@@ -4,6 +4,7 @@ import '../../styles/components/LinkCard.css';
 const LinkCard = ({
   icon,
   label,
+  desc,
   url,
   onRemove,
   disabled = false,
@@ -17,18 +18,13 @@ const LinkCard = ({
   return (
     <div className={`link-card${disabled ? ' link-card-disabled' : ''}`}>
       <div className="link-card-main-row">
-        <button
-          type="button"
-          className="link-card-content"
-          onClick={handleClick}
-          disabled={disabled}
-          tabIndex={0}
-        >
-          {icon && (
-            <span className="link-card-icon">{icon}</span>
-          )}
+        <span className="link-card-icon">{icon ||
+          <span style={{ width: 22, height: 21, display: 'inline-block' }}></span>}
+        </span>
+        <div className="link-card-meta">
           <span className="link-card-label">{label}</span>
-        </button>
+          {desc && <span className="link-card-desc">{desc}</span>}
+        </div>
         {onRemove && !disabled && (
           <button
             type="button"

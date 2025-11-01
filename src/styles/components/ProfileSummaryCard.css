@@ -80,20 +80,17 @@
 }
 
 .profile-img-box {
-  flex: none;
-  width: 180px;
-  height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+width: 180px;
+height: 200px;
+flex-shrink: 0;
+aspect-ratio: 9/10;
 }
 
 .profile-avatar {
-  width: 160px;
-  height: 160px;
-  border-radius: 80px;
-  background: #ededed;
-  object-fit: cover;
+width: 160.159px;
+height: 160.159px;
+flex-shrink: 0;
+aspect-ratio: 160.16/160.16;
 }
 
 /* 오른쪽 컬럼 */
@@ -206,14 +203,9 @@
 
 /* 링크 카드 리스트 (가로 스크롤) */
 .profile-links-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 12px;
-  width: 525px;
-  min-height: 46px;
-  overflow-x: auto;
-  margin-bottom: 7px;
+display: flex;
+align-items: center;
+gap: 12px;
 }
 
 .profile-keywords-row {

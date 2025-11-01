@@ -4,13 +4,25 @@ import Tag from '../atoms/Tag';
 import LinkCard from '../atoms/LinkCard';
 import '../../styles/components/ProfileSummaryCard.css';
 
+// 사이트별 아이콘 자동 매핑
+const getIconByTypeOrUrl = (type, url) => {
+  if (type === 'github' || (url && url.includes('github.com')))
+    return <img src="/github.svg" alt="GitHub" />;
+  if (type === 'notion' || (url && url.includes('notion.so')))
+    return <img src="/notion.svg" alt="Notion" />;
+  if (type === 'portfolio' || (url && url.includes('portfolio')))
+    return <img src="/portfolio.svg" alt="Portfolio" />;
+  // 이 외 추가 가능 예시: velog, youtube 등
+  return null; // 또는 기본 아이콘 JSX
+};
+
 const ProfileSummaryCard = ({
   profile: {
     name, avatar, school, major, gpa,
     wishJob, wishArea, keywords = [],
     github, notion, portfolioLinks = []
   },
-  onClose = () => {}, // 기본값
+  onClose = () => {},
   isFavorite = false,
   onContact, onToggleFavorite,
 }) => (
@@ -19,8 +31,8 @@ const ProfileSummaryCard = ({
     <div className="profile-header-row">
       <span className="profile-title">프로필</span>
       <button className="close-btn" onClick={onClose}>
-    <img src="/close.svg" alt="닫기" />
-  </button>
+        <img src="/close.svg" alt="닫기" />
+      </button>
     </div>
 
     {/* 메인 Row: 좌측 이미지/우측 정보 */}
@@ -63,12 +75,27 @@ const ProfileSummaryCard = ({
           <span className="wish-value">{wishArea || wishJob}</span>
         </div>
 
-        {/* 링크 카드 리스트 */}
+        {/* 링크 카드 리스트 - 아이콘 자동 분기 */}
         <div className="profile-links-row">
-          {github && <LinkCard icon="github" label="Repository_Name" url={github} />}
-          {notion && <LinkCard icon="notion" label="페이지_이름" url={notion} />}
+          {github &&
+            <LinkCard
+              icon={getIconByTypeOrUrl('github', github)}
+              label="Repository_Name"
+              url={github}
+            />}
+          {notion &&
+            <LinkCard
+              icon={getIconByTypeOrUrl('notion', notion)}
+              label="페이지_이름"
+              url={notion}
+            />}
           {portfolioLinks.map(link =>
-            <LinkCard key={link.url} icon={link.icon} label={link.label} url={link.url} />
+            <LinkCard
+              key={link.url}
+              icon={getIconByTypeOrUrl(link.icon, link.url)}
+              label={link.label}
+              url={link.url}
+            />
           )}
         </div>
 
