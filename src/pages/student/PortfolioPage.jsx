@@ -1,6 +1,6 @@
 import React from 'react';
 import { ProfileBasicInfoForm } from '../../components/organisms';
-
+import { AwardListSection } from '../../components/organisms';
 const PortfolioPage = () => {
   const handleSubmit = (formData) => {
     console.log('Form submitted:', formData);
@@ -13,6 +13,7 @@ const PortfolioPage = () => {
       <div className="portfolio-content">
         <ProfileBasicInfoForm onSubmit={handleSubmit} />
       </div>
+      <AwardListSection />
     </div>
   );
 };
