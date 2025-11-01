@@ -20,18 +20,10 @@
   width:100%;
 }
 
-.section-header .btn-delete-section {
-  color: var(--color-gray-500);
-  flex-shrink: 0;
-  padding: 4px 8px;
-  font-weight: var(--font-weight-regular);
-}
-
 .section-header .btn-delete-section:hover {
   color: var(--color-error);
   background-color: var(--color-gray-50);
 }
-
 
 .section-content-wrapper {
   margin-top: 24px;
@@ -39,8 +31,8 @@
 
 .section-controls-footer {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  justify-content: end;
+  align-items: center;
   gap: 16px;
   margin-top: 16px;
 }

@@ -65,7 +65,7 @@ const PortfolioEditPage = () => {
 
       <div className="portfolio-main-editor">
         <header>
-          <h2>포트폴리오 수정</h2>
+          <h2>포트폴리오</h2>
         </header>
 
         <PortfolioEditor
