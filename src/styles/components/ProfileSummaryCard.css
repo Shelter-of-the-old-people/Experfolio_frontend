@@ -1,0 +1,241 @@
+/* ProfileSummaryCard.css - Figma 시안 완전 반영 버전 */
+
+.profile-summary-wrap {
+  width: 990px;
+  min-width: 990px;
+  border-radius: 16px;
+  background: #f6f6f6;
+  padding: 0;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* 상단 타이틀 (프로필/닫기) */
+.profile-header-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 990px;
+  height: 56px;
+  padding: 0 24px 0 18px;  /* 좌측/우측 여백 맞춤 */
+  background: #f6f6f6;
+  border-radius: 16px 16px 0 0;
+  box-sizing: border-box;
+}
+
+.close-btn {
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  margin-left: 10px;
+  /* 박스 클릭/터치 영역 확보 */
+  transition: background 0.12s;
+  border-radius: 8px;
+}
+
+.close-btn:hover,
+.close-btn:focus-visible {
+  background: #ececec;
+}
+
+.close-btn img {
+  width: 22px;
+  height: 22px;
+  display: block;
+  pointer-events: none;
+  filter: grayscale(30%);
+}
+
+
+.profile-title {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: #000;
+  line-height: 29px;
+}
+
+/* 프로필 본문 row */
+.profile-main-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 24px;
+  width: 990px;
+  min-height: 216px;
+  background: #fff;
+  border-radius: 0 0 16px 16px;
+  padding: 0 24px 0 24px;
+}
+
+.profile-img-box {
+  flex: none;
+  width: 180px;
+  height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-avatar {
+  width: 160px;
+  height: 160px;
+  border-radius: 80px;
+  background: #ededed;
+  object-fit: cover;
+}
+
+/* 오른쪽 컬럼 */
+.profile-detail-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: auto;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12px 0;
+}
+
+/* 이름/소속 등 한 줄과 연락/별 컨테이너 */
+.profile-id-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 44px;
+  gap: 32px;
+  padding: 6px 0;
+}
+
+.profile-meta-group {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-name {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #000;
+  margin-right: 8px;
+}
+.user-meta-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+}
+.user-meta-row .school,
+.user-meta-row .major,
+.user-meta-row .gpa {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-size: 14px;
+  line-height: 17px;
+  color: #37352F;
+}
+.user-meta-row .school { font-weight: 600; }
+.user-meta-row .major,
+.user-meta-row .gpa { font-weight: 500; }
+
+/* 연락하기/별 */
+.profile-actions-inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+.profile-actions-inline .star-btn {
+  font-size: 24px;
+  color: #37352F;
+  transition: color 0.2s;
+  margin-left: 6px;
+  cursor: pointer;
+}
+.profile-actions-inline .star-btn.active {
+  color: #ffc600;
+}
+.profile-actions-inline button,
+.profile-actions-inline .button {
+  height: 32px;
+  min-width: 73px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: 700;
+  background: #1e1e1e;
+  color: #fff;
+  border: none;
+}
+
+.profile-wishinfo-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  margin-bottom: 3px;
+  min-height: 17px;
+}
+.profile-wishinfo-row .wish-label {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #000;
+}
+.profile-wishinfo-row .wish-value {
+  font-family: 'Pretendard Variable', sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: #585858;
+}
+
+/* 링크 카드 리스트 (가로 스크롤) */
+.profile-links-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: 525px;
+  min-height: 46px;
+  overflow-x: auto;
+  margin-bottom: 7px;
+}
+
+.profile-keywords-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 2px;
+}
+.profile-keywords-row .tag,
+.profile-keywords-row span {
+  background: #000;
+  border-radius: 20px;
+  font-family: 'Pretendard Variable', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  padding: 6px 12px;
+  min-width: 61px;
+  height: 29px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

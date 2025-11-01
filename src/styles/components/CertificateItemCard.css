@@ -1,0 +1,37 @@
+.item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 7px;
+  border: 1px solid #e5e5e5;
+  margin-bottom: 8px;
+  padding: 13px 18px;
+  position: relative;
+  transition: background 0.13s;
+}
+.item-title {
+  flex: 1 1 140px;
+  font-weight: bold;
+}
+.item-actions {
+  flex: 0 0 90px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  justify-content: center;
+  transition: opacity .14s;
+}
+.item-date {
+  flex: 1 1 80px;
+  text-align: right;
+  color: #888;
+  margin-left: 30px;
+  font-size: 0.98rem;
+}
+.item-card:hover {
+  background: #e5e5e5;
+}
+.item-card:hover .item-actions {
+  opacity: 1;
+}

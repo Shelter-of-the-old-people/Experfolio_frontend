@@ -1,0 +1,50 @@
+.award-item-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 7px;
+  border: 1px solid #e5e5e5;
+  margin-bottom: 8px;
+  padding: 13px 18px;
+  position: relative;
+  transition: background 0.13s;
+}
+
+/* 카드 레이아웃: 대회명(좌), 결과(중앙), 아이콘(중앙), 연도/월(우) */
+.card-title {
+  flex: 1 0 140px;
+  font-weight: bold;
+}
+.card-prize {
+  flex: 1 0 85px;
+  text-align: left;
+  margin-left: 18px;
+  font-weight: bold;
+}
+
+.card-actions {
+  flex: 0 0 90px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  justify-content: center;
+  transition: opacity .14s;
+}
+
+.card-date {
+  flex: 1 0 80px;
+  text-align: right;
+  color: #888;
+  margin-left: 22px;
+  font-size: 0.98rem;
+}
+
+/* 호버: 회색 배경, 아이콘만 등장 */
+.award-item-card:hover {
+  background: #e5e5e5;
+}
+
+.award-item-card:hover .card-actions {
+  opacity: 1;
+}

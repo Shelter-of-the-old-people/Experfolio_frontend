@@ -1,27 +1,16 @@
 import React from 'react';
 import IconButton from '../atoms/IconButton';
+import '../../styles/components/AwardItemCard.css';
 
-const AwardItemCard = ({ award, onEdit, onDelete }) => {
-  return (
-    <div
-      className="award-item-card"
-      onMouseEnter={() => {/* hover 스타일 적용 */}}
-      onMouseLeave={() => {/* hover 해제 */}}
-    >
-      <div className="award-item-main">
-        <div className="award-title">{award.title}</div>
-        <div className="award-date">{award.date}</div>
-      </div>
-      <div className="award-item-meta">
-        <div className="award-prize">{award.prize}</div>
-        <div className="award-desc">{award.description}</div>
-      </div>
-      <div className="award-card-actions">
-        <IconButton icon="edit" ariaLabel="편집" onClick={() => onEdit(award.id)} />
-        <IconButton icon="delete" ariaLabel="삭제" onClick={() => onDelete(award.id)} />
-      </div>
-    </div>
-  );
-};
-
+const AwardItemCard = ({ award, onEdit, onDelete }) => (
+  <div className="award-item-card">
+    <span className="card-prize">{award.prize}</span>
+    <span className="card-title">{award.title}</span>
+    <span className="card-actions">
+      <IconButton icon="edit" ariaLabel="편집" onClick={() => onEdit(award.id)} />
+      <IconButton icon="delete" ariaLabel="삭제" onClick={() => onDelete(award.id)} />
+    </span>
+    <span className="card-date">{award.year}년 {award.month}월</span>
+  </div>
+);
 export default AwardItemCard;
