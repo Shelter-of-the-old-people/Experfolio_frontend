@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ProfileImageUpload, TextInput, LinkCard } from '../atoms';
 import { LinkInputSection } from '../molecules';
+import '../../styles/components/ProfileBasicInfoForm.css';
 
 const ProfileBasicInfoForm = ({
   initialData = {},
@@ -36,14 +37,11 @@ const ProfileBasicInfoForm = ({
   const handleAddLink = async (url) => {
     try {
       const linkData = await fetchLinkMetadata(url);
-      
       setFormData(prev => ({
         ...prev,
         links: [...prev.links, linkData]
       }));
     } catch (error) {
-      console.error('링크 메타데이터 가져오기 실패:', error);
-      
       setFormData(prev => ({
         ...prev,
         links: [...prev.links, {
@@ -58,10 +56,8 @@ const ProfileBasicInfoForm = ({
   const fetchLinkMetadata = async (url) => {
     const urlObj = new URL(url);
     const hostname = urlObj.hostname;
-    
     let icon = null;
     let label = hostname;
-
     if (hostname.includes('github.com')) {
       const pathParts = urlObj.pathname.split('/').filter(Boolean);
       label = pathParts[1] || 'Repository_Name';
@@ -76,7 +72,6 @@ const ProfileBasicInfoForm = ({
       label = '페이지_이름';
       icon = '🔗';
     }
-
     return { url, label, icon };
   };
 
@@ -93,80 +88,75 @@ const ProfileBasicInfoForm = ({
   };
 
   return (
-    <form className="profile-basic-info-form" onSubmit={handleSubmit}>
-      <div className="profile-form-layout">
-        <div className="profile-form-left">
-          <ProfileImageUpload
-            value={formData.profileImage}
-            onChange={(file) => handleInputChange('profileImage', file)}
+    <form className="profile-content" onSubmit={handleSubmit}>
+      <div className="profile-side">
+        <ProfileImageUpload
+          value={formData.profileImage}
+          onChange={(file) => handleInputChange('profileImage', file)}
+          disabled={disabled}
+        />
+      </div>
+
+      <div className="profile-main">
+        <div className="profile-header">
+          <span className="profile-title">프로필</span>
+          <span className="profile-description">본인의 프로필 정보를 입력하세요.</span>
+        </div>
+        <div className="profile-form-section">
+          <TextInput
+            label="이름"
+            value={formData.name}
+            onChange={(value) => handleInputChange('name', value)}
+            placeholder="본인의 프로필에 표시될 이름(별칭)을 입력하세요."
+            disabled={disabled}
+            required
+          />
+          <TextInput
+            label="학교명"
+            value={formData.schoolName}
+            onChange={(value) => handleInputChange('schoolName', value)}
+            placeholder="학교명"
+            disabled={disabled}
+          />
+          <TextInput
+            label="전공"
+            value={formData.major}
+            onChange={(value) => handleInputChange('major', value)}
+            placeholder="전공"
+            disabled={disabled}
+          />
+          <TextInput
+            label="성적"
+            value={formData.gpa}
+            onChange={(value) => handleInputChange('gpa', value)}
+            placeholder="성적"
+            disabled={disabled}
+          />
+          <TextInput
+            label="희망 직무"
+            value={formData.desiredJob}
+            onChange={(value) => handleInputChange('desiredJob', value)}
+            placeholder="희망 직무"
             disabled={disabled}
           />
         </div>
 
-        <div className="profile-form-right">
-          <div className="profile-form-header">
-            <h2 className="profile-form-title">프로필</h2>
-            <p className="profile-form-subtitle">본인의 프로필 정보를 입력하세요.</p>
+        {formData.links.length > 0 && (
+          <div className="linkcard-list">
+            {formData.links.map((link, index) => (
+              <LinkCard
+                key={index}
+                icon={link.icon}
+                label={link.label}
+                url={link.url}
+                onRemove={() => handleRemoveLink(index)}
+                disabled={disabled}
+              />
+            ))}
           </div>
+        )}
 
-          <div className="profile-form-fields">
-            <TextInput
-              label="이름"
-              value={formData.name}
-              onChange={(value) => handleInputChange('name', value)}
-              placeholder="본인의 프로필에 표시될 이름(별칭)을 입력하세요."
-              disabled={disabled}
-              required
-            />
-
-            <TextInput
-              label="학교명"
-              value={formData.schoolName}
-              onChange={(value) => handleInputChange('schoolName', value)}
-              placeholder="학교명"
-              disabled={disabled}
-            />
-
-            <TextInput
-              label="전공"
-              value={formData.major}
-              onChange={(value) => handleInputChange('major', value)}
-              placeholder="전공"
-              disabled={disabled}
-            />
-
-            <TextInput
-              label="성적"
-              value={formData.gpa}
-              onChange={(value) => handleInputChange('gpa', value)}
-              placeholder="성적"
-              disabled={disabled}
-            />
-
-            <TextInput
-              label="희망 직무"
-              value={formData.desiredJob}
-              onChange={(value) => handleInputChange('desiredJob', value)}
-              placeholder="희망 직무"
-              disabled={disabled}
-            />
-          </div>
-
-          {formData.links.length > 0 && (
-            <div className="profile-form-links">
-              {formData.links.map((link, index) => (
-                <LinkCard
-                  key={index}
-                  icon={link.icon}
-                  label={link.label}
-                  url={link.url}
-                  onRemove={() => handleRemoveLink(index)}
-                  disabled={disabled}
-                />
-              ))}
-            </div>
-          )}
-
+        <div className="add-link-row">
           <LinkInputSection
             onAdd={handleAddLink}
             disabled={disabled}

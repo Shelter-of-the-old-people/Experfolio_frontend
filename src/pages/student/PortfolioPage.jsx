@@ -10,7 +10,6 @@ const PortfolioPage = () => {
 
   return (
     <div className="portfolio-page">
-      {/* <h1>내 포트폴리오</h1>
       <div className="portfolio-content">
         <ProfileBasicInfoForm onSubmit={handleSubmit} />
       </div>
@@ -18,8 +17,8 @@ const PortfolioPage = () => {
       <div>
         <CertificateListSection />
         </div>
-        <LanguageListSection /> */}
-        {/* <ProfileSummaryCard profile={{
+        <LanguageListSection />
+        <ProfileSummaryCard profile={{
           name: "홍길동",
           avatar: "",
           school: "서울대학교",
@@ -33,7 +32,7 @@ const PortfolioPage = () => {
           portfolioLinks: [
             { icon: "portfolio", label: "내 포트폴리오", url: "https://portfolio.example.com" }
           ]
-        }} /> */}
+        }} />
         <ProfileCareerCards
   awards = {[
   {
