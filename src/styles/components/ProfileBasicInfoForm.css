@@ -1,36 +1,17 @@
 .profile-content {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 36px;
-  width: 990px;
-  margin: 40px auto;
-  background: #fff;
-  border-radius: 9px;
-  min-height: 700px;
-  box-sizing: border-box;
+display: flex;
+padding: 0 24px;
+align-items: flex-start;
+gap: 24px;
 }
 
 .profile-side {
-  min-width: 180px;
-  max-width: 180px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: flex-start;
+gap: 4px;
 }
-
-.profile-avatar {
-  width: 180px;
-  height: 200px;
-  background: #1e1e1e;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .profile-change-btn {
   width: 156px;
   height: 32px;
@@ -45,18 +26,18 @@
 }
 
 .profile-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 0 6px;
-  gap: 22px;
+display: flex;
+width: 738px;
+flex-direction: column;
+align-items: flex-start;
+gap: 24px;
 }
 
 .profile-header {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+gap: 12px;
 }
 
 .profile-title {
@@ -74,6 +55,7 @@
 }
 
 .profile-form-section {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 18px;
@@ -125,7 +107,7 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  width: 202px;
+  width: 100%;
   max-height: 141px;
   overflow-x: auto;
   margin-bottom: 10px;
@@ -143,11 +125,12 @@
 }
 
 .add-link-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 10px;
-  margin-top: 8px;
+display: flex;
+width: 50%;
+flex-direction: column;
+align-items: flex-start;
+gap: 10px;
+align-self: stretch;
 }
 .add-link-btn {
   height: 32px;
@@ -160,9 +143,4 @@
   font-size: 14px;
   border: none;
   cursor: pointer;
-}
-
-@media (max-width:1100px) {
-  .profile-content { flex-direction: column; width: 99vw; min-width: 320px; }
-  .profile-main, .profile-side { width: 100%; max-width: 800px;}
 }

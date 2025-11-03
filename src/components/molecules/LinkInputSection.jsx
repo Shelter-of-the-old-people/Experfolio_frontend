@@ -40,7 +40,7 @@ const LinkInputSection = ({
   };
 
   return (
-    <div className="link-input-section">
+    <div className="link-input-section" style={{width: '100%'}}>
       <div className="link-input-wrapper">
         <TextInput
           label="첨부링크"

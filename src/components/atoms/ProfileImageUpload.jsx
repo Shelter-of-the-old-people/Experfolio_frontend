@@ -56,17 +56,20 @@ const ProfileImageUpload = ({
       />
       
       <div className="profile-image-preview">
-        {previewUrl ? (
-          <img src={previewUrl} alt="프로필 이미지" />
-        ) : (
-          <div className="profile-image-placeholder">
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="35" r="20" fill="#262626" />
-              <path d="M 20 100 Q 20 70 50 70 Q 80 70 80 100 Z" fill="#262626" />
-            </svg>
-          </div>
-        )}
-      </div>
+              {previewUrl ? (
+                <img 
+                  src={previewUrl} 
+                  alt="프로필 이미지" 
+                  className="uploaded-image"  /* 1. 이 클래스 추가 */
+                />
+              ) : (
+                <img 
+                  src="/profile-default.svg" 
+                  alt="기본 프로필" 
+                  className="placeholder-image" /* 2. 이 클래스 추가 (이건 하셨네요) */
+                />
+              )}
+            </div>
 
       <button
         type="button"
