@@ -241,7 +241,7 @@ const ProfileEditPage = () => {
       />
       
       <CertificateListSection 
-        certificates={certs}
+        certs={certs}
         onAdd={(newCert) => {
           setCerts(prev => [...prev, { 
             ...newCert, 
@@ -254,7 +254,7 @@ const ProfileEditPage = () => {
       />
       
       <LanguageListSection 
-        languages={langs}
+        langs={langs}
         onAdd={(newLang) => {
           setLangs(prev => [...prev, { 
             ...newLang, 

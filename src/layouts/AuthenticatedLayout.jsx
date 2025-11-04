@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { routes } from '../routes';
 import { Button } from '../components/atoms';
 import { useAuth } from '../hooks/useAuth'; // <--- 이 줄을 추가합니다.
+import { CompanySidebar } from '../components/organisms';
 
 const AuthenticatedLayout = ({ children, userRole }) => {
   const navigate = useNavigate();
@@ -18,7 +19,7 @@ const AuthenticatedLayout = ({ children, userRole }) => {
   };
 
   const getSidebarItems = () => {
-    if (userRole === 'RECURITER') {
+    if (userRole === 'RECRUITER') {
       return [
         { path: routes.SEARCH, label: '인재 검색' },
         { path: routes.PROFILE, label: '기업 정보' }
@@ -50,14 +51,14 @@ const AuthenticatedLayout = ({ children, userRole }) => {
       </header>
       
       <div className="layout-body">
-         {userRole === 'COMPANY' ? (
+         {userRole === 'RECRUITER' ? (
           <CompanySidebar />
-        ) : userRole === 'STUDENT' ? (
+        ) : userRole === 'JOB_SEEKER' ? (
           <aside className="sidebar">
             {/* 구직자 사이드바 */}
           </aside>
         ) : null}
-        
+
         <aside className="sidebar">
           <nav className="sidebar-nav">
             {getSidebarItems().map((item, index) => (
