@@ -15,6 +15,7 @@ export const routes = {
   // Student routes
   PORTFOLIO: '/portfolio',
   PORTFOLIO_EDIT: '/portfolio/edit',
+  PROFILE_EDIT: '/profile/edit',
   
   // Common authenticated routes
   PROFILE: '/profile',

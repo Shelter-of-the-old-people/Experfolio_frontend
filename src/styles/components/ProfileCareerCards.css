@@ -1,0 +1,65 @@
+.career-main-flex {
+    display: flex;
+    width: 100%;
+    max-width: 990px;
+    padding: 12px 24px;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 12px;
+    margin: 0 auto;
+}
+.career-col-awards,
+.career-col-certificate,
+.career-col-language {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;  /* 2. stretch로 변경 (내부 카드 너비 100%) */
+  gap: 10px;
+  flex-shrink: 1;      /* 3. 공간이 부족하면 줄어들도록 허용 */
+  flex-basis: 0;         /* 4. 기본 크기를 0으로 설정 */
+  min-width: 0;          /* 5. 카드가 너무 길어 넘치는 현상 방지 */
+}
+
+/* 2. 컬럼별 가로폭 비율 설정 (2:1:1 비율) */
+.career-col-awards {
+  flex-grow: 1.4; /* 2만큼의 공간을 차지 */
+}
+
+.career-col-certificate {
+  flex-grow: 1; /* 1만큼의 공간을 차지 */
+}
+
+.career-col-language {
+  flex-grow: 1; /* 1만큼의 공간을 차지 */
+}
+.career-title {
+    color: #000;
+    font-family: "Pretendard Variable";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: normal;
+}
+/* 1. 카드 자체의 커서를 'default' (화살표)로 강제 */
+.career-col .item-card,
+.career-col .award-item-card {
+  cursor: default;
+}
+
+/* 2. 호버 시 배경색이 변하지 않도록 강제 (기본 #fff로 고정) */
+.career-col .item-card:hover,
+.career-col .award-item-card:hover {
+  background: #fff;
+}
+
+/* 3. '편집/삭제' 아이콘 영역을 숨기고, 클릭/호버 이벤트를 완전히 막음 */
+.career-col .item-actions,
+.career-col .card-actions {
+  display: none;
+}
+
+/* 4. (안전 장치) 호버 시에도 아이콘이 보이지 않게 함 */
+.career-col .item-card:hover .item-actions,
+.career-col .award-item-card:hover .card-actions {
+  display: none;
+}
