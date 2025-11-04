@@ -1,13 +1,13 @@
 import axios from 'axios';
+import { normalizeApiResponse, normalizeApiError } from '../utils/apiNormalizer';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api';
 
-// Axios 인스턴스 생성
 const api = axios.create({
   baseURL: API_BASE_URL,
   timeout: 10000,
   headers: {
-    'ngrok-skip-browser-warning': 'true' // <-- 1. 이 헤더를 추가합니다.
+    'ngrok-skip-browser-warning': 'true'
   }
 });
 
@@ -25,29 +25,45 @@ api.interceptors.request.use(
   }
 );
 
-// 응답 인터셉터 (에러 처리, 토큰 만료 처리)
+// 응답 인터셉터 (응답 정규화 및 에러 처리)
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // 응답을 정규화하여 일관된 구조로 변환
+    const normalizedResponse = {
+      ...response,
+      data: normalizeApiResponse(response)
+    };
+    return normalizedResponse;
+  },
   async (error) => {
     const originalRequest = error.config;
     
+    // 401 에러 처리 (토큰 갱신)
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       
       try {
-        // 토큰 갱신 시도
         const refreshToken = localStorage.getItem('refreshToken');
         if (refreshToken) {
-          const response = await axios.post(`${API_BASE_URL}/auth/refresh`, {
+          // refresh API는 정규화하지 않은 원본 axios 인스턴스 사용
+          const refreshApi = axios.create({
+            baseURL: API_BASE_URL,
+            timeout: 10000
+          });
+          
+          const response = await refreshApi.post('/v1/auth/refresh', {
             refreshToken
           });
           
-          const newToken = response.data.token;
-          localStorage.setItem('token', newToken);
+          // refresh 응답도 정규화
+          const normalized = normalizeApiResponse(response);
+          const newToken = normalized.data?.token || normalized.data?.accessToken;
           
-          // 원래 요청 재시도
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
-          return api(originalRequest);
+          if (newToken) {
+            localStorage.setItem('token', newToken);
+            originalRequest.headers.Authorization = `Bearer ${newToken}`;
+            return api(originalRequest);
+          }
         }
       } catch (refreshError) {
         // 갱신 실패 시 로그아웃 처리
@@ -55,12 +71,23 @@ api.interceptors.response.use(
         localStorage.removeItem('refreshToken');
         localStorage.removeItem('userData');
         window.location.href = '/login';
+        return Promise.reject(refreshError);
       }
     }
     
-    // 에러 메시지 표준화
-    const message = error.response?.data?.message || error.message || '서버 오류가 발생했습니다.';
-    return Promise.reject(new Error(message));
+    // 에러 정규화
+    const normalizedError = normalizeApiError(error);
+    
+    // Error 객체로 변환하여 일관된 에러 처리
+    const apiError = new Error(normalizedError.message);
+    apiError.response = {
+      ...error.response,
+      data: normalizedError
+    };
+    apiError.status = normalizedError.status;
+    apiError.originalError = error;
+    
+    return Promise.reject(apiError);
   }
 );
 

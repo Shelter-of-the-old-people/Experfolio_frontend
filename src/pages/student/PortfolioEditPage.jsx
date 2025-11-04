@@ -1,14 +1,9 @@
-// shelter-of-the-old-people/experfolio_frontend/Experfolio_frontend--/src/pages/student/PortfolioEditPage.jsx
-
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PortfolioEditor } from '../../components/organisms';
 import { useApi, useLazyApi } from '../../hooks/useApi';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
-
 import SaveStatusIndicator from '../../components/molecules/SaveStatusIndicator';
-import { TextInput, NumberInput } from '../../components/atoms';
-import { PortfolioSection } from '../../components/molecules';
 
 const TempSideNav = ({ sections, basicInfo }) => ( 
   <nav className="temp-sidenav">
@@ -44,7 +39,10 @@ const PortfolioEditPage = () => {
 
   useEffect(() => {
     if (portfolioData) {
-      const { portfolioItems } = portfolioData.data; 
+      const normalizedResponse = portfolioData.data;
+      const actualData = normalizedResponse.data;
+      
+      const { portfolioItems } = actualData || {};
       setSections(portfolioItems || []);
       setSaveStatus('saved'); 
     } else if (fetchError) {
@@ -59,18 +57,32 @@ const PortfolioEditPage = () => {
     setSaveStatus('saving');
     try {
       const basicInfo = {
-        name: user?.name || "사용자", schoolName: "학교명 입력", major: "전공 입력", gpa: 0.0,
-        desiredPosition: "", referenceUrl: [], awards: [], certifications: [], languages: []
+        name: user?.name || "사용자", 
+        schoolName: "학교명 입력", 
+        major: "전공 입력", 
+        gpa: 0.0,
+        desiredPosition: "", 
+        referenceUrl: [], 
+        awards: [], 
+        certifications: [], 
+        languages: []
       };
       const response = await api.post('/portfolios', basicInfo);
-      // 3. (수정) 데이터 파싱 경로 수정 (data.data 추가)
-      const { portfolioItems } = response.data;
+      
+      const actualData = response.data.data;
+      const { portfolioItems } = actualData || {};
       setSections(portfolioItems || []);
       setSaveStatus('saved');
     } catch (createError) {
       console.error("초기 포트폴리오 생성 실패:", createError);
       setSaveStatus('error');
-      setSections([ { id: `temp-${Date.now()}`, title: '', layout: 'unselected', content: '', file: null } ]);
+      setSections([{ 
+        id: `temp-${Date.now()}`, 
+        title: '', 
+        layout: 'unselected', 
+        content: '', 
+        file: null 
+      }]);
     }
   };
 
@@ -78,39 +90,62 @@ const PortfolioEditPage = () => {
     execute: updateItem, 
     loading: isUpdating 
   } = useLazyApi((itemId, formData) => 
-    // [수정됨] headers 객체를 제거하여 Axios가 Content-Type을 자동으로 설정하도록 합니다.
     api.put(`/portfolios/items/${itemId}`, formData)
   );
 
-  // 4. (수정) executeSave가 최신 'sections'를 참조하도록 수정
   const executeSave = async (sectionId) => {
-    if (isUpdating || !dirtySectionId || sectionId !== dirtySectionId || String(sectionId).startsWith('temp-')) {
+    // temp 섹션은 저장하지 않음
+    if (String(sectionId).startsWith('temp-')) {
+      console.log('임시 섹션은 저장하지 않습니다:', sectionId);
       return;
     }
+    
+    // 이미 저장 중이거나, dirty 섹션이 아니면 저장하지 않음
+    if (isUpdating || !dirtySectionId || sectionId !== dirtySectionId) {
+      return;
+    }
+    
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
     }
+    
     setSaveStatus('saving');
     
+    // 섹션 찾기
     let sectionToSave;
     setSections(currentSections => {
       sectionToSave = currentSections.find(s => s.id === sectionId);
-      return currentSections; // 상태 변경 없음, 참조만
+      return currentSections;
     });
 
+    // 섹션을 찾지 못하면 조용히 리턴 (에러 상태로 변경하지 않음)
     if (!sectionToSave) {
-      setSaveStatus('error');
+      console.warn('저장할 섹션을 찾을 수 없습니다. 이미 삭제되었거나 ID가 변경되었을 수 있습니다:', sectionId);
+      setDirtySectionId(null);
+      setSaveStatus('saved');
       return;
     }
+    
     const { file, ...itemDto } = sectionToSave;
     const formData = new FormData();
     formData.append('item', new Blob([JSON.stringify(itemDto)], { type: 'application/json' }));
+    
     if (file instanceof File) {
       formData.append('files', file); 
     }
+    
     try {
-      await updateItem(sectionId, formData);
+      const response = await updateItem(sectionId, formData);
+      
+      // 응답에서 업데이트된 전체 portfolioItems를 받아 state 갱신
+      const actualData = response.data.data;
+      const { portfolioItems } = actualData || {};
+      
+      if (portfolioItems) {
+        setSections(portfolioItems);
+      }
+      
       setSaveStatus('saved');
       setDirtySectionId(null); 
     } catch (err) {
@@ -120,25 +155,38 @@ const PortfolioEditPage = () => {
   };
 
   const { execute: createItem, loading: isCreating } = useLazyApi((formData) => 
-    // [수정됨] headers 객체를 제거하여 Axios가 Content-Type을 자동으로 설정하도록 합니다.
     api.post('/portfolios/items', formData)
   );
 
   const handleAddSection = async () => {
+    // dirty 섹션이 있으면 먼저 저장 시도
     if (dirtySectionId) {
-      await executeSave(dirtySectionId);
+      // 섹션이 실제로 존재하는지 확인
+      const sectionExists = sections.some(s => s.id === dirtySectionId);
+      if (sectionExists && !String(dirtySectionId).startsWith('temp-')) {
+        await executeSave(dirtySectionId);
+      } else {
+        // 섹션이 없으면 dirty 상태만 초기화
+        setDirtySectionId(null);
+      }
     }
+    
     const defaultItemDto = { type: 'other', title: '', content: '' };
     const formData = new FormData();
     formData.append('item', new Blob([JSON.stringify(defaultItemDto)], { type: 'application/json' }));
+    
     try {
       const response = await createItem(formData);
       
-      // [수정됨] 서버가 반환한 '새 아이템'을 가져옵니다.
-      const newItem = response.data;
-      // [수정됨] 기존 'sections' 배열에 새 아이템을 추가(append)합니다.
-      setSections(prevSections => [...prevSections, newItem]);
+      const actualData = response.data.data;
+      const { portfolioItems } = actualData || {};
+      
+      if (portfolioItems) {
+        setSections(portfolioItems);
+      }
+      
       setSaveStatus('saved');
+      setDirtySectionId(null);
 
     } catch (err) {
       console.error("섹션 추가 실패:", err);
@@ -146,7 +194,6 @@ const PortfolioEditPage = () => {
     }
   };
 
-  // ... (handleDeleteSection, handleUpdateSection, ... 는 변경 없음) ...
   const { execute: deleteItem, loading: isDeleting } = useLazyApi((itemId) => 
     api.delete(`/portfolios/items/${itemId}`)
   );
@@ -156,20 +203,35 @@ const PortfolioEditPage = () => {
       alert("포트폴리오는 최소 1개의 섹션이 필요합니다.");
       return;
     }
+    
     if (String(sectionId).startsWith('temp-')) {
        setSections(prevSections => prevSections.filter(section => section.id !== sectionId));
        return;
     }
+    
     if (!window.confirm("이 섹션을 정말 삭제하시겠습니까? (서버에서 영구 삭제됩니다)")) {
       return;
     }
+    
     clearTimeout(saveTimerRef.current);
     if (dirtySectionId === sectionId) {
       setDirtySectionId(null);
     }
+    
     try {
-      await deleteItem(sectionId);
-      setSections(prevSections => prevSections.filter(section => section.id !== sectionId));
+      const response = await deleteItem(sectionId);
+      
+      // 응답에서 업데이트된 전체 portfolioItems를 받아 state 갱신
+      const actualData = response.data.data;
+      const { portfolioItems } = actualData || {};
+      
+      if (portfolioItems) {
+        setSections(portfolioItems);
+      } else {
+        // 응답에 portfolioItems가 없으면 로컬에서 제거
+        setSections(prevSections => prevSections.filter(section => section.id !== sectionId));
+      }
+      
       setSaveStatus('saved');
     } catch (err) {
       console.error("섹션 삭제 실패:", err);
@@ -202,11 +264,10 @@ const PortfolioEditPage = () => {
       setSaveStatus('waiting'); 
       saveTimerRef.current = setTimeout(() => {
         executeSave(sectionId);
-      }, 8000); // 8초
+      }, 8000);
     }
   };
   
-  // --- (페이지 이탈 시 자동 저장 로직 - 변경 없음) ---
   useEffect(() => {
     stateForCleanup.current = {
       dirtySectionId,
@@ -227,6 +288,7 @@ const PortfolioEditPage = () => {
         executeSave(dirtySectionId);
       }
     };
+    
     const handleBeforeUnload = (e) => {
       const { dirtySectionId, saveStatus } = stateForCleanup.current || {};
       if (dirtySectionId || saveStatus === 'unsaved' || saveStatus === 'waiting') {
@@ -235,6 +297,7 @@ const PortfolioEditPage = () => {
         e.returnValue = '저장되지 않은 변경 사항이 있습니다. 페이지를 벗어나시겠습니까?';
       }
     };
+    
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload);
@@ -242,7 +305,6 @@ const PortfolioEditPage = () => {
     };
   }, []); 
 
-  // --- (로딩 스피너 UI - 변경 없음) ---
   if (pageLoading && sections.length === 0) {
     return (
       <div className="portfolio-edit-page">
@@ -253,13 +315,11 @@ const PortfolioEditPage = () => {
     );
   }
   
-  // 6. [수정] 404 메시지를 제외한 실제 오류만 화면에 표시
   if (fetchError && !portfolioData && !(fetchError || '').includes('포트폴리오를 찾을 수 없습니다')) {
     return (
       <div className="portfolio-edit-page">
         <div className="portfolio-main-editor" style={{ textAlign: 'center', color: 'var(--color-error)' }}>
           <h2>오류가 발생했습니다.</h2>
-          {/* 6.1 (수정) fetchError.message -> fetchError (문자열) */}
           <p>{fetchError}</p>
         </div>
       </div>
@@ -268,8 +328,7 @@ const PortfolioEditPage = () => {
 
   const isEditorBusy = isCreating || isDeleting || isUpdating;
   
-  // 7. [수정] 데이터 파싱 경로 수정 (data.data -> data)
-  const basicInfo = portfolioData?.data?.basicInfo; 
+  const basicInfo = portfolioData?.data?.data?.basicInfo; 
 
   return (
     <div className="portfolio-edit-page">

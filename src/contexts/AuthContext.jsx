@@ -3,7 +3,6 @@ import api from '../services/api';
 
 export const AuthContext = createContext();
 
-// 'export' 키워드를 제거
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); 
   const [loading, setLoading] = useState(true); 
@@ -23,7 +22,8 @@ const AuthProvider = ({ children }) => {
     try {
       const response = await api.post('/v1/auth/login', credentials);
       
-      const loginData = response.data.data; 
+      // 정규화된 응답: response.data = { success, message, data, timestamp }
+      const loginData = response.data.data;
 
       if (!loginData || !loginData.accessToken || !loginData.userInfo) {
         throw new Error('로그인 응답 형식이 올바르지 않습니다.');
@@ -38,7 +38,7 @@ const AuthProvider = ({ children }) => {
 
       api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
       
-      return response.data; 
+      return response.data;
 
     } catch (error) {
       throw new Error(error.message || '로그인에 실패했습니다.');
@@ -58,7 +58,6 @@ const AuthProvider = ({ children }) => {
     localStorage.setItem('userData', JSON.stringify(userData));
   };
 
-  // 4. isStudent가 "STUDENT"를 기준으로 판단
   const value = {
     user,
     loading,
@@ -77,5 +76,4 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-// AuthProvider를 default export로 지정
 export default AuthProvider;
