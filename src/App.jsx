@@ -81,12 +81,20 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
 
-      <Route path={routes.PROFILE_EDIT} element={
+
+
+      {/* <Route path={routes.PROFILE_EDIT} element={
         <ProtectedRoute requiredRole="STUDENT" currentUser={currentUser}>
           <AuthenticatedLayout userRole="STUDENT">
             <ProfileEditPage />
           </AuthenticatedLayout>
         </ProtectedRoute>
+      } /> */}
+
+      <Route path={routes.PROFILE_EDIT} element={
+        <PublicLayout>
+          <ProfileEditPage />
+        </PublicLayout>
       } />
       
       {/* Common Profile Route */}
