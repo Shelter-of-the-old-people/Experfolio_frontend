@@ -1,6 +1,5 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../contexts/AuthContext';
 import { routes } from '../routes';
 import { Button } from '../components/atoms';
 
@@ -18,12 +17,12 @@ const AuthenticatedLayout = ({ children, userRole }) => {
   };
 
   const getSidebarItems = () => {
-    if (userRole === 'COMPANY') {
+    if (userRole === 'RECURITER') {
       return [
         { path: routes.SEARCH, label: '인재 검색' },
         { path: routes.PROFILE, label: '기업 정보' }
       ];
-    } else if (userRole === 'STUDENT') {
+    } else if (userRole === 'JOB_SEEKER') {
       return [
         { path: routes.PORTFOLIO, label: '포트폴리오' },
         { path: routes.PORTFOLIO_EDIT, label: '포트폴리오 수정' },

@@ -1,7 +1,8 @@
 import React from 'react'; // useState 제거
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-// 1. useAuth 훅을 임포트합니다.
-import { AuthProvider, useAuth } from './contexts'; 
+// 1. useAuth 훅의 import 경로를 수정합니다.
+import { AuthProvider } from './contexts'; 
+import { useAuth } from './hooks/useAuth'; // '../contexts' -> './hooks/useAuth'
 import { PublicLayout, AuthenticatedLayout } from './layouts';
 import ProtectedRoute from './components/ProtectedRoute';
 import { routes } from './routes';
