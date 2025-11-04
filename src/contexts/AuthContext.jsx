@@ -1,3 +1,5 @@
+// shelter-of-the-old-people/experfolio_frontend/Experfolio_frontend-kmh/src/contexts/AuthContext.jsx
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
@@ -10,41 +12,39 @@ export const useAuth = () => {
   return context;
 };
 
-// --- 테스트를 위한 임시 사용자 객체 ---
-const MOCK_STUDENT_USER = {
-  id: 999,
-  email: 'test@student.com',
-  name: '테스트 학생',
-  role: 'STUDENT' 
+// --- ▼ 1. Postman에서 받은 실제 데이터로 이 부분을 교체합니다. ▼ ---
+const REAL_USER_INFO = {
+    "userId": "7464f463-f105-41bf-b589-f5a7a6620897",
+    "email": "user2@example.com",
+    "name": "김민호",
+    "phoneNumber": "010-1010-1010",
+    // (중요) 백엔드(JOB_SEEKER)와 프론트(STUDENT) 역할 이름이 달라 강제 수정
+    "role": "STUDENT", 
+    "createdAt": "2025-11-04T16:08:33.940217"
 };
-// ---
+const REAL_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsInJvbGUiOiJKT0JfU0VFS0VSIiwidXNlcklkIjoiNzQ2NGY0NjMtZjEwNS00MWJmLWI1ODktZjVhN2E2NjIwODk3IiwidG9rZW5UeXBlIjoiQUNDRVNTIiwiaWF0IjoxNzYyMjQwMjU1LCJleHAiOjE3NjIyNDIwNTV9.Y8SONDuvbDlVFwuV5PY_LPGTUbSnmUBfdKujX9Im22k";
+// --- ▲ 교체 완료 ▲ ---
+
 
 export const AuthProvider = ({ children }) => {
-  // --- 수정된 부분: useState의 초기값을 MOCK_STUDENT_USER로 변경 ---
-  const [user, setUser] = useState(MOCK_STUDENT_USER); // null -> MOCK_STUDENT_USER
-  
-  // --- 수정된 부분: 로딩 상태를 false로 즉시 설정 ---
-  const [loading, setLoading] = useState(false); // true -> false
+  // 2. 초기 상태를 'null'이나 'MOCK'이 아닌 실제 유저 정보로 설정
+  const [user, setUser] = useState(REAL_USER_INFO); 
+  const [loading, setLoading] = useState(false);
 
-  // 로컬스토리지에서 토큰 확인 (테스트 중에는 이 로직을 비활성화)
+  // 3. (핵심) 앱 로드 시 localStorage에 실제 토큰과 유저 정보를 저장
+  //    api.js가 이 'token'을 읽어 헤더에 사용합니다.
   useEffect(() => {
-    // const token = localStorage.getItem('token');
-    // const userData = localStorage.getItem('userData');
-    
-    // if (token && userData) {
-    //   setUser(JSON.parse(userData));
-    // }
-    // setLoading(false);
-    
-    // 하드코딩된 유저를 사용하므로 로컬스토리지 로직 주석 처리
-  }, []);
+    localStorage.setItem('token', REAL_ACCESS_TOKEN);
+    localStorage.setItem('userData', JSON.stringify(REAL_USER_INFO));
+    setUser(REAL_USER_INFO); // 상태도 다시 한번 확인
+  }, []); // 앱 실행 시 1회만
 
   const login = async (credentials) => {
-    // (기존 로그인 로직은 지금 사용되지 않음)
+    // (실제 로그인 기능 구현 시, 이 부분을 API 호출로 변경)
     try {
       const mockResponse = {
-        user: MOCK_STUDENT_USER,
-        token: 'mock-jwt-token'
+        user: REAL_USER_INFO,
+        token: REAL_ACCESS_TOKEN
       };
 
       setUser(mockResponse.user);
@@ -58,11 +58,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
-    // 로그아웃 시 MOCK_STUDENT_USER로 되돌아가지 않도록 null로 설정
     setUser(null); 
     localStorage.removeItem('token');
     localStorage.removeItem('userData');
-    // (테스트 후 원복 시 setUser(null)을 MOCK_STUDENT_USER로 다시 변경해야 함)
   };
 
   const updateUser = (userData) => {
@@ -70,6 +68,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('userData', JSON.stringify(userData));
   };
 
+  // 4. isStudent가 "STUDENT"를 기준으로 판단
   const value = {
     user,
     loading,

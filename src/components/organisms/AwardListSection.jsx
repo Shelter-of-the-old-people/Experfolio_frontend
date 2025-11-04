@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React from 'react'; // 1. useState 임포트 제거
 import AwardInputForm from '../molecules/AwardInputForm';
 import AwardItemCard from '../molecules/AwardItemCard';
-// 1. 필요한 CSS 파일을 임포트합니다.
 import '../../styles/components/AwardInputForm.css';
 
-const AwardListSection = () => {
-  const [awards, setAwards] = useState([]);
+// 2. props로 awards, onAdd, onDelete, onEdit 등을 받도록 수정
+const AwardListSection = ({ awards = [], onAdd, onDelete, onEdit = () => {} }) => {
+  
+  // 3. 내부 useState 제거
+  // const [awards, setAwards] = useState([]);
 
-  const handleAdd = (award) => setAwards((prev) => [...prev, { ...award, id: Date.now() }]);
-  const handleEdit = (id) => { /* 모달/폼으로 편집 로직 */ };
-  const handleDelete = (id) => setAwards((prev) => prev.filter(a => a.id !== id));
+  // 4. 핸들러가 내부 state 대신 부모(ProfileEditPage)가 넘겨준 props 함수를 호출
+  const handleAdd = (award) => onAdd(award); 
+  const handleDelete = (id) => onDelete(id);
+  const handleEdit = (id) => onEdit(id);
 
   return (
     <div className="award-section">
@@ -17,6 +20,7 @@ const AwardListSection = () => {
       <div className='awards-list-section'>
         <h3 className="award-title">수상경력</h3>
         <div className="awards-list">
+          {/* 5. props로 받은 awards를 렌더링 */}
           {awards.map(item => (
             <AwardItemCard
               key={item.id}
@@ -33,6 +37,7 @@ const AwardListSection = () => {
           <span className="award-title">수상경력</span>
           <span className="award-desc">수상경력을 추가해주세요.</span>
         </div>
+        {/* 6. onAdd 핸들러를 InputForm에 그대로 전달 */}
         <AwardInputForm onAdd={handleAdd} />
       </div>
 
