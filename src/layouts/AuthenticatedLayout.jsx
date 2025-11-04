@@ -2,10 +2,11 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { routes } from '../routes';
 import { Button } from '../components/atoms';
+import { useAuth } from '../hooks/useAuth'; // <--- 이 줄을 추가합니다.
 
 const AuthenticatedLayout = ({ children, userRole }) => {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout } = useAuth(); // 이제 'useAuth'가 정의되었습니다.
 
   const handleLogout = () => {
     logout();

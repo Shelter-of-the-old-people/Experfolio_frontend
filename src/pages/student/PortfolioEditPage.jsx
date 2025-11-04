@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { PortfolioEditor } from '../../components/organisms';
 import { useApi, useLazyApi } from '../../hooks/useApi';
 import api from '../../services/api';
-import { useAuth } from '../../hooks/useAuth'; // ../../contexts' -> '../../hooks/useAuth'
+import { useAuth } from '../../hooks/useAuth';
 
 // 1. 자동 저장 UI 및 커스텀 훅 임포트
-import SaveStatusIndicator from '../../components/molecules/SaveStatusIndicator'; // 경로 수정
+import SaveStatusIndicator from '../../components/molecules/SaveStatusIndicator';
 import { TextInput, NumberInput } from '../../components/atoms';
-import { PortfolioSection } from '../../components/molecules'; // PortfolioEditor가 사용하므로 임포트 (경로 가정)
+import { PortfolioSection } from '../../components/molecules';
 
 // (TempSideNav는 변경 없음 - 이전 단계에서 basicInfo prop 추가됨)
 const TempSideNav = ({ sections, basicInfo }) => ( 
@@ -31,8 +31,6 @@ const TempSideNav = ({ sections, basicInfo }) => (
   </nav>
 );
 
-// (페이지 컴포넌트의 나머지 로직은 이전 단계와 동일합니다.)
-// ... (이전 단계의 PortfolioEditPage.jsx 코드) ...
 const PortfolioEditPage = () => {
   const [sections, setSections] = useState([]);
   const { user } = useAuth();
@@ -42,29 +40,39 @@ const PortfolioEditPage = () => {
   const [dirtySectionId, setDirtySectionId] = useState(null); // 변경되었으나 저장되지 않은 섹션 ID
   const saveTimerRef = useRef(null); // 8초 지연 타이머
 
-  // (기존) GET /api/portfolios/me (이름 변경)
+  // --- [수정 1] 무한 루프 해결 ---
+  // 1.1. api.get('/portfolios/me') 함수를 useCallback으로 감싸 안정적인 참조를 생성합니다.
+  const fetchApi = useCallback(() => api.get('/portfolios/me'), []);
+
+  // 1.2. useApi 훅에 인라인 함수 대신 안정적인 fetchApi 함수를 전달합니다.
+  // (useApi 훅은 기본적으로 마운트 시 1회 fetchApi를 실행합니다)
   const { 
     data: portfolioData, 
     loading: pageLoading,
     error: fetchError,
-    execute: fetchPortfolio 
-  } = useApi(() => api.get('/portfolios/me'), [], false); 
+    execute: fetchPortfolio // (재호출이 필요할 경우를 위해 execute는 유지)
+  } = useApi(fetchApi, []); // (기존의 [], false 인자는 []로 통일)
 
-  // (기존) 데이터 로드 로직
+  // 1.3. [삭제] useApi가 이미 데이터를 로드하므로 중복된 fetchPortfolio() 호출을 제거합니다.
+  /*
   useEffect(() => {
     fetchPortfolio();
   }, [fetchPortfolio]);
-
+  */
+  
+  // --- [수정 2] 데이터 파싱 오류 해결 ---
   useEffect(() => {
     if (portfolioData) {
-      const { portfolioItems } = portfolioData.data.data;
+      // 2.1. 'portfolioData.data.data'가 아닌 'portfolioData.data'에서 직접 파싱합니다.
+      const { portfolioItems } = portfolioData.data;
       setSections(portfolioItems || []);
       setSaveStatus('saved'); // 로드 완료 = 저장된 상태
     } else if (fetchError && fetchError.message.includes('404')) {
       createInitialPortfolio();
     }
-  }, [portfolioData, fetchError]);
+  }, [portfolioData, fetchError]); // (createInitialPortfolio는 의존성에서 제거하여 404 발생 시 1회만 실행되도록 함)
 
+  // (createInitialPortfolio는 POST 요청이므로 .data.data 구조를 사용할 수 있어 수정하지 않음)
   const createInitialPortfolio = async () => {
     setSaveStatus('saving');
     try {
@@ -73,7 +81,7 @@ const PortfolioEditPage = () => {
         desiredPosition: "", referenceUrl: [], awards: [], certifications: [], languages: []
       };
       const response = await api.post('/portfolios', basicInfo);
-      const { portfolioItems } = response.data.data;
+      const { portfolioItems } = response.data;
       setSections(portfolioItems || []);
       setSaveStatus('saved');
     } catch (createError) {
@@ -84,7 +92,7 @@ const PortfolioEditPage = () => {
     }
   };
 
-  // --- 3. [신규] 섹션 수정 API (PUT /api/portfolios/items/{itemId}) ---
+  // --- (이하 나머지 핸들러는 변경 사항 없음) ---
   const { 
     execute: updateItem, 
     loading: isUpdating 
@@ -94,84 +102,65 @@ const PortfolioEditPage = () => {
     })
   );
 
-  // --- 4. [신규] 실제 저장 로직 (즉시 또는 8초 후 호출됨) ---
   const executeSave = async (sectionId) => {
-    // 이미 저장 중이거나, 변경 사항이 없거나, 임시 ID인 경우 중단
     if (isUpdating || !dirtySectionId || sectionId !== dirtySectionId || String(sectionId).startsWith('temp-')) {
       return;
     }
-    
-    // 기존 8초 타이머가 있다면 취소 (중복 실행 방지)
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
     }
-
     setSaveStatus('saving');
-    
     const sectionToSave = sections.find(s => s.id === sectionId);
     if (!sectionToSave) {
       setSaveStatus('error');
       return;
     }
-
-    // DTO와 파일(file)을 FormData로 구성
     const { file, ...itemDto } = sectionToSave;
     const formData = new FormData();
     formData.append('item', new Blob([JSON.stringify(itemDto)], { type: 'application/json' }));
-    
-    // file이 File 객체인 경우 (새로 업로드된 파일)에만 추가
     if (file instanceof File) {
       formData.append('files', file); 
     }
-    // (file이 null이거나 단순 문자열 경로(기존 파일)이면 'files'를 보내지 않음)
-
     try {
       await updateItem(sectionId, formData);
       setSaveStatus('saved');
-      setDirtySectionId(null); // 저장 완료 후 'dirty' 상태 해제
+      setDirtySectionId(null); 
     } catch (err) {
       console.error("섹션 저장 실패:", err);
       setSaveStatus('error');
     }
   };
 
-  // (기존) 섹션 추가 API
   const { execute: createItem, loading: isCreating } = useLazyApi((formData) => 
     api.post('/portfolios/items', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     })
   );
 
-  // --- 5. [수정] handleAddSection (요구사항 3) ---
+  // (handleAddSection도 POST 응답을 사용하므로 .data.data 유지)
   const handleAddSection = async () => {
-    // 섹션 추가 전, 저장할 변경 사항이 있는지 확인
     if (dirtySectionId) {
-      await executeSave(dirtySectionId); // 8초 딜레이 없이 즉시 저장
+      await executeSave(dirtySectionId);
     }
-
-    // (기존 추가 로직)
     const defaultItemDto = { type: 'other', title: '새 섹션', content: '내용을 입력하세요.' };
     const formData = new FormData();
     formData.append('item', new Blob([JSON.stringify(defaultItemDto)], { type: 'application/json' }));
-
     try {
       const response = await createItem(formData);
       const updatedPortfolio = response.data.data;
       setSections(updatedPortfolio.portfolioItems || []);
-      setSaveStatus('saved'); // 새 섹션 추가 후 '저장됨' 상태
+      setSaveStatus('saved');
     } catch (err) {
       console.error("섹션 추가 실패:", err);
       setSaveStatus('error');
     }
   };
 
-  // (기존) 섹션 삭제 API
   const { execute: deleteItem, loading: isDeleting } = useLazyApi((itemId) => 
     api.delete(`/portfolios/items/${itemId}`)
   );
 
-  // (기존) handleDeleteSection
   const handleDeleteSection = async (sectionId) => {
     if (sections.length <= 1) {
       alert("포트폴리오는 최소 1개의 섹션이 필요합니다.");
@@ -184,53 +173,43 @@ const PortfolioEditPage = () => {
     if (!window.confirm("이 섹션을 정말 삭제하시겠습니까? (서버에서 영구 삭제됩니다)")) {
       return;
     }
-
-    // 삭제 전, 혹시 저장 중이거나 대기 중인 타이머가 있다면 취소
     clearTimeout(saveTimerRef.current);
     if (dirtySectionId === sectionId) {
       setDirtySectionId(null);
     }
-
     try {
       await deleteItem(sectionId);
       setSections(prevSections => prevSections.filter(section => section.id !== sectionId));
-      setSaveStatus('saved'); // 삭제도 '저장됨' 상태로 간주
+      setSaveStatus('saved');
     } catch (err) {
       console.error("섹션 삭제 실패:", err);
       setSaveStatus('error');
     }
   };
 
-  // --- 6. [수정] handleUpdateSection (요구사항 1) ---
   const handleUpdateSection = (updatedSection) => {
-    // 1. UI는 즉시 반응하도록 로컬 상태를 업데이트
     setSections(prevSections =>
       prevSections.map(section =>
         section.id === updatedSection.id ? updatedSection : section
       )
     );
-    // 2. 변경 사항이 발생했음을 기록
     setDirtySectionId(updatedSection.id);
     setSaveStatus('unsaved');
-    // 3. 8초 타이머는 여기(onChange)가 아닌, onBlur 핸들러에서 시작
   };
 
-  // --- 7. [신규] 포커스 이벤트 핸들러 (요구사항 1, 2) ---
   const handleSectionFocusGained = (sectionId) => {
-    // 포커스를 얻으면, 8초 저장 타이머를 취소
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
       if (dirtySectionId === sectionId) {
-         setSaveStatus('unsaved'); // 'waiting' -> 'unsaved'로 복귀
+         setSaveStatus('unsaved');
       }
     }
   };
 
   const handleSectionFocusLost = (sectionId) => {
-    // 포커스를 잃은 섹션이 'dirty' 상태일 때만 8초 타이머 시작
     if (dirtySectionId && dirtySectionId === sectionId) {
-      setSaveStatus('waiting'); // '저장 대기 중' (UI 표시용)
+      setSaveStatus('waiting'); 
       saveTimerRef.current = setTimeout(() => {
         executeSave(sectionId);
       }, 8000); // 8초
@@ -248,7 +227,6 @@ const PortfolioEditPage = () => {
     );
   }
   if (fetchError && !portfolioData && !fetchError.message.includes('404')) {
-    // ... (에러 UI)
     return (
       <div className="portfolio-edit-page">
         <div className="portfolio-main-editor" style={{ textAlign: 'center', color: 'var(--color-error)' }}>
@@ -260,19 +238,17 @@ const PortfolioEditPage = () => {
   }
 
   const isEditorBusy = isCreating || isDeleting || isUpdating;
-  const basicInfo = portfolioData?.data?.data?.basicInfo; // 로드된 basicInfo
+  
+  // --- [수정 2.2] basicInfo 파싱 수정 ---
+  const basicInfo = portfolioData?.data?.basicInfo; // 'data.data'가 아닌 'data'에서 파싱
 
   return (
     <div className="portfolio-edit-page">
-      {/* TempSideNav에 basicInfo와 sections를 모두 전달합니다.
-        basicInfo가 로드되기 전(null)일 수 있으므로 TempSideNav에서 null 체크 필요
-      */}
       <TempSideNav sections={sections} basicInfo={basicInfo} />
 
       <div className="portfolio-main-editor">
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2>포트폴리오</h2>
-          {/* 8. [신규] 저장 상태 표시기 */}
           <SaveStatusIndicator status={isUpdating ? 'saving' : saveStatus} />
         </header>
         
@@ -284,13 +260,11 @@ const PortfolioEditPage = () => {
 
         <PortfolioEditor
           sections={sections}
-          // 9. [신규] 핸들러 전달
           onUpdateSection={handleUpdateSection}
           onDeleteSection={handleDeleteSection}
           onAddSection={handleAddSection}
           onSectionFocusGained={handleSectionFocusGained}
           onSectionFocusLost={handleSectionFocusLost}
-          // (isEditorBusy는 PortfolioEditor 내부에서 버튼 비활성화 등에 사용될 수 있음)
           disabled={isEditorBusy}
         />
       </div>

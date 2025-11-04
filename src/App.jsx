@@ -60,8 +60,8 @@ function AppRoutes() {
         (이제 currentUser는 AuthContext의 MOCK_STUDENT_USER입니다) 
       */}
       <Route path={routes.SEARCH} element={
-        <ProtectedRoute requiredRole="COMPANY" currentUser={currentUser}>
-          <AuthenticatedLayout userRole="COMPANY">
+        <ProtectedRoute requiredRole="RECRUITER" currentUser={currentUser}>
+          <AuthenticatedLayout userRole="RECRUITER">
             <SearchPage />
           </AuthenticatedLayout>
         </ProtectedRoute>
@@ -71,16 +71,16 @@ function AppRoutes() {
         (currentUser가 MOCK_STUDENT_USER이므로 이 라우트가 정상 동작합니다)
       */}
       <Route path={routes.PORTFOLIO} element={
-        <ProtectedRoute requiredRole="STUDENT" currentUser={currentUser}>
-          <AuthenticatedLayout userRole="STUDENT">
+        <ProtectedRoute requiredRole="JOB_SEEKER" currentUser={currentUser}>
+          <AuthenticatedLayout userRole="JOB_SEEKER">
             <PortfolioPage />
           </AuthenticatedLayout>
         </ProtectedRoute>
       } />
       
       <Route path={routes.PORTFOLIO_EDIT} element={
-        <ProtectedRoute requiredRole="STUDENT" currentUser={currentUser}>
-          <AuthenticatedLayout userRole="STUDENT">
+        <ProtectedRoute requiredRole="JOB_SEEKER" currentUser={currentUser}>
+          <AuthenticatedLayout userRole="JOB_SEEKER">
             <PortfolioEditPage />
           </AuthenticatedLayout>
         </ProtectedRoute>
@@ -91,7 +91,7 @@ function AppRoutes() {
         <ProtectedRoute currentUser={currentUser}>
           <AuthenticatedLayout userRole={currentUser?.role}>
             <div>
-              {currentUser?.role === 'COMPANY' ? 
+              {currentUser?.role === 'RECRUITER' ? 
                 '기업 정보 수정 페이지' : 
                 '학생 정보 수정 페이지'
               }
