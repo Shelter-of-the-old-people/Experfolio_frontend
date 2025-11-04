@@ -1,9 +1,3 @@
-/*
- * src/styles/pages/PortfolioEditPage.css
- * 포트폴리오 수정 페이지의 메인 에디터 컨테이너 스타일
- */
-
-/* --- [신규] 페이지 루트 레이아웃 --- */
 .portfolio-edit-page {
   display: flex;
   height: 100%;
@@ -13,18 +7,14 @@
   flex: 1;
   padding: 20px;
   overflow-y: auto;
-
-  /* PM님 요청 사항: 최대 너비 900px 및 중앙 정렬 */
   max-width: 900px;
   margin: 0 auto;
 }
 
-/* --- [신규] 메인 에디터 헤더 --- */
 .portfolio-main-editor header {
   margin-bottom: 30px;
 }
 
-/* --- [신규] 임시 사이드바 스타일 --- */
 .temp-sidenav {
   border-right: 1px solid #eee;
   padding: 20px;
@@ -36,7 +26,6 @@
 }
 
 .temp-sidenav-list {
-  /* ul 태그 (reset.css에 의해 list-style: none 적용됨) */
 }
 
 .temp-sidenav-item {

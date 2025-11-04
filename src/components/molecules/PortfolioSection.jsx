@@ -1,11 +1,11 @@
 import React from 'react';
-import { TextInput, TextEditor, Button } from '../atoms';
+// [수정됨] Debounced(지연) 버전의 컴포넌트를 임포트합니다.
+import { DebouncedTextInput as TextInput, DebouncedTextEditor as TextEditor, Button } from '../atoms';
 import LayoutSelector from './LayoutSelector';
 import FileUpload from './FileUpload';
-import { useDebounce } from '../../hooks/useDebounce';
 
 const SectionContent = ({ 
-  type, 
+  layout, 
   content, 
   file, 
   onContentChange, 
@@ -16,7 +16,7 @@ const SectionContent = ({
   const editorElement = (
     <TextEditor
       value={content}
-      onChange={onContentChange}
+      onChange={onContentChange} // 이제 이 onChange는 onBlur 시점에 호출됩니다.
       placeholder="이곳에 내용을 입력하세요..."
     />
   );
@@ -25,8 +25,9 @@ const SectionContent = ({
     <FileUpload file={file} onFileChange={onFileChange} />
   );
 
+  // ... (renderLayout 로직은 변경 없음) ...
   const renderLayout = () => {
-    switch (type) {
+    switch (layout) {
       case 'text-only':
         return editorElement;
       case 'file-top':
@@ -78,30 +79,7 @@ const SectionContent = ({
 
 
 const PortfolioSection = ({ section, onUpdate, onDelete }) => {
-  const [internalSection, setInternalSection] = useState(section);
-  const debouncedTitle = useDebounce(internalSection.title, 1000);
-  const debouncedContent = useDebounce(internalSection.content, 1000);
   
-  useEffect(() => {
-    setInternalSection(section);
-  }, [section]);
-
-  useEffect(() => {
-    if (debouncedTitle !== section.title || debouncedContent !== section.content) {
-      onUpdate({ ...internalSection, title: debouncedTitle, content: debouncedContent });
-    }
-  }, [debouncedTitle, debouncedContent]);
-
-  const handleImmediateUpdate = (field, value) => {
-    const updatedSection = { ...internalSection, [field]: value };
-    setInternalSection(updatedSection);
-    onUpdate(updatedSection); 
-  };
-
-  const handleTextUpdate = (field, value) => {
-    setInternalSection(prev => ({ ...prev, [field]: value }));
-  };
-
   const handleUpdate = (field, value) => {
     onUpdate({ ...section, [field]: value });
   };
@@ -117,27 +95,27 @@ const PortfolioSection = ({ section, onUpdate, onDelete }) => {
         >
         </Button>
         <div className="section-header">
-            <TextInput
+            <TextInput // [수정됨] 이제 이 컴포넌트는 DebouncedTextInput입니다.
                 value={section.title}
-                onChange={(value) => handleTextUpdate('title', value)}
+                onChange={(value) => handleUpdate('title', value)} // onBlur 시점에 호출됨
                 placeholder="제목 입력 : 예) 팀 프로젝트 - Experfolio"
                 required
                 />
         </div>
 
         <div className="section-content-wrapper">
-            {section.type === 'unselected' ? (
+            {section.layout === 'unselected' ? (
             <LayoutSelector
-                onSelect={(value) => handleImmediateUpdate('type', value)}
+                onSelect={(value) => handleUpdate('layout', value)}
             />
             ) : (
             <SectionContent
-                type={section.type}
+                layout={section.layout}
                 content={section.content}
                 file={section.file}
-                onContentChange={(value) => handleTextUpdate('content', value)}
-                onFileChange={(value) => handleImmediateUpdate('file', value)}
-                onChangeLayoutClick={() => handleImmediateUpdate('type', 'unselected')}
+                onContentChange={(value) => handleUpdate('content', value)} // onBlur 시점에 호출됨
+                onFileChange={(value) => handleUpdate('file', value)} // (FileUpload는 즉시 저장)
+                onChangeLayoutClick={() => handleUpdate('layout', 'unselected')}
             />
             )}
             
