@@ -28,6 +28,7 @@
   color: #888;
   margin-left: 30px;
   font-size: 0.98rem;
+  white-space: nowrap;
 }
 .item-card:hover {
   background: #e5e5e5;

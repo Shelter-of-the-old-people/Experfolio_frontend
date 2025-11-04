@@ -1,10 +1,11 @@
 import React from 'react';
 import Button from '../atoms/Button';
-import Tag from '../atoms/Tag';
+// import Tag from '../atoms/Tag'; // <-- 1. 키워드가 없으므로 Tag 임포트 제거
 import LinkCard from '../atoms/LinkCard';
+// 기존 CSS를 그대로 재사용합니다.
 import '../../styles/components/ProfileSummaryCard.css';
 
-// 사이트별 아이콘 자동 매핑
+// 아이콘 매핑 로직 (변경 없음)
 const getIconByTypeOrUrl = (type, url) => {
   if (type === 'github' || (url && url.includes('github.com')))
     return <img src="/github.svg" alt="GitHub" />;
@@ -12,32 +13,28 @@ const getIconByTypeOrUrl = (type, url) => {
     return <img src="/notion.svg" alt="Notion" />;
   if (type === 'portfolio' || (url && url.includes('portfolio')))
     return <img src="/portfolio.svg" alt="Portfolio" />;
-  // 이 외 추가 가능 예시: velog, youtube 등
-  return null; // 또는 기본 아이콘 JSX
+  return null; 
 };
 
-const ProfileSummaryCard = ({
+const MyProfileSummaryCard = ({
   profile: {
     name, avatar, school, major, gpa,
-    wishJob, wishArea, keywords = [],
+    wishJob, wishArea, 
+    // keywords = [], // <-- 2. keywords prop 제거
     github, notion, portfolioLinks = []
   },
-  onClose = () => {},
-  isFavorite = false,
-  onContact, onToggleFavorite,
+  onEdit // '수정' 버튼 클릭 핸들러
 }) => (
   <div className="profile-summary-wrap">
-    {/* 상단 프로필 타이틀 */}
-    <div className="profile-header-row">
+    
+    {/* --- 3. 헤더 수정: '프로필' 텍스트 추가, 'X' 버튼 없음 --- */}
+    <div className="profile-header-row"> 
       <span className="profile-title">프로필</span>
-      <button className="close-btn" onClick={onClose}>
-        <img src="/close.svg" alt="닫기" />
-      </button>
+      {/* 'X' 버튼이 없는 헤더입니다. */}
     </div>
 
-    {/* 메인 Row: 좌측 이미지/우측 정보 */}
+    {/* --- 본문 --- */}
     <div className="profile-main-row">
-      {/* 프로필 이미지 */}
       <div className="profile-img-box">
         <img
           src={avatar || '/profile-default.svg'}
@@ -46,9 +43,7 @@ const ProfileSummaryCard = ({
         />
       </div>
 
-      {/* 정보 컬럼 */}
       <div className="profile-detail-col">
-        {/* 이름 + 소속 + 전공 + 성적 + [연락/별] Row */}
         <div className="profile-id-row">
           <div className="profile-meta-group">
             <span className="user-name">{name}</span>
@@ -58,25 +53,24 @@ const ProfileSummaryCard = ({
               <span className="gpa">{gpa}</span>
             </span>
           </div>
+
+          {/* --- 4. '수정' 버튼 위치 수정 (본문 우측 상단) --- */}
           <div className="profile-actions-inline">
-            <span
-              className={`star-btn${isFavorite ? ' active' : ''}`}
-              onClick={onToggleFavorite}
-              role="button"
-              aria-label={isFavorite ? '즐겨찾기 해제' : '즐겨찾기 추가'}
+            <Button 
+              onClick={onEdit}
+              variant="black"
             >
-            </span>
-            <Button onClick={onContact}>연락하기</Button>
+              수정
+            </Button>
           </div>
         </div>
 
-        {/* 희망 분야/직무 row */}
+        {/* --- 나머지 내용 (변경 없음) --- */}
         <div className="profile-wishinfo-row">
           <span className="wish-label">희망 분야</span>
           <span className="wish-value">{wishArea || wishJob}</span>
         </div>
 
-        {/* 링크 카드 리스트 - 아이콘 자동 분기 */}
         <div className="profile-links-row">
           {github &&
             <LinkCard
@@ -100,15 +94,11 @@ const ProfileSummaryCard = ({
           )}
         </div>
 
-        {/* 키워드/태그 리스트 */}
-        <div className="profile-keywords-row">
-          {keywords.map((kw, i) => (
-            <Tag key={i}>{kw}</Tag>
-          ))}
-        </div>
+        {/* --- 5. 키워드 섹션(profile-keywords-row) 제거 --- */}
+        
       </div>
     </div>
   </div>
 );
 
-export default ProfileSummaryCard;
+export default MyProfileSummaryCard;

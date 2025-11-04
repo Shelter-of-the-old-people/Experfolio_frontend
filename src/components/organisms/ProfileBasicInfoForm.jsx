@@ -3,6 +3,20 @@ import { ProfileImageUpload, TextInput, LinkCard } from '../atoms';
 import { LinkInputSection } from '../molecules';
 import '../../styles/components/ProfileBasicInfoForm.css';
 
+// --- ▼ 1. 아이콘 매핑 함수를 ProfileSummaryCard에서 복사 ---
+const getIconByTypeOrUrl = (type, url) => {
+  if (type === 'github' || (url && url.includes('github.com')))
+    return <img src="/github.svg" alt="GitHub" />;
+  if (type === 'notion' || (url && url.includes('notion.so')))
+    return <img src="/notion.svg" alt="Notion" />;
+  if (type === 'portfolio' || (url && url.includes('portfolio')))
+    return <img src="/portfolio.svg" alt="Portfolio" />;
+  // (필요시 velog 등 다른 아이콘도 여기에 추가)
+  
+  // 2. 기본 아이콘을 이모지 '🔗' 대신 null로 변경
+  return null; 
+};
+
 const ProfileBasicInfoForm = ({
   initialData = {},
   onSubmit,
@@ -36,7 +50,7 @@ const ProfileBasicInfoForm = ({
 
   const handleAddLink = async (url) => {
     try {
-      const linkData = await fetchLinkMetadata(url);
+      const linkData = await fetchLinkMetadata(url); 
       setFormData(prev => ({
         ...prev,
         links: [...prev.links, linkData]
@@ -47,31 +61,33 @@ const ProfileBasicInfoForm = ({
         links: [...prev.links, {
           url,
           label: new URL(url).hostname,
-          icon: null
+          icon: getIconByTypeOrUrl(null, url)
         }]
       }));
     }
   };
 
-  const fetchLinkMetadata = async (url) => {
+ const fetchLinkMetadata = async (url) => {
     const urlObj = new URL(url);
     const hostname = urlObj.hostname;
-    let icon = null;
-    let label = hostname;
+    
+    // 5a. 새 함수를 호출하여 아이콘(<img> 태그 또는 null)을 가져옴
+    let icon = getIconByTypeOrUrl(null, url); 
+    
+    let label = hostname; // 기본 레이블
+    
+    // 5b. 이모지 대신 레이블만 설정
     if (hostname.includes('github.com')) {
       const pathParts = urlObj.pathname.split('/').filter(Boolean);
       label = pathParts[1] || 'Repository_Name';
-      icon = '🔗';
     } else if (hostname.includes('notion')) {
       label = '페이지_이름';
-      icon = '📄';
     } else if (hostname.includes('velog')) {
       label = '페이지_이름';
-      icon = '✍️';
     } else {
       label = '페이지_이름';
-      icon = '🔗';
     }
+    
     return { url, label, icon };
   };
 
