@@ -25,6 +25,7 @@ const CertificateInputForm = ({ onAdd }) => {
     <div className="award-input-form"> 
       <TextInput
         label="자격명"
+        placeholder={"자격명"}
         value={form.name}
         onChange={v => handleChange('name', v)}
         required

@@ -25,6 +25,7 @@ const LanguageInputForm = ({ onAdd }) => {
       {/* '시험명'은 이미 TextInput이라 OK */}
       <TextInput 
         label="시험명" 
+        placeholder={"시험명"}
         value={form.testName} 
         onChange={v => handleChange('testName', v)} 
         required 
@@ -38,6 +39,7 @@ const LanguageInputForm = ({ onAdd }) => {
         <div className="input-container award-date-selects" style={{ gap: '8px' }}>
           <div style={{ width: '100px' }}> 
             <TextInput
+            placeholder={"점수"}
               value={form.score}
               onChange={v => handleChange('score', v)}
               required
