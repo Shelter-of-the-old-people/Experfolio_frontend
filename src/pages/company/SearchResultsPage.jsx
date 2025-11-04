@@ -28,9 +28,10 @@ const SearchResultsPage = () => {
       setLoading(true);
       setError(null);
       try {
-        // ✅ 실제 API 호출 (백엔드 엔드포인트에 맞게 수정)
-        const response = await api.post('/v1/search/portfolios', { query });
-        setSearchResult(response.data.data); // 정규화된 응답에서 data 추출
+        const response = await api.post('/v1/search', { query });
+        
+        // normalizeApiResponse로 인해 response.data.data에 실제 데이터가 있음
+        setSearchResult(response.data.data);
         
       } catch (err) {
         setError(err.message || '검색 중 오류가 발생했습니다.');
@@ -88,7 +89,15 @@ const SearchResultsPage = () => {
     <div className="search-results-page">
       <h1>검색 결과</h1>
       
-      {loading && <p>AI 인재를 검색 중입니다...</p>}
+      {loading && (
+        <div>
+          <p>AI 인재를 검색 중입니다...</p>
+          <p style={{ fontSize: '14px', color: '#666', marginTop: '8px' }}>
+            AI 기반 검색은 최대 60초 정도 소요될 수 있습니다.
+          </p>
+        </div>
+      )}
+      
       {error && <p style={{ color: 'var(--color-error)' }}>{error}</p>}
       
       {searchResult && !loading && (
@@ -98,6 +107,11 @@ const SearchResultsPage = () => {
               <span className="query-highlight">"{query}"</span>에 대한 
               총 {searchResult.totalResults}명의 인재를 찾았습니다.
             </p>
+            {searchResult.searchTime && (
+              <p style={{ fontSize: '14px', color: '#666', marginTop: '4px' }}>
+                검색 시간: {searchResult.searchTime}
+              </p>
+            )}
           </div>
 
           <SearchResultHeader 

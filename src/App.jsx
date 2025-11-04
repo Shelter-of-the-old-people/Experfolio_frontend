@@ -11,7 +11,7 @@ import StyleGuide from './pages/dev/StyleGuide';
 // 페이지 컴포넌트 임포트
 import { HomePage, NotFoundPage } from './pages/common';
 import { LoginPage, SignupPage } from './pages/auth';
-import { SearchPage } from './pages/company';
+import { SearchPage, SearchResultsPage, SearchProfilePage } from './pages/company';
 import { PortfolioPage, PortfolioEditPage, ProfileEditPage } from './pages/student';
 
 
