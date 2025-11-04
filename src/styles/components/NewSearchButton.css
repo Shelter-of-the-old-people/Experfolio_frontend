@@ -1,0 +1,15 @@
+/*
+ * src/styles/components/NewSearchButton.css
+ */
+
+.new-search-btn {
+  justify-content: flex-start;
+  
+  /* 피그마 기준 너비 268px, 높이 50px */
+  width: 268px;
+  height: 50px;
+
+  /* 디자인 토큰 사용 */
+  gap: var(--space-2);
+  padding: 0 var(--space-4);
+}

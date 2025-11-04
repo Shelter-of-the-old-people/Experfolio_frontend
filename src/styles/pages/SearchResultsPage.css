@@ -1,0 +1,32 @@
+/*
+ * src/styles/pages/SearchResultsPage.css
+ * 검색 결과 페이지 레이아웃
+ */
+
+.search-results-page {
+  /* AuthenticatedLayout의 main-content 패딩과 별도로
+     페이지 자체의 내부 패딩을 설정합니다. */
+  padding: var(--space-6); /* 24px */
+}
+
+.search-results-page h1 {
+  /* typography.css h1 스타일 사용 */
+  margin-bottom: var(--space-3);
+}
+
+.search-results-page .search-summary {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-700);
+  margin-bottom: var(--space-6);
+}
+
+.search-results-page .query-highlight {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-black);
+}
+
+/* 카드 목록을 담는 리스트 */
+.search-results-list {
+  display: flex;
+  flex-direction: column;
+}

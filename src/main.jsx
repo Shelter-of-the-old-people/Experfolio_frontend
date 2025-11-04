@@ -22,6 +22,16 @@ import './styles/components/LayoutSelector.css'
 import './styles/components/PortfolioEditor.css'
 import './styles/components/SaveStatusIndicator.css'
 
+// 현재 프로젝트 main.jsx에 추가
+import './styles/components/NewSearchButton.css'
+import './styles/components/BookmarkSection.css'
+import './styles/components/CompanySidebar.css'
+import './styles/components/SearchQueryIndicator.css'
+import './styles/components/SearchBar.css'
+import './styles/components/KeywordTag.css'
+import './styles/components/SearchResultCard.css'
+import './styles/pages/SearchResultsPage.css'
+
 // 6. 페이지별 스타일
 import './styles/pages/PortfolioEditPage.css'
 

@@ -5,3 +5,6 @@ export { default as CertificateListSection } from './CertificateListSection';
 export { default as LanguageListSection } from './LanguageListSection';
 export { default as ProfileCareerCards } from './ProfileCareerCards';
 export { default as MyProfileSummaryCard } from './MyProfileSummaryCard';
+export { default as CompanySidebar } from './CompanySidebar';
+export { default as SearchResultCard } from './SearchResultCard';
+export { default as SearchResultHeader } from './SearchResultHeader';

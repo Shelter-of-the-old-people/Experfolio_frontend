@@ -9,3 +9,4 @@ export { default as LinkCard } from './LinkCard';
 
 export { default as DebouncedTextInput } from './DebouncedTextInput';
 export { default as DebouncedTextEditor } from './DebouncedTextEditor';
+export { default as KeywordTag } from './KeywordTag';

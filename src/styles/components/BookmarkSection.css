@@ -1,0 +1,97 @@
+/*
+ * src/styles/components/BookmarkSection.css
+ * 즐겨찾기 섹션 컴포넌트 스타일 (수정본)
+ */
+
+.bookmark-section {
+  /* 피그마 기준 너비 268px */
+  width: 268px;
+  padding: var(--space-3) 0;
+  border-bottom: 1px solid var(--color-gray-200);
+  
+}
+
+/* --- [중요] 헤더 가로 배치 --- */
+.bookmark-header {
+  /* 이 display: flex가 "즐겨찾기" 텍스트와 화살표(img)를 가로로 배치합니다. */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.bookmark-title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+}
+
+.bookmark-toggle-arrow {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease-in-out;
+  transform: rotate(0deg);
+  
+  /* * reset.css의 'display: block'을 덮어쓰기 위해
+   * * 'display: inline' 또는 'display: unset'을 추가할 수 있으나,
+   * * 부모(.bookmark-header)가 flex이므로 
+   * * 자식(img)은 자동으로 flex-item이 되어 block 속성이 무시됩니다.
+   * * (즉, .bookmark-header에 display: flex가 적용되면 이 문제는 자동으로 해결됩니다.)
+   */
+}
+
+.bookmark-toggle-arrow.open {
+  transform: rotate(180deg);
+}
+
+.bookmark-list {
+  padding: 0;
+  margin: 0;
+  margin-top: var(--space-4);
+}
+
+.bookmark-item {
+  list-style: none; 
+}
+
+/* --- [중요] 리스트 아이템 가로 배치 --- */
+.bookmark-item-link {
+  /* 이 display: flex가 "인재 아이콘(img)"과 "인재1(span)"을 가로로 배치합니다. */
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  
+  text-decoration: none;
+  color: inherit;
+  width: 100%;
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s;
+}
+
+.bookmark-item-link:hover {
+  background-color: var(--color-gray-50);
+}
+
+.bookmark-item-avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  color: var(--color-black);
+}
+
+.bookmark-item-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.bookmark-item-empty {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-500);
+  padding: var(--space-2) 0;
+}

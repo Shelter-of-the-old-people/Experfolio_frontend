@@ -9,3 +9,7 @@ export { default as CertificateInputForm } from './CertificateInputForm';
 export {default as LanguageItemCard} from './LanguageItemCard';
 export {default as LanguageInputForm} from './LanguageInputForm';
 export { default as SaveStatusIndicator } from './SaveStatusIndicator';
+export { default as NewSearchButton } from './NewSearchButton';
+export { default as BookmarkSection } from './BookmarkSection';
+export { default as SearchQueryIndicator } from './SearchQueryIndicator';
+export { default as SearchBar } from './SearchBar';

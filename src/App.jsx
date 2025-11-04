@@ -48,6 +48,22 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
 
+      <Route path={routes.SEARCH_RESULTS} element={
+        <ProtectedRoute requiredRole="RECRUITER" currentUser={currentUser}>
+          <AuthenticatedLayout userRole="RECRUITER">
+            <SearchResultsPage />
+          </AuthenticatedLayout>
+        </ProtectedRoute>
+      } />
+
+      <Route path={routes.TALENT_DETAIL} element={
+        <ProtectedRoute requiredRole="RECRUITER" currentUser={currentUser}>
+          <AuthenticatedLayout userRole="RECRUITER">
+            <SearchProfilePage />
+          </AuthenticatedLayout>
+        </ProtectedRoute>
+      } />
+
       <Route path={routes.PORTFOLIO} element={
         <PublicLayout>
           <PortfolioPage />
@@ -84,6 +100,9 @@ function AppRoutes() {
           </AuthenticatedLayout>
         </ProtectedRoute>
       } />
+
+
+
       
       {/* Dev Routes */}
       <Route path={routes.STYLE_GUIDE} element={<StyleGuide />} />

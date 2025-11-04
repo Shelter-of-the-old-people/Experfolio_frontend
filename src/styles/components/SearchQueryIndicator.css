@@ -1,0 +1,59 @@
+/*
+ * src/styles/components/SearchQueryIndicator.css
+ * 검색 쿼리 인디케이터 스타일
+ */
+
+.search-query-indicator {
+  display: inline-flex;
+  align-items: center;
+  width: 100%; 
+  height: 50px;
+  padding: 0 var(--space-4);
+  
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+  overflow: hidden;
+  
+}
+
+.indicator-icon {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0; 
+  margin-right: var(--space-3);
+}
+
+.indicator-text {
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 비활성 상태 (대시보드) */
+.search-query-indicator.inactive {
+  background-color: transparent;
+  color: var(--color-black);
+  border-color: var(--color-gray-300);
+}
+.search-query-indicator.inactive:hover {
+  background-color: var(--color-gray-50);
+}
+.search-query-indicator.inactive .indicator-icon {
+  filter: none;
+}
+
+/* 활성 상태 (검색 중) */
+.search-query-indicator.active {
+  background-color: var(--color-black);
+  color: var(--color-white);
+  border-color: var(--color-black);
+}
+.search-query-indicator.active:hover {
+  background-color: var(--color-gray-700);
+  border-color: var(--color-gray-700);
+}
+.search-query-indicator.active .indicator-icon {
+  filter: brightness(0) invert(1);
+}

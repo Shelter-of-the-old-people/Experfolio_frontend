@@ -1,0 +1,27 @@
+/*
+ * src/styles/components/CompanySidebar.css
+ * 기업 회원용 고정 사이드바 스타일
+ */
+
+.company-sidebar {
+  /* 너비 320px로 고정 */
+  width: 320px;
+  /* flex-shrink: 0; 을 추가하여 레이아웃 축소 방지 */
+  flex-shrink: 0;
+  
+  /* 화면 좌측에 고정 (AuthenticatedLayout의 .layout-body가 flex이므로) */
+  height: 100%; /* 부모 높이만큼 채우기 */
+  
+  /* 패딩 20px (디자인 토큰 var(--space-5) 사용) */
+  padding: var(--space-5);
+
+  /* 아이템을 세로로 배열 (flex-direction: column) */
+  display: flex;
+  flex-direction: column;
+  
+  /* 아이템 사이의 간격 (임의로 24px 지정, var(--space-6)) */
+  gap: var(--space-6);
+  
+  /* 임시: 사이드바 영역 구분을 위한 border (기존 AuthenticatedLayout.css 참고) */
+  border-right: 1px solid #eee;
+}

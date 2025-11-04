@@ -50,6 +50,14 @@ const AuthenticatedLayout = ({ children, userRole }) => {
       </header>
       
       <div className="layout-body">
+         {userRole === 'COMPANY' ? (
+          <CompanySidebar />
+        ) : userRole === 'STUDENT' ? (
+          <aside className="sidebar">
+            {/* 구직자 사이드바 */}
+          </aside>
+        ) : null}
+        
         <aside className="sidebar">
           <nav className="sidebar-nav">
             {getSidebarItems().map((item, index) => (

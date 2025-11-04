@@ -1,0 +1,17 @@
+/*
+ * src/styles/components/KeywordTag.css
+ * 검색 결과 키워드 태그 스타일
+ */
+
+.keyword-tag {
+  display: inline-block;
+  /* */
+  background-color: var(--color-black); 
+  color: var(--color-white);
+  
+  /* 디자인 토큰 사용 */
+  padding: var(--space-2) var(--space-3); /* 8px 12px */
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border-radius: var(--radius-full);
+}
