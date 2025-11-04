@@ -1,5 +1,3 @@
-// shelter-of-the-old-people/experfolio_frontend/Experfolio_frontend--/src/components/organisms/PortfolioEditor.jsx
-
 import React from 'react';
 import { Button } from '../atoms';
 import { PortfolioSection } from '../molecules'; 
@@ -20,7 +18,7 @@ const PortfolioEditor = ({
       <div className="sections-list">
         {sections.map((section) => (
           <PortfolioSection
-            key={section.id}
+            key={section.id} // [수정됨] React 목록 렌더링을 위한 key prop
             section={section}
             onUpdate={onUpdateSection}
             onDelete={onDeleteSection}

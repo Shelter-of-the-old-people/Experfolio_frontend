@@ -3,7 +3,8 @@ import api from '../services/api';
 
 export const AuthContext = createContext();
 
-export const AuthProvider = ({ children }) => {
+// 'export' 키워드를 제거
+const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); 
   const [loading, setLoading] = useState(true); 
 
@@ -22,7 +23,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.post('/v1/auth/login', credentials);
       
-      const loginData = response.data; 
+      const loginData = response.data.data; 
 
       if (!loginData || !loginData.accessToken || !loginData.userInfo) {
         throw new Error('로그인 응답 형식이 올바르지 않습니다.');
@@ -75,3 +76,6 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+// AuthProvider를 default export로 지정
+export default AuthProvider;

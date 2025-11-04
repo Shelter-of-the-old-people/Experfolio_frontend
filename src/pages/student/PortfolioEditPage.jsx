@@ -14,11 +14,6 @@ const TempSideNav = ({ sections, basicInfo }) => (
   <nav className="temp-sidenav">
     <h4 className="temp-sidenav-header">포트폴리오 목차</h4>
     <ul className="temp-sidenav-list">
-      <li className="temp-sidenav-item">
-        <a href="#section-basic-info">
-          {basicInfo?.name || '기본 정보'}
-        </a>
-      </li>
       {sections.map((section) => (
         <li key={section.id} className="temp-sidenav-item">
           <a href={`#section-${section.id}`}>
@@ -83,9 +78,8 @@ const PortfolioEditPage = () => {
     execute: updateItem, 
     loading: isUpdating 
   } = useLazyApi((itemId, formData) => 
-    api.put(`/portfolios/items/${itemId}`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
+    // [수정됨] headers 객체를 제거하여 Axios가 Content-Type을 자동으로 설정하도록 합니다.
+    api.put(`/portfolios/items/${itemId}`, formData)
   );
 
   // 4. (수정) executeSave가 최신 'sections'를 참조하도록 수정
@@ -126,9 +120,8 @@ const PortfolioEditPage = () => {
   };
 
   const { execute: createItem, loading: isCreating } = useLazyApi((formData) => 
-    api.post('/portfolios/items', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' }
-    })
+    // [수정됨] headers 객체를 제거하여 Axios가 Content-Type을 자동으로 설정하도록 합니다.
+    api.post('/portfolios/items', formData)
   );
 
   const handleAddSection = async () => {
@@ -140,10 +133,13 @@ const PortfolioEditPage = () => {
     formData.append('item', new Blob([JSON.stringify(defaultItemDto)], { type: 'application/json' }));
     try {
       const response = await createItem(formData);
-      // 5. (수정) 데이터 파싱 경로 수정 (data.data 추가)
-      const updatedPortfolio = response.data;
-      setSections(updatedPortfolio.portfolioItems || []);
+      
+      // [수정됨] 서버가 반환한 '새 아이템'을 가져옵니다.
+      const newItem = response.data;
+      // [수정됨] 기존 'sections' 배열에 새 아이템을 추가(append)합니다.
+      setSections(prevSections => [...prevSections, newItem]);
       setSaveStatus('saved');
+
     } catch (err) {
       console.error("섹션 추가 실패:", err);
       setSaveStatus('error');
@@ -272,8 +268,8 @@ const PortfolioEditPage = () => {
 
   const isEditorBusy = isCreating || isDeleting || isUpdating;
   
-  // 7. [수정] 데이터 파싱 경로 수정 (data.data 추가)
-  const basicInfo = portfolioData?.data?.data?.basicInfo; 
+  // 7. [수정] 데이터 파싱 경로 수정 (data.data -> data)
+  const basicInfo = portfolioData?.data?.basicInfo; 
 
   return (
     <div className="portfolio-edit-page">
