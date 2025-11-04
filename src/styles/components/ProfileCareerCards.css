@@ -1,21 +1,37 @@
 .career-main-flex {
     display: flex;
-    width: 990px;
+    width: 100%;
+    max-width: 990px;
     padding: 12px 24px;
     justify-content: center;
     align-items: flex-start;
     gap: 12px;
     margin: 0 auto;
 }
-
-.career-col {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-    flex: 1 0 0;
+.career-col-awards,
+.career-col-certificate,
+.career-col-language {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;  /* 2. stretch로 변경 (내부 카드 너비 100%) */
+  gap: 10px;
+  flex-shrink: 1;      /* 3. 공간이 부족하면 줄어들도록 허용 */
+  flex-basis: 0;         /* 4. 기본 크기를 0으로 설정 */
+  min-width: 0;          /* 5. 카드가 너무 길어 넘치는 현상 방지 */
 }
 
+/* 2. 컬럼별 가로폭 비율 설정 (2:1:1 비율) */
+.career-col-awards {
+  flex-grow: 2; /* 2만큼의 공간을 차지 */
+}
+
+.career-col-certificate {
+  flex-grow: 1; /* 1만큼의 공간을 차지 */
+}
+
+.career-col-language {
+  flex-grow: 1; /* 1만큼의 공간을 차지 */
+}
 .career-title {
     color: #000;
     font-family: "Pretendard Variable";

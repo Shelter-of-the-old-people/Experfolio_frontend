@@ -34,7 +34,8 @@ const ProfileEditPage = () => {
 
   // 7. 백엔드 전송을 위한 API 훅 (엔드포인트: PUT /api/portfolios/basic-info)
   const { execute: updateProfile, loading, error } = useLazyApi(
-    (profileData) => api.put('/portfolios/basic-info', profileData) 
+    (profileData) => api.put('/portfolios/basic-info', profileData)
+    //(profileData) => api.post('/portfolios', profileData) 
   );
 
   // 8. 메인 저장 핸들러

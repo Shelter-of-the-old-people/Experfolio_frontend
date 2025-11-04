@@ -1,5 +1,3 @@
-// shelter-of-the-old-people/experfolio_frontend/Experfolio_frontend-kmh/src/contexts/AuthContext.jsx
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AuthContext = createContext();
@@ -22,7 +20,7 @@ const REAL_USER_INFO = {
     "role": "STUDENT", 
     "createdAt": "2025-11-04T16:08:33.940217"
 };
-const REAL_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsInJvbGUiOiJKT0JfU0VFS0VSIiwidXNlcklkIjoiNzQ2NGY0NjMtZjEwNS00MWJmLWI1ODktZjVhN2E2NjIwODk3IiwidG9rZW5UeXBlIjoiQUNDRVNTIiwiaWF0IjoxNzYyMjQwMjU1LCJleHAiOjE3NjIyNDIwNTV9.Y8SONDuvbDlVFwuV5PY_LPGTUbSnmUBfdKujX9Im22k";
+const REAL_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsInJvbGUiOiJKT0JfU0VFS0VSIiwidXNlcklkIjoiNzQ2NGY0NjMtZjEwNS00MWJmLWI1ODktZjVhN2E2NjIwODk3IiwidG9rZW5UeXBlIjoiQUNDRVNTIiwiaWF0IjoxNzYyMjU0MzUyLCJleHAiOjE3NjIyNTYxNTJ9.Req3dy-If98nZAKCjMPdtpOwQpdoYoXXyNTAzbJqVSk";
 // --- ▲ 교체 완료 ▲ ---
 
 

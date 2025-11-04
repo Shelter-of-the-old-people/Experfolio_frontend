@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { AuthProvider } from './contexts';
+import { AuthProvider, useAuth } from './contexts';
 import { PublicLayout, AuthenticatedLayout } from './layouts';
 import ProtectedRoute from './components/ProtectedRoute';
 import { routes } from './routes';
@@ -14,7 +14,7 @@ import { PortfolioPage, PortfolioEditPage, ProfileEditPage } from './pages/stude
 
 
 function AppRoutes() {
-  const [currentUser, setCurrentUser] = useState(null);
+  const { user: currentUser } = useAuth();
   
   return (
     <Routes>
