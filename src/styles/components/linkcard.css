@@ -9,6 +9,14 @@
   background: #F4F4F4;
   border-radius: 10px;
   box-sizing: border-box;
+
+  /* --- ▼ 1. 부드러운 배경색 변경을 위한 transition 추가 --- */
+  transition: background-color 0.2s ease-in-out;
+}
+
+/* --- ▼ 2. 호버 시 배경색 변경 규칙 추가 --- */
+.link-card:hover {
+  background-color: #00000033; /* 20% 검은색 투명도 */
 }
 
 .link-card-main-row {
@@ -16,7 +24,7 @@
   flex-direction: row;
   align-items: center;
   gap: 12px;
-  width: 154px;
+  width: 100%;
   height: 21px;
   position: relative;
 }
@@ -27,7 +35,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex: none;
+  flex-shrink: 0;
 }
 
 .link-card-meta {
@@ -36,8 +44,9 @@
   justify-content: center;
   align-items: flex-start;
   gap: 2px;
-  width: 120px;
+  flex: 1;
   height: 17px;
+  min-width: 0;
 }
 
 .link-card-label {
@@ -47,8 +56,11 @@
   font-size: 14px;
   line-height: 17px;
   color: #000;
-  width: 120px;
+  width: 100%;
   height: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .link-card-desc {
@@ -59,12 +71,25 @@
 }
 
 .link-card-remove {
-  position: absolute;
-  right: -30px; /* 카드 우측 끝에 배치 */
-  top: 0;
+  margin-left: auto;
+  flex-shrink: 0;
+  margin-right: 24px;
   background: none;
   border: none;
   color: #222;
   font-size: 18px;
   cursor: pointer;
+  padding: 0 4px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  /* --- ▼ 3. 기본 상태에서 'x' 버튼 숨기기 --- */
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* --- ▼ 4. 카드 호버 시 'x' 버튼 보이기 --- */
+.link-card:hover .link-card-remove {
+  opacity: 1;
 }

@@ -88,6 +88,8 @@ const ProfileBasicInfoForm = ({
   };
 
   return (
+    <div className="profile-basic-info-form">
+      <span className='headline'>프로필</span>
     <form className="profile-content" onSubmit={handleSubmit}>
       <div className="profile-side">
         <ProfileImageUpload
@@ -140,30 +142,32 @@ const ProfileBasicInfoForm = ({
             disabled={disabled}
           />
         </div>
+        <div className="linkcard-section">
+                {formData.links.length > 0 && (
+                  <div className="linkcard-list">
+                    {formData.links.map((link, index) => (
+                      <LinkCard
+                        key={index}
+                        icon={link.icon}
+                        label={link.label}
+                        url={link.url}
+                        onRemove={() => handleRemoveLink(index)}
+                        disabled={disabled}
+                      />
+                    ))}
+                  </div>
+                )}
 
-        {formData.links.length > 0 && (
-          <div className="linkcard-list">
-            {formData.links.map((link, index) => (
-              <LinkCard
-                key={index}
-                icon={link.icon}
-                label={link.label}
-                url={link.url}
-                onRemove={() => handleRemoveLink(index)}
-                disabled={disabled}
-              />
-            ))}
-          </div>
-        )}
-
-        <div className="add-link-row">
-          <LinkInputSection
-            onAdd={handleAddLink}
-            disabled={disabled}
-          />
+                <div className="add-link-row">
+                  <LinkInputSection
+                    onAdd={handleAddLink}
+                    disabled={disabled}
+                  />
+                </div>
         </div>
       </div>
     </form>
+    </div>
   );
 };
 
