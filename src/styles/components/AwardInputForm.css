@@ -3,14 +3,24 @@
   border-radius: 2px;
   width: 990px;
   padding: 24px;
-  margin: 0 auto;
+  margin: 24px;
   display: flex;
   flex-direction: column;
   gap: 24px;
 }
+.awards-list-section{
+  display: flex;
+  width: 462px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
 
 .award-section-header {
-  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
 }
 .award-title {
   font-weight: 700;
@@ -19,28 +29,28 @@
   color: #000;
 }
 .award-desc {
-  font-size: 16px;
-  font-family: 'Pretendard Variable', sans-serif;
   color: #000;
-  margin-left: 19px;
+  font-family: "Pretendard Variable";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }
 
 .award-list {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 10px;
+  align-self: stretch;
 }
 
-.award-card {
+.award-item-card {
   display: flex;
-  flex-direction: row;
+  padding: 12px 24px;
   align-items: center;
   justify-content: space-between;
-  background: #E9E9E9;
-  border-radius: 2px;
-  padding: 12px 24px;
-  min-height: 41px;
-  gap: 14px;
+  align-self: stretch;
 }
 
 .award-card-info {
@@ -83,48 +93,39 @@
   align-items: center;
   justify-content: center;
 }
+.award-input-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  align-self: stretch;
+
+}
+
+
+/* --- ▼ 폼 스타일 수정 시작 --- */
 
 .award-input-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  width: 100%;
+  gap: var(--space-2-5, 10px); 
   background: none;
 }
 
-.award-form-row {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 10px;
-  width: 100%;
-  margin-bottom: 12px;
-}
-
-.award-label {
-  min-width: 60px;
-  font-family: 'Pretendard Variable';
-  font-size: 12px;
-  font-weight: 600;
-  color: #37352F;
-  margin-top: 7px;
-}
-
-.award-input {
-  flex-grow: 1;
-  padding: 8px 14px;
-  border: none;
-  border-bottom: 1px solid #A7A7A7;
-  font-size: 14px;
-  background: #fff;
-  font-family: 'Pretendard Variable';
-  color: #222;
-}
-
+/* (수정) 라디오 버튼 컨테이너 스타일 */
 .award-radio-options {
   display: flex;
   flex-direction: row;
+  align-items: center; /* (추가) 수직 중앙 정렬 */
   gap: 10px;
+  
+  /* (추가) TextInput의 .input 필드와 높이/패딩을 맞춤 */
+  min-height: calc(1rem * var(--line-height-loose, 2)); 
+  padding: 0 var(--space-3-5, 0.875rem);
 }
+
+/* (유지) 라디오 버튼 자체의 스타일 */
 .award-radio-btn {
   background: #FFF;
   border: 1px solid #959595;
@@ -137,6 +138,21 @@
   align-items: center;
   gap: 8px;
 }
+
+/* (추가) 날짜 선택기(select)들을 감싸는 컨테이너 */
+.award-date-selects {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  
+  /* (추가) TextInput의 .input 필드와 높이/패딩을 맞춤 */
+  min-height: calc(1rem * var(--line-height-loose, 2)); 
+  padding: 0 var(--space-3-5, 0.875rem);
+}
+
+
+/* (유지) 셀렉트 박스 자체의 스타일 */
 .award-select {
   background: #fff;
   border: 1px solid #959595;
@@ -169,5 +185,6 @@
 }
 @media (max-width:1100px) {
   .award-section { width: 98vw; min-width: 320px; }
-  .award-input-form, .award-card { flex-direction: column; gap: 12px; }
+  /* (수정) .award-input-form은 이미 column이므로 모바일 대응 불필요 */
+  .award-card { flex-direction: column; gap: 12px; }
 }

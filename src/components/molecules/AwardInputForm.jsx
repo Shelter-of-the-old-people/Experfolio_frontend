@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { TextInput } from '../atoms'; 
 import '../../styles/components/AwardInputForm.css';
 
 const prizeOptions = [
@@ -32,19 +33,21 @@ const AwardInputForm = ({ onAdd }) => {
 
   return (
     <div className="award-input-form">
-      <div className="award-form-row">
-        <label className="award-label">대회명 *</label>
-        <input
-          className="award-input"
-          value={form.title}
-          onChange={(e) => handleChange('title', e.target.value)}
-          required
-          placeholder="대회명(직무와 관련 있는 것만 적어주세요.)"
-        />
-      </div>
-      <div className="award-form-row">
-        <label className="award-label">결과</label>
-        <div className="award-radio-options">
+      
+      {/* 1. 대회명 (TextInput - 이미 수직 레이아웃) */}
+      <TextInput
+        label="대회명"
+        value={form.title}
+        onChange={(value) => handleChange('title', value)}
+        required
+        placeholder="대회명(직무와 관련 있는 것만 적어주세요.)"
+      />
+      
+      <div className="input-wrapper">
+        <div className="input-label-wrapper">
+          <label className="input-label">결과</label>
+        </div>
+        <div className="input-container award-radio-options">
           {prizeOptions.map((opt) => (
             <label className="award-radio-btn" key={opt.value}>
               <input
@@ -60,38 +63,46 @@ const AwardInputForm = ({ onAdd }) => {
           ))}
         </div>
       </div>
-      <div className="award-form-row">
-        <label className="award-label">설명</label>
-        <input
-          className="award-input"
-          value={form.description}
-          onChange={(e) => handleChange('description', e.target.value)}
-          placeholder="구체적인 내용을 적어주세요."
-        />
+      
+      {/* 3. 설명 (TextInput - 이미 수직 레이아웃) */}
+      <TextInput
+        label="설명"
+        value={form.description}
+        onChange={(value) => handleChange('description', value)}
+        placeholder="구체적인 내용을 적어주세요."
+      />
+
+      {/* --- ▼ 4. '날짜' 섹션 수정 --- */}
+      <div className="input-wrapper">
+        <div className="input-label-wrapper">
+          <label className="input-label">날짜</label>
+        </div>
+        {/* 날짜 선택기들을 감싸는 새 컨테이너 추가 */}
+        <div className="input-container award-date-selects">
+          <select
+            className="award-select"
+            value={form.year}
+            onChange={(e) => handleChange('year', e.target.value)}
+          >
+            <option value="">연도</option>
+            {years.map((y) => (
+              <option key={y} value={y}>{y}</option>
+            ))}
+          </select>
+          <select
+            className="award-select"
+            value={form.month}
+            onChange={(e) => handleChange('month', e.target.value)}
+          >
+            <option value="">월</option>
+            {months.map((m) => (
+              <option key={m} value={m}>{m}</option>
+            ))}
+          </select>
+        </div>
       </div>
-      <div className="award-form-row">
-        <label className="award-label">날짜</label>
-        <select
-          className="award-select"
-          value={form.year}
-          onChange={(e) => handleChange('year', e.target.value)}
-        >
-          <option value="">연도</option>
-          {years.map((y) => (
-            <option key={y} value={y}>{y}</option>
-          ))}
-        </select>
-        <select
-          className="award-select"
-          value={form.month}
-          onChange={(e) => handleChange('month', e.target.value)}
-        >
-          <option value="">월</option>
-          {months.map((m) => (
-            <option key={m} value={m}>{m}</option>
-          ))}
-        </select>
-      </div>
+      {/* --- ▲ 수정 끝 --- */}
+
       <button className="award-add-btn" type="button" onClick={handleAdd}>+ 추가하기</button>
     </div>
   );

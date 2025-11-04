@@ -58,6 +58,14 @@ const LinkInputSection = ({
         size="default"
         onClick={handleAdd}
         disabled={disabled || !linkUrl.trim()}
+        style={{
+          color: '#000',
+          fontFamily: '"Pretendard Variable"',
+          fontSize: '14px',
+          fontStyle: 'normal',
+          fontWeight: 700,
+          lineHeight: 'normal'
+        }}
       >
         + 추가하기
       </Button>
