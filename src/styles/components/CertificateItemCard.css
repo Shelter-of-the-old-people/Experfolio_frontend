@@ -1,0 +1,39 @@
+.item-card {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border-radius: 7px;
+  border: 1px solid #e5e5e5;
+  margin-bottom: 8px;
+  padding: 13px 18px;
+  position: relative;
+  transition: background 0.13s;
+}
+.item-title {
+  flex: 1 1 auto;
+  font-weight: bold;
+  font-size: 14px;
+}
+.item-actions {
+  flex: 0 0 90px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  justify-content: center;
+  transition: opacity .14s;
+}
+.item-date {
+  flex: 0 0 auto;
+  text-align: right;
+  color: #888;
+  margin-left: auto;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.item-card:hover {
+  background: #e5e5e5;
+}
+.item-card:hover .item-actions {
+  opacity: 1;
+}

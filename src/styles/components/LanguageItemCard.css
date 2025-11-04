@@ -1,0 +1,50 @@
+.item-card {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border-radius: 7px;
+  border: 1px solid #e5e5e5;
+  margin-bottom: 8px;
+  padding: 13px 18px;
+  position: relative;
+  transition: background 0.13s;
+}
+.item-card:hover {
+  background: #e5e5e5;
+}
+.item-title {
+  flex: 1 1 auto;
+  font-weight: bold;
+  font-size: 14px;
+}
+.item-score {
+  flex: 1 1 auto;
+  color: #3a3a3a;
+  margin-left: 10px;
+  font-size: 14px;
+
+  /* --- ▼ 1. '점수'에 이 줄을 추가하세요 --- */
+  white-space: nowrap;
+}
+.item-actions {
+  flex: 0 0 90px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  justify-content: center;
+  transition: opacity .14s;
+}
+.item-date {
+  flex: 1 0 80px;
+  text-align: right;
+  color: #888;
+  margin-left: 18px;
+  font-size: 14px;
+
+  /* --- ▼ 2. '날짜'에 이 줄을 추가하세요 --- */
+  white-space: nowrap;
+}
+.item-card:hover .item-actions {
+  opacity: 1;
+}

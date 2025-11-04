@@ -1,3 +1,6 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+
 import React from 'react'; // useState 제거
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 // 1. useAuth 훅의 import 경로를 수정합니다.
@@ -12,7 +15,7 @@ import StyleGuide from './pages/dev/StyleGuide';
 import { HomePage, NotFoundPage } from './pages/common';
 import { LoginPage, SignupPage } from './pages/auth';
 import { SearchPage } from './pages/company';
-import { PortfolioPage, PortfolioEditPage } from './pages/student';
+import { PortfolioPage, PortfolioEditPage, ProfileEditPage } from './pages/student';
 
 
 function AppRoutes() {
@@ -44,17 +47,17 @@ function AppRoutes() {
         </PublicLayout>
       } />
       
-      <Route path={routes.SIGNUP_COMPANY} element={
+      {/* <Route path={routes.SIGNUP_COMPANY} element={
         <PublicLayout>
-          <div>기업 회원가입 페이지 (구현 예정)</div>
+          <CompanySignupPage />
         </PublicLayout>
-      } />
+      } /> */}
       
-      <Route path={routes.SIGNUP_STUDENT} element={
+      {/* <Route path={routes.SIGNUP_STUDENT} element={
         <PublicLayout>
-          <div>학생 회원가입 페이지 (구현 예정)</div>
+          <StudentSignupPage />
         </PublicLayout>
-      } />
+      } /> */}
       
       {/* Company Routes
         (이제 currentUser는 AuthContext의 MOCK_STUDENT_USER입니다) 
@@ -67,6 +70,8 @@ function AppRoutes() {
         </ProtectedRoute>
       } />
       
+      {/* Student Routes */}
+      {/* <Route path={routes.PORTFOLIO} element={
       {/* Student Routes 
         (currentUser가 MOCK_STUDENT_USER이므로 이 라우트가 정상 동작합니다)
       */}
@@ -76,6 +81,12 @@ function AppRoutes() {
             <PortfolioPage />
           </AuthenticatedLayout>
         </ProtectedRoute>
+      } /> */}
+
+        <Route path={routes.PORTFOLIO} element={
+        <PublicLayout>
+          <PortfolioPage />
+        </PublicLayout>
       } />
       
       <Route path={routes.PORTFOLIO_EDIT} element={
@@ -85,6 +96,22 @@ function AppRoutes() {
           </AuthenticatedLayout>
         </ProtectedRoute>
       } />
+
+
+
+      <Route path={routes.PROFILE_EDIT} element={
+        <ProtectedRoute requiredRole="STUDENT" currentUser={currentUser}>
+          <AuthenticatedLayout userRole="STUDENT">
+            <ProfileEditPage />
+          </AuthenticatedLayout>
+        </ProtectedRoute>
+      } />
+
+      {/* <Route path={routes.PROFILE_EDIT} element={
+        <PublicLayout>
+          <ProfileEditPage />
+        </PublicLayout>
+      } /> */}
       
       {/* Common Profile Route */}
       <Route path={routes.PROFILE} element={

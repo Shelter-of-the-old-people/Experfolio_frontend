@@ -57,6 +57,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('userData', JSON.stringify(userData));
   };
 
+  // 4. isStudent가 "STUDENT"를 기준으로 판단
   const value = {
     user,
     loading,
