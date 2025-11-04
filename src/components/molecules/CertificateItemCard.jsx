@@ -17,7 +17,7 @@ const CertificateItemCard = ({ cert, onEdit, onDelete }) => (
     onClick={() => onDelete(cert.id)}
   />
     </span>
-    <span className="item-date">{cert.year}년 {cert.month}월</span>
+    <span className="item-date">{cert.year}년{cert.month ? ` ${cert.month}월` : ''}</span>
   </div>
 );
 

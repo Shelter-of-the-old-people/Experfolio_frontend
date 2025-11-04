@@ -18,7 +18,7 @@ const AwardItemCard = ({ award, onEdit, onDelete }) => (
     onClick={() => onDelete(award.id)}
   />
     </span>
-    <span className="card-date">{award.year}년 {award.month}월</span>
+    <span className="card-date">{award.year}년{award.month ? ` ${award.month}월` : ''}</span>
   </div>
 );
 export default AwardItemCard;

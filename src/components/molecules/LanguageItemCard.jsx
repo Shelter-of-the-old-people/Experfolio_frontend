@@ -18,7 +18,7 @@ const LanguageItemCard = ({ lang, onEdit, onDelete }) => (
     onClick={() => onDelete(lang.id)}
   />
     </span>
-    <span className="item-date">{lang.year}년 {lang.month}월</span>
+    <span className="item-date">{lang.year}년{lang.month ? ` ${lang.month}월` : ''}</span>
   </div>
 );
 
