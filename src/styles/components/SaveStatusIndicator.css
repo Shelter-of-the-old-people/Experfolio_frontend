@@ -3,7 +3,6 @@
   align-items: center;
   gap: var(--space-2);
   padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-md);
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   transition: all 0.3s ease;
@@ -15,13 +14,10 @@
 }
 
 .save-status-indicator.saved {
-  color: #059669;
-  background-color: #ecfdf5;
 }
 
 .save-status-indicator.error {
   color: var(--color-error);
-  background-color: #fef2f2;
 }
 
 .save-status-icon {

@@ -1,3 +1,5 @@
+// shelter-of-the-old-people/experfolio_frontend/Experfolio_frontend--/src/hooks/useApi.js
+
 import { useState, useEffect, useCallback } from 'react'; // 1. useCallback 임포트
 
 export const useApi = (apiFunc, dependencies = []) => {
@@ -14,18 +16,21 @@ export const useApi = (apiFunc, dependencies = []) => {
       setData(result);
       return result;
     } catch (err) {
+      // 3. (수정) 에러 메시지를 상태에 저장
       setError(err.message || '오류가 발생했습니다.');
-      throw err;
+      
+      // 4. (제거) Uncaught (in promise) 오류를 유발하는 throw 제거
+      // throw err;
+
     } finally {
       setLoading(false);
     }
   }, [apiFunc]); // apiFunc가 바뀔 때만 execute 함수 재생성
 
   useEffect(() => {
-    // 3. [수정됨] 잘못된 if (dependencies.length > 0) 조건문 제거
-    //    이제 dependencies가 비어있으면(기본값) 마운트 시 1회 실행됩니다.
+    // 5. (수정됨) dependencies가 비어있으면(기본값) 마운트 시 1회 실행
     execute();
-  }, [execute, ...dependencies]); // 4. dependencies 배열에 execute 포함 (useCallback으로 안정화됨)
+  }, [execute, ...dependencies]); // 6. dependencies 배열에 execute 포함
 
   return { data, loading, error, execute };
 };
@@ -44,6 +49,7 @@ export const useLazyApi = (apiFunc) => {
       setData(result);
       return result;
     } catch (err) {
+      // (useLazyApi는 수동 호출이므로 throw err를 유지합니다)
       setError(err.message || '오류가 발생했습니다.');
       throw err;
     } finally {

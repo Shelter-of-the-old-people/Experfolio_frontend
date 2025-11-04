@@ -1,8 +1,8 @@
-// shelter-of-the-old-people/experfolio_frontend/Experfolio_frontend-kmh/src/pages/student/ProfileEditPage.jsx
+// shelter-of-the-old-people/experfolio_frontend/Experfolio_frontend--/src/pages/student/ProfileEditPage.jsx
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. useNavigate 임포트
-import { routes } from '../../routes'; // 2. routes 임포트
+import React, { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { routes } from '../../routes';
 import { 
   ProfileBasicInfoForm, 
   AwardListSection, 
@@ -10,7 +10,8 @@ import {
   LanguageListSection 
 } from '../../components/organisms';
 import { Button } from '../../components/atoms';
-import { useLazyApi } from '../../hooks/useApi'; 
+import { useApi, useLazyApi } from '../../hooks/useApi';
+import { useAuth } from '../../hooks/useAuth';
 import api from '../../services/api';
 
 // --- (데이터 매핑 헬퍼 함수들은 변경 없습니다) ---
@@ -25,51 +26,52 @@ const getIconByTypeOrUrl = (type, url) => {
 };
 const mapApiToBasicInfoState = (apiBasicInfo) => {
   return {
-    profileImage: null, // (API에 프로필 이미지 없으므로 null)
+    profileImage: null,
     name: apiBasicInfo.name || '',
     schoolName: apiBasicInfo.schoolName || '',
     major: apiBasicInfo.major || '',
-    gpa: apiBasicInfo.gpa ? String(apiBasicInfo.gpa) : '', // 숫자를 문자열로 변환
-    desiredJob: apiBasicInfo.desiredPosition || '', // (키 이름 매핑: desiredPosition -> desiredJob)
+    gpa: apiBasicInfo.gpa ? String(apiBasicInfo.gpa) : '',
+    desiredJob: apiBasicInfo.desiredPosition || '',
     links: (apiBasicInfo.referenceUrl || []).map(url => ({
       url,
-      label: new URL(url).hostname, // 간단히 도메인을 라벨로
+      label: new URL(url).hostname,
       icon: getIconByTypeOrUrl(null, url)
     }))
   };
 };
 const mapApiToAwardsState = (apiAwards) => {
   return (apiAwards || []).map((award, index) => ({
-    id: `award-${index}`, // (임시 ID)
-    title: award.awardName,       // (키 매핑: awardName -> title)
-    prize: award.achievement,     // (키 매핑: achievement -> prize)
-    year: award.awardY || award.issueY, // (키 매핑: awardY/issueY -> year)
-    month: '', // (API에 month가 없으므로 빈 값)
-    description: '', // (API에 description이 없으므로 빈 값)
+    id: `award-${index}`,
+    title: award.awardName,
+    prize: award.achievement,
+    year: award.awardY || award.issueY,
+    month: '',
+    description: '',
   }));
 };
 const mapApiToCertsState = (apiCerts) => {
   return (apiCerts || []).map((cert, index) => ({
-    id: `cert-${index}`, // (임시 ID)
-    name: cert.certificationName, // (키 매핑: certificationName -> name)
+    id: `cert-${index}`,
+    name: cert.certificationName,
     year: cert.issueY,
-    month: '', // (API에 month가 없으므로 빈 값)
+    month: '',
   }));
 };
 const mapApiToLangsState = (apiLangs) => {
   return (apiLangs || []).map((lang, index) => ({
-    id: `lang-${index}`, // (임시 ID)
+    id: `lang-${index}`,
     testName: lang.testName,
     score: lang.score,
     year: lang.issueY,
-    month: '', // (API에 month가 없으므로 빈 값)
+    month: '',
   }));
 };
 // --- (변환 함수 끝) ---
 
 
 const ProfileEditPage = () => {
-  const navigate = useNavigate(); // 3. navigate 함수 생성
+  const navigate = useNavigate();
+  const { user } = useAuth(); 
 
   // --- (useState 훅들은 변경 없습니다) ---
   const [basicInfo, setBasicInfo] = useState({
@@ -84,49 +86,95 @@ const ProfileEditPage = () => {
     setBasicInfo(prev => ({ ...prev, [field]: value }));
   };
 
-  // --- (API 호출 로직(useLazyApi)은 변경 없습니다) ---
+  // --- (저장 API(useLazyApi)는 변경 없습니다) ---
   const { 
     execute: executeSave, 
     loading: saveLoading, 
     error: saveError      
   } = useLazyApi(
     (profileData) => 
-        //api.post('/portfolios', profileData) 
     api.put('/portfolios/basic-info', profileData)
   );
+
+  // --- (useApi 훅은 변경 없습니다) ---
+  const fetchApi = useCallback(() => api.get('/portfolios/me'), []);
   const { 
-    execute: fetchPortfolio, 
-    loading: fetchLoading 
-  } = useLazyApi(() => api.get('/portfolios/me'));
+    data: portfolioData, 
+    loading: fetchLoading, 
+    error: fetchError 
+  } = useApi(fetchApi, []); 
   
-  // --- (useEffect 데이터 로딩 훅은 변경 없습니다) ---
+  // --- (createInitialPortfolio 함수는 변경 없습니다) ---
+  const createInitialPortfolio = async () => {
+    try {
+      const initialBasicInfo = {
+        name: user?.name || "사용자", 
+        schoolName: "", 
+        major: "", 
+        gpa: 0.0,
+        desiredPosition: "", 
+        referenceUrl: [], 
+        awards: [], 
+        certifications: [], 
+        languages: []
+      };
+      
+      const response = await api.post('/portfolios', initialBasicInfo); 
+      
+      if (response && response.data && response.data.basicInfo) {
+        console.log('ProfileEditPage: 초기 프로필 생성 성공', response.data.basicInfo);
+        const { basicInfo: apiBasicInfo } = response.data;
+        setBasicInfo(mapApiToBasicInfoState(apiBasicInfo));
+        setAwards(mapApiToAwardsState(apiBasicInfo.awards));
+        setCerts(mapApiToCertsState(apiBasicInfo.certifications));
+        setLangs(mapApiToLangsState(apiBasicInfo.languages));
+      }
+    } catch (createError) {
+      console.error("ProfileEditPage: 초기 포트폴리오 생성 실패:", createError);
+      alert("초기 프로필 생성에 실패했습니다. 페이지를 새로고침해주세요.");
+    }
+  };
+  
+  // 7. [수정] useEffect 데이터 로딩 훅
   useEffect(() => {
-    fetchPortfolio()
-      .then(response => {
-        if (response && response.data && typeof response.data === 'object') {
-          const { basicInfo: apiBasicInfo } = response.data;
-          if (apiBasicInfo) {
-            console.log('ProfileEditPage: 데이터 로드 성공', apiBasicInfo);
-            setBasicInfo(mapApiToBasicInfoState(apiBasicInfo));
-            setAwards(mapApiToAwardsState(apiBasicInfo.awards));
-            setCerts(mapApiToCertsState(apiBasicInfo.certifications));
-            setLangs(mapApiToLangsState(apiBasicInfo.languages));
-          } else {
-            console.warn('ProfileEditPage: API는 성공했으나 basicInfo가 없습니다.');
-          }
-        } else if (response && response.data) {
-           console.warn('ProfileEditPage: ngrok 경고 페이지가 수신되었습니다.', response.data);
+    if (portfolioData) {
+      // (기존 성공 로직)
+      if (portfolioData.data && typeof portfolioData.data === 'object') {
+        const { basicInfo: apiBasicInfo } = portfolioData.data;
+        if (apiBasicInfo) {
+          console.log('ProfileEditPage: 데이터 로드 성공', apiBasicInfo);
+          setBasicInfo(mapApiToBasicInfoState(apiBasicInfo));
+          setAwards(mapApiToAwardsState(apiBasicInfo.awards));
+          setCerts(mapApiToCertsState(apiBasicInfo.certifications));
+          setLangs(mapApiToLangsState(apiBasicInfo.languages));
+        } else {
+          console.warn('ProfileEditPage: API는 성공했으나 basicInfo가 없습니다.');
         }
-      })
-      .catch(err => {
-        console.error('ProfileEditPage: 데이터 로드 실패!', err);
-      });
-  }, []); 
+      } else if (portfolioData.data) {
+         console.warn('ProfileEditPage: ngrok 경고 페이지가 수신되었습니다.', portfolioData.data);
+      }
+    } else if (fetchError) {
+      // --- (핵심 수정 지점) ---
+      // 'fetchError'는 'useApi' 훅에서 문자열로 설정됩니다.
+      // '.message' 속성을 읽지 않고 'fetchError' 문자열 자체를 검사합니다.
+      const errorMsg = fetchError || ''; 
+      
+      // 백엔드가 500 오류에도 "포트폴리오를 찾을 수 없습니다" 메시지를 보내는
+      // 현재 상황(Constraint)에 맞춘 유일한 분기 처리입니다.
+      if (errorMsg.includes('포트폴리오를 찾을 수 없습니다')) {
+        console.log('ProfileEditPage: 404/500(Not Found) 감지. 초기 프로필 생성을 시도합니다.');
+        createInitialPortfolio();
+      } else {
+        // "포트폴리오를 찾을 수 없습니다"가 아닌 다른 모든 오류 (e.g., "서버 오류가 발생했습니다.")
+        console.error('ProfileEditPage: 데이터 로드 실패!', fetchError);
+      }
+    }
+  }, [portfolioData, fetchError, user]); 
   
-  // 9. (수정) 저장 핸들러
+  
+  // --- (handleSaveAll 핸들러는 변경 없습니다) ---
   const handleSaveAll = async () => {
     
-    // --- (requestBody 생성 로직은 변경 없습니다) ---
     const requestBody = {
       name: basicInfo.name,
       schoolName: basicInfo.schoolName,
@@ -157,9 +205,7 @@ const ProfileEditPage = () => {
       console.log('저장 성공:', result);
       alert('프로필이 성공적으로 저장되었습니다.');
       
-      // --- ▼ 4. (핵심) 저장 성공 후 포트폴리오 페이지로 이동 ---
       navigate(routes.PORTFOLIO); 
-      // --- ▲ 수정 완료 ▲ ---
 
     } catch (err) {
       console.error('저장 실패:', err);
@@ -167,9 +213,16 @@ const ProfileEditPage = () => {
     }
   };
   
-  // --- (로딩 스피너 및 return 문은 변경 없습니다) ---
-  if (fetchLoading) {
+  // --- (로딩 스피너는 변경 없습니다) ---
+  if (fetchLoading && !portfolioData && !fetchError) {
     return <div className="portfolio-page"><p>프로필 정보를 불러오는 중입니다...</p></div>;
+  }
+  
+  // [수정] 404(포트폴리오 없음) 메시지를 제외한 실제 오류만 화면에 표시
+  if (fetchError && !(fetchError || '').includes('포트폴리오를 찾을 수 없습니다')) {
+     return <div className="portfolio-page" style={{ color: 'red' }}>
+       <p>데이터 로드 중 오류가 발생했습니다: {fetchError}</p>
+     </div>;
   }
 
   return (

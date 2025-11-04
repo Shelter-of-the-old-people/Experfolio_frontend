@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await api.post('/v1/auth/login', credentials);
       
-      const loginData = response.data.data; 
+      const loginData = response.data; 
 
       if (!loginData || !loginData.accessToken || !loginData.userInfo) {
         throw new Error('로그인 응답 형식이 올바르지 않습니다.');

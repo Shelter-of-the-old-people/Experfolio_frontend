@@ -1,8 +1,19 @@
+// shelter-of-the-old-people/experfolio_frontend/Experfolio_frontend--/src/components/organisms/PortfolioEditor.jsx
+
 import React from 'react';
 import { Button } from '../atoms';
 import { PortfolioSection } from '../molecules'; 
 
-const PortfolioEditor = ({ sections, onUpdateSection, onDeleteSection, onAddSection }) => {
+// 1. props 목록에 onSectionFocusGained, onSectionFocusLost, disabled를 추가합니다.
+const PortfolioEditor = ({ 
+  sections, 
+  onUpdateSection, 
+  onDeleteSection, 
+  onAddSection,
+  onSectionFocusGained,
+  onSectionFocusLost,
+  disabled = false 
+}) => {
   return (
     <div className="portfolio-editor">
       
@@ -13,6 +24,9 @@ const PortfolioEditor = ({ sections, onUpdateSection, onDeleteSection, onAddSect
             section={section}
             onUpdate={onUpdateSection}
             onDelete={onDeleteSection}
+            // 2. 전달받은 props를 PortfolioSection에 그대로 넘겨줍니다.
+            onSectionFocusGained={onSectionFocusGained}
+            onSectionFocusLost={onSectionFocusLost} 
           />
         ))}
       </div>
@@ -23,6 +37,7 @@ const PortfolioEditor = ({ sections, onUpdateSection, onDeleteSection, onAddSect
           size="full"
           onClick={onAddSection}
           icon="+"
+          disabled={disabled} // 3. disabled prop도 버튼에 연결합니다.
         >
           섹션 추가
         </Button>

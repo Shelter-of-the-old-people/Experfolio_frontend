@@ -27,7 +27,7 @@ const LoginPage = () => {
 
       // 역할에 따라 적절한 페이지로 리디렉션
       if (userRole === 'JOB_SEEKER') {
-        navigate(routes.PORTFOLIO_EDIT); // 학생은 포트폴리오 수정 페이지로
+        navigate(routes.PORTFOLIO); // 학생은 포트폴리오 수정 페이지로
       } else if (userRole === 'RECRUITER') {
         navigate(routes.SEARCH); // 기업은 인재 검색 페이지로
       } else {

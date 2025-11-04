@@ -10,8 +10,8 @@ const ProtectedRoute = ({ children, requiredRole, currentUser }) => {
   // 역할 기반 접근 제어
   if (requiredRole && currentUser.role !== requiredRole) {
     const defaultPages = {
-      'COMPANY': '/search',
-      'STUDENT': '/portfolio'
+      'RECRUITER': '/search',
+      'JOB_SEEKER': '/portfolio'
     };
     return <Navigate to={defaultPages[currentUser.role] || '/'} replace />;
   }
