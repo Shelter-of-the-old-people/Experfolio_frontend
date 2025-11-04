@@ -1,49 +1,80 @@
-import React from 'react';
+import React, { useState } from 'react';
 
-// 레이아웃 유형 정의 (요구사항 기반)
-const LAYOUT_TYPES = [
-  { id: 'text-only', label: '텍스트만', icon: '/default/layout-text-only.svg' },
-  { id: 'file-top', label: '파일 상단', icon: '/default/layout-file-top.svg' },
-  { id: 'file-bottom', label: '파일 하단', icon: '/default/layout-file-bottom.svg' },
-  { id: 'file-left', label: '파일 좌측', icon: '/default/layout-file-left.svg' },
-  { id: 'file-right', label: '파일 우측', icon: '/default/layout-file-right.svg' },
-];
+const LAYOUT_TYPES = {
+  'text-only': { 
+    id: 'text-only', 
+    label: '텍스트만 있는 레이아웃', 
+    defaultIcon: '/default/layout-text-only.svg',
+    hoverIcon: '/hover/layout-text-only.svg',
+    gridArea: 'center'
+  },
+  'file-top': { 
+    id: 'file-top', 
+    label: '파일 상단 레이아웃', 
+    defaultIcon: '/default/layout-file-top.svg',
+    hoverIcon: '/hover/layout-file-top.svg',
+    gridArea: 'top'
+  },
+  'file-bottom': { 
+    id: 'file-bottom', 
+    label: '파일 하단 레이아웃', 
+    defaultIcon: '/default/layout-file-bottom.svg',
+    hoverIcon: '/hover/layout-file-bottom.svg',
+    gridArea: 'bottom'
+  },
+  'file-left': { 
+    id: 'file-left', 
+    label: '파일 좌측 레이아웃', 
+    defaultIcon: '/default/layout-file-left.svg',
+    hoverIcon: '/hover/layout-file-left.svg',
+    gridArea: 'left'
+  },
+  'file-right': { 
+    id: 'file-right', 
+    label: '파일 우측 레이아웃', 
+    defaultIcon: '/default/layout-file-right.svg',
+    hoverIcon: '/hover/layout-file-right.svg',
+    gridArea: 'right'
+  },
+};
+// 렌더링 순서 정의 (Grid 배치 순서)
+const LAYOUT_ORDER = ['file-top', 'file-left', 'text-only', 'file-right', 'file-bottom'];
 
-const LayoutSelector = ({ activeLayout, onSelect }) => {
+const LayoutSelector = ({ onSelect }) => {
+  const [hoveredId, setHoveredId] = useState(null);
+  const defaultText = "레이아웃을 선택해주세요";
+  const currentLabel = hoveredId ? LAYOUT_TYPES[hoveredId].label : defaultText;
+
   return (
-    <div className="layout-selector-wrapper" style={{ marginBottom: '20px' }}>
-      <label className="input-label" style={{ marginBottom: '10px' }}>
-        레이아웃 선택
-      </label>
-      <div 
-        className="layout-buttons" 
-        style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}
-      >
-        {LAYOUT_TYPES.map((layout) => (
-          <button
-            key={layout.id}
-            type="button"
-            className={`layout-button ${activeLayout === layout.id ? 'active' : ''}`}
-            onClick={() => onSelect(layout.id)}
-            style={{
-              padding: '10px',
-              border: `2px solid ${activeLayout === layout.id ? '#1E1E1E' : '#e5e5e5'}`,
-              borderRadius: '8px',
-              background: activeLayout === layout.id ? '#f5f5f5' : '#fff',
-              cursor: 'pointer'
-            }}
-          >
-            <img 
-              src={layout.icon} 
-              alt={layout.label} 
-              style={{ width: '50px', height: '50px', display: 'block', margin: '0 auto' }} 
-            />
-            <span style={{ fontSize: '12px', marginTop: '5px', color: '#525252' }}>
-              {layout.label}
-            </span>
-          </button>
-        ))}
+    <div className="layout-selector-container">
+      <div className="layout-grid">
+        {LAYOUT_ORDER.map((id) => {
+          const layout = LAYOUT_TYPES[id];
+          const isHovered = hoveredId === layout.id;
+          
+          return (
+            <button
+              key={layout.id}
+              type="button"
+              className="layout-grid-button"
+              style={{ gridArea: layout.gridArea }}
+              onClick={() => onSelect(layout.id)}
+              onMouseEnter={() => setHoveredId(layout.id)}
+              onMouseLeave={() => setHoveredId(null)}
+            >
+              <img 
+                src={isHovered ? layout.hoverIcon : layout.defaultIcon} 
+                alt={layout.label}
+              />
+            </button>
+          );
+        })}
       </div>
+      
+      {/* 3. 호버 시 변경되는 중앙 텍스트 */}
+      <p className="layout-selector-text">
+        {currentLabel}
+      </p>
     </div>
   );
 };

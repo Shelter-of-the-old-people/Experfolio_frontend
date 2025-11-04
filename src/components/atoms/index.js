@@ -6,3 +6,6 @@ export { default as BusinessNumberInput } from './BusinessNumberInput';
 export { default as TextEditor } from './TextEditor';
 export { default as ProfileImageUpload } from './ProfileImageUpload';
 export { default as LinkCard } from './LinkCard';
+
+export { default as DebouncedTextInput } from './DebouncedTextInput';
+export { default as DebouncedTextEditor } from './DebouncedTextEditor';

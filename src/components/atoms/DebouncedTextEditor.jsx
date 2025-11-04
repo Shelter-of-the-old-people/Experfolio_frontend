@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-const TextEditor = ({
+// 원본 TextEditor의 로직을 복제하여 Debounced 버전을 만듭니다.
+const DebouncedTextEditor = ({
   value = '',
-  onChange,
+  onChange, // 이 onChange는 onBlur 시점에 호출됩니다.
   placeholder,
   disabled = false,
   error = false,
@@ -11,6 +12,15 @@ const TextEditor = ({
   required = false,
   ...props
 }) => {
+  const [internalValue, setInternalValue] = useState(value);
+
+  useEffect(() => {
+    if (value !== internalValue) {
+      setInternalValue(value);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [value]);
+
   const getLabelClassName = () => {
     let classes = ['input-label'];
     if (error) classes.push('input-label-error');
@@ -22,6 +32,16 @@ const TextEditor = ({
     if (error) classes.push('input-error');
     if (disabled) classes.push('input-disabled');
     return classes.join(' ');
+  };
+
+  const handleChange = (e) => {
+    setInternalValue(e.target.value);
+  };
+
+  const handleBlur = () => {
+    if (onChange && internalValue !== value) {
+      onChange(internalValue); // 포커스가 떠날 때만 부모에게 알림
+    }
   };
 
   return (
@@ -40,8 +60,9 @@ const TextEditor = ({
       
       <div className="input-container">
         <textarea
-          value={value} // [복구됨] internalValue -> value
-          onChange={(e) => onChange?.(e.target.value)} // [복구됨] onBlur 제거, onChange 즉시 호출
+          value={internalValue}
+          onChange={handleChange}
+          onBlur={handleBlur} // onBlur 저장 로직
           placeholder={placeholder}
           disabled={disabled}
           className={getEditorClassName()}
@@ -53,4 +74,4 @@ const TextEditor = ({
   );
 };
 
-export default TextEditor;
+export default DebouncedTextEditor;

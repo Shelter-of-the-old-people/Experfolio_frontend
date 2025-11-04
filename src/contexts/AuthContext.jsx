@@ -1,64 +1,55 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useState, useEffect } from 'react';
+import api from '../services/api'; 
 
-const AuthContext = createContext();
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
-
-// --- ▼ 1. Postman에서 받은 실제 데이터로 이 부분을 교체합니다. ▼ ---
-const REAL_USER_INFO = {
-    "userId": "7464f463-f105-41bf-b589-f5a7a6620897",
-    "email": "user2@example.com",
-    "name": "김민호",
-    "phoneNumber": "010-1010-1010",
-    // (중요) 백엔드(JOB_SEEKER)와 프론트(STUDENT) 역할 이름이 달라 강제 수정
-    "role": "STUDENT", 
-    "createdAt": "2025-11-04T16:08:33.940217"
-};
-const REAL_ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsInJvbGUiOiJKT0JfU0VFS0VSIiwidXNlcklkIjoiNzQ2NGY0NjMtZjEwNS00MWJmLWI1ODktZjVhN2E2NjIwODk3IiwidG9rZW5UeXBlIjoiQUNDRVNTIiwiaWF0IjoxNzYyMjY3MTYwLCJleHAiOjE3NjIyNjg5NjB9.deROIq3s7fpmlYiSfSBOc0KhYDKMgCMFoCxhSBL8x_Q";
-// --- ▲ 교체 완료 ▲ ---
-
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  // 2. 초기 상태를 'null'이나 'MOCK'이 아닌 실제 유저 정보로 설정
-  const [user, setUser] = useState(REAL_USER_INFO); 
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null); 
+  const [loading, setLoading] = useState(true); 
 
-  // 3. (핵심) 앱 로드 시 localStorage에 실제 토큰과 유저 정보를 저장
-  //    api.js가 이 'token'을 읽어 헤더에 사용합니다.
   useEffect(() => {
-    localStorage.setItem('token', REAL_ACCESS_TOKEN);
-    localStorage.setItem('userData', JSON.stringify(REAL_USER_INFO));
-    setUser(REAL_USER_INFO); // 상태도 다시 한번 확인
-  }, []); // 앱 실행 시 1회만
+    const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('userData');
+    
+    if (token && userData) {
+      setUser(JSON.parse(userData));
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+    }
+    setLoading(false);
+  }, []);
 
   const login = async (credentials) => {
-    // (실제 로그인 기능 구현 시, 이 부분을 API 호출로 변경)
     try {
-      const mockResponse = {
-        user: REAL_USER_INFO,
-        token: REAL_ACCESS_TOKEN
-      };
-
-      setUser(mockResponse.user);
-      localStorage.setItem('token', mockResponse.token);
-      localStorage.setItem('userData', JSON.stringify(mockResponse.user));
+      const response = await api.post('/v1/auth/login', credentials);
       
-      return mockResponse;
+      const loginData = response.data.data; 
+
+      if (!loginData || !loginData.accessToken || !loginData.userInfo) {
+        throw new Error('로그인 응답 형식이 올바르지 않습니다.');
+      }
+
+      const { accessToken, refreshToken, userInfo } = loginData;
+
+      setUser(userInfo);
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('userData', JSON.stringify(userInfo));
+
+      api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+      
+      return response.data; 
+
     } catch (error) {
-      throw new Error('로그인에 실패했습니다.');
+      throw new Error(error.message || '로그인에 실패했습니다.');
     }
   };
 
   const logout = () => {
     setUser(null); 
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken'); 
     localStorage.removeItem('userData');
+    delete api.defaults.headers.common['Authorization'];
   };
 
   const updateUser = (userData) => {
@@ -74,13 +65,13 @@ export const AuthProvider = ({ children }) => {
     logout,
     updateUser,
     isAuthenticated: !!user,
-    isCompany: user?.role === 'COMPANY',
-    isStudent: user?.role === 'STUDENT'
+    isCompany: user?.role === 'RECRUITER', 
+    isStudent: user?.role === 'JOB_SEEKER'
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {children}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

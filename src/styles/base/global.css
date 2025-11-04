@@ -1,5 +1,9 @@
 /* 전역 기본 스타일 및 폰트 설정 */
 
+html, body, #root {
+  height: 100%;
+}
+
 body {
   font-family: var(--font-family-base);
   font-size: var(--font-size-base);
@@ -7,6 +11,7 @@ body {
   line-height: var(--line-height-normal);
   color: var(--text-primary, #1a1a1a);
   background-color: var(--bg-page, #ffffff);
+  margin: 0;
 }
 
 /* 모든 요소가 부모 폰트 속성을 상속 */

@@ -8,3 +8,4 @@ export { default as CertificateItemCard } from './CertificateItemCard';
 export { default as CertificateInputForm } from './CertificateInputForm';
 export {default as LanguageItemCard} from './LanguageItemCard';
 export {default as LanguageInputForm} from './LanguageInputForm';
+export { default as SaveStatusIndicator } from './SaveStatusIndicator';

@@ -52,3 +52,11 @@
   height: 100%;
   display: flex;
 }
+
+.btn-section-delete{
+  position: absolute;
+  margin:var(--space-2);
+  flex-shrink: 0;
+  top:0;
+  right:0;
+}

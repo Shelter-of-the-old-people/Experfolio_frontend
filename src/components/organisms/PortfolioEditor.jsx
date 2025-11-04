@@ -1,24 +1,23 @@
 import React from 'react';
 import { Button } from '../atoms';
-import { PortfolioSection } from '../molecules'; // index.js를 통해 임포트
+import { PortfolioSection } from '../molecules'; 
 
-const PortfolioEditor = ({ sections, onUpdateSection, onAddSection }) => {
+const PortfolioEditor = ({ sections, onUpdateSection, onDeleteSection, onAddSection }) => {
   return (
     <div className="portfolio-editor">
       
-      {/* 1. 섹션 목록 렌더링 */}
       <div className="sections-list">
         {sections.map((section) => (
           <PortfolioSection
             key={section.id}
             section={section}
-            onUpdate={onUpdateSection} 
+            onUpdate={onUpdateSection}
+            onDelete={onDeleteSection}
           />
         ))}
       </div>
 
-      {/* 2. 섹션 추가 버튼 (항상 최하단) */}
-      <div className="add-section-container" style={{ marginTop: '30px' }}>
+      <div className="add-section-container">
         <Button
           variant="black"
           size="full"

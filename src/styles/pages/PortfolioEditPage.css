@@ -1,0 +1,43 @@
+.portfolio-edit-page {
+  display: flex;
+  height: 100%;
+}
+
+.portfolio-main-editor {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.portfolio-main-editor header {
+  margin-bottom: 30px;
+}
+
+.temp-sidenav {
+  border-right: 1px solid #eee;
+  padding: 20px;
+  min-width: 200px;
+}
+
+.temp-sidenav-header {
+  margin-bottom: 20px;
+}
+
+.temp-sidenav-list {
+}
+
+.temp-sidenav-item {
+  margin-bottom: 10px;
+}
+
+.temp-sidenav-item a {
+  text-decoration: none;
+  color: var(--color-gray-700);
+}
+
+.temp-sidenav-item a:hover {
+  color: var(--color-black);
+  font-weight: var(--font-weight-medium);
+}
