@@ -10,7 +10,7 @@ import StyleGuide from './pages/dev/StyleGuide';
 
 // 페이지 컴포넌트 임포트
 import { HomePage, NotFoundPage } from './pages/common';
-import { LoginPage, SignupPage } from './pages/auth';
+import { LoginPage, SignupPage, CompanySignupPage, StudentSignupPage } from './pages/auth';
 import { SearchPage, SearchResultsPage, SearchProfilePage } from './pages/company';
 import { PortfolioPage, PortfolioEditPage, ProfileEditPage } from './pages/student';
 
@@ -37,6 +37,18 @@ function AppRoutes() {
       <Route path={routes.SIGNUP} element={
         <PublicLayout>
           <SignupPage />
+        </PublicLayout>
+      } />
+
+        <Route path={routes.SIGNUP_STUDENT} element={
+        <PublicLayout>
+          <StudentSignupPage />
+        </PublicLayout>
+      } />
+
+        <Route path={routes.SIGNUP_COMPANY} element={
+        <PublicLayout>
+          <CompanySignupPage />
         </PublicLayout>
       } />
 

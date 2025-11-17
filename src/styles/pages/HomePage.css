@@ -1,0 +1,289 @@
+.home-wrap {
+display: flex;
+padding: 40px 20px 70px 20px;
+flex-direction: column;
+align-items: center;
+gap: 68px;
+}
+.home-container {
+display: flex;
+align-items: flex-start;
+gap: 44px;
+flex: 1 0 0;
+align-self: stretch;
+}
+
+/* === 좌측 메인 콘텐츠 (Frame 112) === */
+.main-section {
+display: flex;
+padding: 72px;
+flex-direction: column;
+align-items: flex-start;
+gap: 48px;
+flex: 1 0 0;
+align-self: stretch;
+}
+
+.main-title {
+color: #000;
+font-family: "Pretendard Variable";
+font-size: 48px;
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+}
+
+.divider {
+height: 1px;
+align-self: stretch;
+background-color: #000000;
+}
+
+/* 서비스 소개 영역 */
+.service-intro-area {
+display: flex;
+padding: 24px;
+align-items: flex-start;
+gap: 10px;
+align-self: stretch;
+}
+
+.service-area {
+display: flex;
+align-items: flex-start;
+gap: 10px;
+flex: 1 0 0;
+}
+
+.service-title-area {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+gap: 10px;
+flex: 1 0 0;
+}
+
+.service-title {
+color: #000;
+font-family: "Pretendard Variable";
+font-size: 28px;
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+}
+
+.intro-text-area {
+display: flex;
+height: 124px;
+justify-content: center;
+align-items: center;
+gap: 24px;
+align-self: stretch;
+}
+
+.intro-text-box {
+display: flex;
+justify-content: center;
+align-items: center;
+gap: 10px;
+flex: 1 0 0;
+align-self: stretch;
+}
+.intro-text {
+color: #000;
+font-family: "Pretendard Variable";
+font-size: 24px;
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+}
+
+
+
+/* 이용 가이드 영역 (기업/학생) */
+.guide-area {
+display: flex;
+width: 1376px;
+padding: 24px;
+align-items: flex-start;
+gap: 10px;
+flex: 1 0 0;
+}
+
+.guide-column {
+display: flex;
+align-items: flex-start;
+gap: 10px;
+flex: 1 0 0;
+align-self: stretch;
+}
+.guide-content-box {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+gap: 10px;
+flex: 1 0 0;
+align-self: stretch;
+}
+
+.guide-label {
+color: #000;
+font-family: "Pretendard Variable";
+font-size: 24px;
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+}
+
+.guide-box {
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+gap: 24px;
+flex: 1 0 0;
+align-self: stretch;
+}
+.guide-text {
+color: #000;
+font-family: "Pretendard Variable";
+font-size: 24px;
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+}
+
+
+/* === 우측 로그인 사이드바 (로그인 섹션) === */
+.login-sidebar {
+display: flex;
+width: 316px;
+height: 890px;
+padding: 210px 0;
+flex-direction: column;
+align-items: center;
+gap: 24px;
+}
+.sidebar-title-area {
+display: flex;
+padding: 10px 20px;
+justify-content: center;
+align-items: center;
+gap: 10px;
+}
+
+.sidebar-title {
+color: #000;
+font-family: "Pretendard Variable";
+font-size: 32px;
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+}
+
+.login-form-container {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+gap: 12px;
+align-self: stretch;
+}
+
+.login-label {
+color: #000;
+font-family: "Pretendard Variable";
+font-size: 20px;
+font-style: normal;
+font-weight: 600;
+line-height: normal;
+}
+
+/* 아이디/비번 + 로그인 버튼을 감싸는 행 */
+.login-input-row {
+display: flex;
+align-items: center;
+gap: 10px;
+align-self: stretch;
+}
+
+.login-inputs {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+gap: 6px;
+flex: 1 0 0;
+}
+
+/* atom 컴포넌트 스타일 오버라이드 (작은 사이즈) */
+.login-inputs .input {
+display: flex;
+padding: 9px 14px;
+align-items: center;
+gap: 10px;
+align-self: stretch;
+border-radius: 2px;
+border: 1px solid #37352F;
+}
+
+.login-btn-wrap {
+display: flex;
+width: 96px;
+padding-top: 8px;
+justify-content: center;
+align-items: center;
+gap: 10px;
+align-self: stretch;
+}
+
+.login-btn-wrap button {
+  height: 100%; /* 높이 꽉 채우기 */
+  width: 100%;
+  padding: 0;
+  font-size: 14px;
+  color: #FFF;
+font-family: "Pretendard Variable";
+font-size: 14px;
+font-style: normal;
+font-weight: 700;
+line-height: normal;
+}
+
+.signup-btn-wrap {
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+gap: 12px;
+align-self: stretch;
+}
+.signup-btn {
+    display: flex;
+height: 48px;
+justify-content: center;
+align-items: center;
+gap: 10px;
+align-self: stretch;
+}
+
+/* 모바일 반응형 */
+@media (max-width: 1024px) {
+  .home-container {
+    flex-direction: column;
+    height: auto;
+    padding: 40px 20px;
+  }
+  
+  .login-sidebar {
+    width: 100%;
+    padding-top: 40px;
+    align-items: center;
+  }
+  
+  .guide-area {
+    flex-direction: column;
+  }
+  
+  .login-input-row {
+    height: auto;
+  }
+}

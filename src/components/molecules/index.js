@@ -13,3 +13,4 @@ export { default as NewSearchButton } from './NewSearchButton';
 export { default as BookmarkSection } from './BookmarkSection';
 export { default as SearchQueryIndicator } from './SearchQueryIndicator';
 export { default as SearchBar } from './SearchBar';
+export { default as SignupSuccessModal } from './SignupSuccessModal';
