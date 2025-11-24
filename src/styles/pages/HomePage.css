@@ -1,5 +1,8 @@
 .home-wrap {
 display: flex;
+width: 100%;
+max-width: 1920px;
+height: 1080px;
 padding: 40px 20px 70px 20px;
 flex-direction: column;
 align-items: center;
@@ -103,7 +106,8 @@ line-height: normal;
 /* 이용 가이드 영역 (기업/학생) */
 .guide-area {
 display: flex;
-width: 1376px;
+width: 100%;
+max-width: 1376px;
 padding: 24px;
 align-items: flex-start;
 gap: 10px;
