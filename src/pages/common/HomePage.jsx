@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { TextInput, PasswordInput, Button } from '../../components/atoms';
 import { useAuth } from '../../hooks/useAuth'; // LoginPage와 동일한 훅 사용
 import { routes } from '../../routes';
+import { ServiceGuideCard } from '../../components/molecules';
 import '../../styles/pages/HomePage.css';
 
 const HomePage = () => {
@@ -70,19 +71,13 @@ const HomePage = () => {
         <div className="divider"></div>
 
         <div className="guide-area">
-          <div className="guide-column">
-            <h3 className="section-label">기업 / 회사</h3>
-            <div className="guide-box">
-              기업 / 회사 사용자 서비스 이용 가이드
-            </div>
-          </div>
+          <ServiceGuideCard title="기업 / 회사">
+            기업 / 회사 사용자 서비스 이용 가이드
+          </ServiceGuideCard>
 
-          <div className="guide-column">
-            <h3 className="section-label">학생</h3>
-            <div className="guide-box">
-              학생 사용자 서비스 이용 가이드
-            </div>
-          </div>
+          <ServiceGuideCard title="학생">
+            학생 사용자 서비스 이용 가이드
+          </ServiceGuideCard>
         </div>
       </section>
 

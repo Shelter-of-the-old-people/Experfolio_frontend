@@ -77,9 +77,11 @@ function AppRoutes() {
       } />
 
       <Route path={routes.PORTFOLIO} element={
-        <PublicLayout>
-          <PortfolioPage />
-        </PublicLayout>
+        <ProtectedRoute requiredRole="JOB_SEEKER" currentUser={currentUser}>
+          <AuthenticatedLayout userRole="JOB_SEEKER">
+            <PortfolioPage />
+          </AuthenticatedLayout>
+        </ProtectedRoute>
       } />
       
 

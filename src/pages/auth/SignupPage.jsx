@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '../../components/atoms';
 import { routes } from '../../routes';
 // HomePage의 스타일을 공유하여 레이아웃 일관성 유지
+import { ServiceGuideCard } from '../../components/molecules';
 import '../../styles/pages/HomePage.css'; 
 
 const SignupPage = () => {
@@ -28,18 +29,16 @@ const SignupPage = () => {
         <div className="divider"></div>
 
         <div className="guide-area">
-          <div className="guide-column">
-            <h3 className="section-label">기업 / 회사</h3>
-            <div className="guide-box">
+          <div className="guide-column"> {/* 만약 레이아웃 유지를 위해 guide-column이 필요하다면 남겨두셔도 됩니다 */}
+            <ServiceGuideCard title="기업 / 회사">
               기업 / 회사 사용자 서비스 이용 가이드
-            </div>
+            </ServiceGuideCard>
           </div>
 
           <div className="guide-column">
-            <h3 className="section-label">학생</h3>
-            <div className="guide-box">
+            <ServiceGuideCard title="학생">
               학생 사용자 서비스 이용 가이드
-            </div>
+            </ServiceGuideCard>
           </div>
         </div>
       </section>

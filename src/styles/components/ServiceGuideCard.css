@@ -1,0 +1,40 @@
+.service-guide-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  flex: 1 0 0; /* 부모 컨테이너(flex) 내에서 공간을 1만큼 차지 */
+  align-self: stretch;
+}
+
+.service-guide-title {
+  color: #000;
+  font-family: "Pretendard Variable", sans-serif;
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin: 0;
+}
+
+.service-guide-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  flex: 1 0 0;
+  align-self: stretch;
+  
+  /* 박스 디자인 (기존 HomePage.css의 .guide-box 스타일 + 배경색/테두리 등 필요시 추가) */
+  /* 현재 디자인에는 배경색이 없어서 border만 임시로 넣거나, 
+     피그마 디자인에 맞춰 배경색(background-color)을 추가하면 됩니다. */
+  /* 예시: */
+  /* background-color: #f9f9f9; */
+  /* border-radius: 8px; */
+  
+  color: #000;
+  font-family: "Pretendard Variable", sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+}
