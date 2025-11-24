@@ -11,7 +11,7 @@ const PublicLayout = ({ children }) => {
           Experfolio
         </Link>
         <nav className="header-nav">
-          <Button variant="trans" as={Link} to={routes.LOGIN}>
+          <Button variant="trans" as={Link} to={routes.HOME}>
             로그인
           </Button>
           <Button variant="black" as={Link} to={routes.SIGNUP}>
