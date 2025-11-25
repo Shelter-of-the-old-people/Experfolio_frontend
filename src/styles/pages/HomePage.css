@@ -2,7 +2,7 @@
 display: flex;
 width: 100%;
 max-width: 1920px;
-height: 1080px;
+height: fit-content;
 padding: 40px 20px 70px 20px;
 flex-direction: column;
 align-items: center;
@@ -162,7 +162,7 @@ line-height: normal;
 .login-sidebar {
 display: flex;
 width: 316px;
-height: 890px;
+height: 100%;
 padding: 210px 0;
 flex-direction: column;
 align-items: center;

@@ -2,23 +2,36 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextInput, PasswordInput, Button, BusinessNumberInput } from '../../components/atoms';
 import { SignupSuccessModal, ServiceGuideCard } from '../../components/molecules';
+import { useLazyApi } from '../../hooks/useApi';
+import { BusinessNumberAPIService } from '../../services/BusinessNumberAPIService';
 import { routes } from '../../routes';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 import '../../styles/pages/HomePage.css';
 
+// 1. API 서비스 초기화
+const apiKey = import.meta.env.VITE_BUSINESS_API_KEY;
+const businessNumberService = new BusinessNumberAPIService(apiKey);
+
+const validateApi = (businessNumber) => {
+  if (!apiKey) {
+    return Promise.reject(new Error("API 키가 설정되지 않았습니다."));
+  }
+  return businessNumberService.validateBusinessNumber(businessNumber);
+};
+
 const CompanySignupPage = () => {
   const navigate = useNavigate();
   const auth = useAuth();
 
-  // 1. 폼 데이터 상태
+  // 폼 데이터 상태
   const [formData, setFormData] = useState({
     companyName: '',
     representative: '',
     bizNum1: '',
     bizNum2: '',
     bizNum3: '',
-    phoneNumber: '', // 전화번호 추가
+    phoneNumber: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -35,11 +48,27 @@ const CompanySignupPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
+  // 2. 검증 API 훅 (useLazyApi) - reset 기능 추가
+  const { 
+    data: validationData, 
+    loading: isValidating, 
+    error: validationError,
+    execute: executeValidation,
+    reset: resetValidation
+  } = useLazyApi(validateApi);
+
+  // 검증 결과 상태 계산
+  const isBizValid = validationData?.isValid;
+  const validationMsg = validationError 
+    ? (validationError.message || '검증 오류') 
+    : (validationData?.getStatusMessage() || '');
+
   const handleInputChange = (field) => (value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
   };
 
+  // 자동 검증 및 상태 초기화 로직
   const handleBizNumChange = (values) => {
     setFormData(prev => ({
       ...prev,
@@ -47,9 +76,27 @@ const CompanySignupPage = () => {
       bizNum2: values.part2,
       bizNum3: values.part3
     }));
+
+    const fullNumber = `${values.part1}${values.part2}${values.part3}`;
+
+    if (fullNumber.length === 10) {
+      console.log('10자리 입력 완료 -> 자동 검증 실행:', fullNumber);
+      executeValidation(fullNumber);
+    } else {
+      if (validationData || validationError) {
+        resetValidation();
+      }
+    }
   };
 
-  // 폼 유효성 검사
+  // --- [추가] 비밀번호 일치 여부 확인 ---
+  // 둘 다 입력되었을 때만 불일치 여부를 판단 (입력 중일 때 에러 표시 방지용 로직은 기호에 따라 조정 가능)
+  const isPasswordMismatch = 
+    formData.password && 
+    formData.confirmPassword && 
+    formData.password !== formData.confirmPassword;
+
+  // 폼 유효성 검사 (비밀번호 일치 조건 추가)
   const isFormValid = 
     formData.companyName.trim() !== '' &&
     formData.representative.trim() !== '' &&
@@ -60,9 +107,11 @@ const CompanySignupPage = () => {
     formData.email.trim() !== '' &&
     formData.password.trim() !== '' &&
     formData.confirmPassword.trim() !== '' &&
-    authStatus === 'complete';
+    !isPasswordMismatch && // [추가] 비밀번호가 일치해야 함
+    authStatus === 'complete' &&
+    isBizValid === true; 
 
-  // 인증 버튼 핸들러
+  // 이메일 인증 핸들러
   const handleAuthClick = () => {
     if (authStatus === 'request') {
       if (!formData.email) {
@@ -83,7 +132,7 @@ const CompanySignupPage = () => {
     }
   };
 
-  // 회원가입 제출 핸들러
+  // 회원가입 제출
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -97,6 +146,17 @@ const CompanySignupPage = () => {
       return;
     }
 
+    if (!isBizValid) {
+      alert('유효한 사업자 등록번호를 입력해주세요.');
+      return;
+    }
+
+    // [추가] 제출 시 안전 장치
+    if (isPasswordMismatch) {
+      alert('비밀번호가 일치하지 않습니다.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -104,19 +164,15 @@ const CompanySignupPage = () => {
         email: formData.email,
         password: formData.password,
         confirmPassword: formData.confirmPassword,
-        name: formData.representative, // 대표자명을 User Name으로 사용
+        name: formData.representative,
         phoneNumber: formData.phoneNumber,
         role: "RECRUITER",
         passwordMatching: formData.password === formData.confirmPassword
       };
 
-      console.log('기업 회원가입 요청:', requestBody);
-
-      // 1. 회원가입 요청
       const response = await api.post('/v1/auth/signup', requestBody);
 
       if (response.data.success) {
-        // 2. 가입 성공 시 자동 로그인 시도
         try {
           await auth.login({ 
             email: formData.email, 
@@ -125,13 +181,13 @@ const CompanySignupPage = () => {
           setShowModal(true);
         } catch (loginError) {
           console.error("자동 로그인 실패:", loginError);
-          alert("회원가입은 완료되었으나 자동 로그인에 실패했습니다. 로그인 페이지로 이동합니다.");
+          alert("회원가입 완료. 로그인 페이지로 이동합니다.");
           navigate(routes.LOGIN);
         }
       }
     } catch (error) {
       console.error('회원가입 실패:', error);
-      const errorMsg = error.response?.data?.message || error.message || '회원가입 중 오류가 발생했습니다.';
+      const errorMsg = error.response?.data?.message || error.message || '오류가 발생했습니다.';
       
       if (errorMsg.includes('이미 존재')) {
         setErrors(prev => ({ ...prev, email: '이미 존재하는 이메일입니다.' }));
@@ -155,13 +211,12 @@ const CompanySignupPage = () => {
 
   const handleModalConfirm = () => {
     setShowModal(false);
-    navigate(routes.SEARCH); // 기업 -> 인재 검색 페이지
+    navigate(routes.SEARCH);
   };
 
   return (
     <div className='home-wrap'>
       <div className="home-container">
-        {/* 좌측 섹션 */}
         <section className="main-section">
           <h1 className="main-title">Experfolio</h1>
           <div className="divider"></div>
@@ -175,7 +230,6 @@ const CompanySignupPage = () => {
           </div>
         </section>
 
-        {/* 우측 회원가입 폼 */}
         <aside className="login-sidebar">
           <div className='sidebar-title-area'>
             <h2 className="sidebar-title">Experfolio</h2>
@@ -214,7 +268,12 @@ const CompanySignupPage = () => {
                 label="사업자 번호" 
                 value={{ part1: formData.bizNum1, part2: formData.bizNum2, part3: formData.bizNum3 }} 
                 onChange={handleBizNumChange} 
-                showValidationButton={false} 
+                
+                showValidationButton={false}
+                isValidating={isValidating}
+                isValid={isBizValid}
+                validationMessage={validationMsg}
+                companyName={validationData?.companyName}
               />
               
               <TextInput 
@@ -241,12 +300,16 @@ const CompanySignupPage = () => {
                 showPasswordToggle={false} 
               />
               
+              {/* --- [수정] 비밀번호 불일치 시 에러 표시 --- */}
               <PasswordInput 
                 label="비밀번호 재확인" 
                 placeholder="비밀번호 재확인" 
                 value={formData.confirmPassword} 
                 onChange={handleInputChange('confirmPassword')} 
-                showPasswordToggle={false} 
+                showPasswordToggle={false}
+                // 에러 상태 전달
+                error={!!isPasswordMismatch} 
+                errorMessage="비밀번호가 일치하지 않습니다."
               />
 
               <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px' }}>

@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import NumberInput from './NumberInput.jsx';
 
 /**
- * 사업자 번호 입력 컴포넌트 (3개의 NumberInput으로 구성) - (Refactored)
- * (UI만 담당하며, 검증 로직은 props로 주입받습니다)
+ * 사업자 번호 입력 컴포넌트 (3개의 NumberInput으로 구성)
+ * - 검증 실패 시 X 아이콘을 클릭하여 초기화하는 기능 추가
  */
 const BusinessNumberInput = ({
   value = { part1: '', part2: '', part3: '' },
@@ -17,11 +17,11 @@ const BusinessNumberInput = ({
   // --- 검증 관련 Props (상위에서 주입) ---
   isValidating = false, // 검증 API 호출 중인지 여부
   isValid = false, // 검증이 완료되었고 유효한지 여부
-  validationMessage, // 검증 결과 메시지 (예: '유효한 사업자입니다', '폐업한 사업자입니다')
+  validationMessage, // 검증 결과 메시지
   companyName, // 검증을 통해 확인된 회사명
   showValidationButton = true,
   showCompanyName = true,
-  onValidate, // '검증' 버튼 클릭 시 호출될 함수 (상위에서 주입)
+  onValidate, // '검증' 버튼 클릭 시 호출될 함수
   // ---
   
   ...props
@@ -58,7 +58,19 @@ const BusinessNumberInput = ({
     }
   }, [localValues, onChange]);
 
-  // 검증 버튼 클릭 핸들러 (상위로 이벤트 전달)
+  // [추가] 입력 초기화 핸들러 (X 아이콘 클릭 시 동작)
+  const handleReset = useCallback((e) => {
+    e.stopPropagation(); // 버블링 방지
+    
+    const emptyValues = { part1: '', part2: '', part3: '' };
+    setLocalValues(emptyValues); // 로컬 상태 초기화
+    
+    if (onChange) {
+      onChange(emptyValues); // 부모 상태 초기화 (이로 인해 부모의 resetValidation 트리거됨)
+    }
+  }, [onChange]);
+
+  // 검증 버튼 클릭 핸들러
   const handleValidateClick = useCallback(() => {
     if (onValidate) {
       const fullNumber = `${localValues.part1}${localValues.part2}${localValues.part3}`;
@@ -66,7 +78,7 @@ const BusinessNumberInput = ({
     }
   }, [localValues, onValidate]);
 
-  // 전체 에러 상태 결정 (외부 에러 또는 검증 실패)
+  // 전체 에러 상태 결정
   const hasError = error || (validationMessage && !isValid);
   const displayErrorMessage = errorMessage || (hasError ? validationMessage : '');
 
@@ -75,24 +87,33 @@ const BusinessNumberInput = ({
     localValues.part2.length === 2 && 
     localValues.part3.length === 5;
 
-  // 검증 상태 아이콘
+  // [수정] 검증 상태 아이콘 (클릭 기능 추가)
   const getValidationIcon = () => {
     if (isValidating) {
       return <span className="validation-icon validating">⏳</span>;
     }
     
-    if (validationMessage) { // 검증 메시지가 있다면
+    if (validationMessage) { 
       if (isValid) {
         return <span className="validation-icon valid">✓</span>;
       } else {
-        return <span className="validation-icon invalid">✗</span>;
+        // 실패 시 X 아이콘
+        return (
+          <span 
+            className="validation-icon invalid" 
+            onClick={handleReset} // 클릭 시 리셋
+            style={{ cursor: 'pointer' }} // 포인터 커서 추가
+            title="입력 초기화"
+          >
+            ✗
+          </span>
+        );
       }
     }
     
     return null;
   };
 
-  // 라벨 클래스
   const getLabelClassName = () => {
     let classes = ['input-label'];
     if (hasError) {

@@ -35,13 +35,20 @@ const StudentSignupPage = () => {
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
   };
 
-  // 폼 유효성 검사: 모든 필드가 채워지고 인증이 완료되었는지 확인
+  // --- [추가] 비밀번호 일치 여부 확인 ---
+  const isPasswordMismatch = 
+    formData.password && 
+    formData.confirmPassword && 
+    formData.password !== formData.confirmPassword;
+
+  // 폼 유효성 검사: 모든 필드가 채워지고, 비밀번호가 일치하며, 인증이 완료되어야 함
   const isFormValid = 
     formData.name.trim() !== '' &&
     formData.phoneNumber.trim() !== '' &&
     formData.email.trim() !== '' &&
     formData.password.trim() !== '' &&
     formData.confirmPassword.trim() !== '' &&
+    !isPasswordMismatch && // [추가] 비밀번호 일치 조건
     authStatus === 'complete';
 
   // 인증 버튼 핸들러
@@ -51,7 +58,6 @@ const StudentSignupPage = () => {
         alert('이메일을 먼저 입력해주세요.');
         return;
       }
-      // TODO: 실제 이메일 인증번호 발송 API 연동 필요
       console.log(`인증번호 발송 요청: ${formData.email}`);
       alert('인증번호가 발송되었습니다. (테스트)');
       setAuthStatus('check');
@@ -61,7 +67,6 @@ const StudentSignupPage = () => {
         alert('인증번호를 입력해주세요.');
         return;
       }
-      // TODO: 실제 인증번호 검증 API 연동 필요
       console.log(`인증번호 확인 요청: ${formData.authCode}`);
       alert('인증이 완료되었습니다.');
       setAuthStatus('complete');
@@ -79,6 +84,12 @@ const StudentSignupPage = () => {
 
     if (authStatus !== 'complete') {
       alert('이메일 인증을 완료해주세요.');
+      return;
+    }
+
+    // [추가] 비밀번호 불일치 시 차단
+    if (isPasswordMismatch) {
+      alert('비밀번호가 일치하지 않습니다.');
       return;
     }
 
@@ -241,12 +252,16 @@ const StudentSignupPage = () => {
                 errorMessage={errors.password} 
               />
               
+              {/* --- [수정] 비밀번호 확인 필드에 에러 표시 연결 --- */}
               <PasswordInput 
                 label="비밀번호 재확인" 
                 placeholder="비밀번호 재확인" 
                 value={formData.confirmPassword} 
                 onChange={handleInputChange('confirmPassword')} 
                 showPasswordToggle={false} 
+                // 에러 상태 전달
+                error={!!isPasswordMismatch} 
+                errorMessage="비밀번호가 일치하지 않습니다."
               />
 
               <div style={{ marginTop: '10px' }}>

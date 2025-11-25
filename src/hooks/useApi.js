@@ -50,5 +50,11 @@ export const useLazyApi = (apiFunc) => {
     }
   };
 
-  return { data, loading, error, execute };
+  const reset = useCallback(() => {
+    setData(null);
+    setError(null);
+    setLoading(false);
+  }, []);
+
+  return { data, loading, error, execute, reset };
 };
