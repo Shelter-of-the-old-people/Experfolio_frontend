@@ -26,7 +26,7 @@ const BookmarkSection = ({ talents = [] }) => {
       >
         <span className="bookmark-title">즐겨찾기</span>
         <img 
-          src="/icons/arrow-down.svg" 
+          src="/dropdown-arrow.svg" 
             alt="토글 화살표"
           className={`bookmark-toggle-arrow ${isOpen ? 'open' : ''}`} 
         />
@@ -45,7 +45,7 @@ const BookmarkSection = ({ talents = [] }) => {
                   className="bookmark-item-link"
                 >
                   <img
-                    src={talent.avatarUrl || '/icons/person-placeholder.svg'}
+                    src={talent.avatarUrl || '/profile-default.svg'}
                     alt={talent.name}
                     className="bookmark-item-avatar"
                   />

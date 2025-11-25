@@ -21,7 +21,7 @@ const NewSearchButton = () => {
 
   // --- [추가] 3. '새 검색' 전용 아이콘 경로 (임의 지정) ---
   // (public/icons/new-search-document.svg 파일이 필요합니다)
-  const iconSrc = "/icons/new-search-document.svg"; 
+  const iconSrc = "/search.svg"; 
 
   return (
     // --- [수정] 4. <Button> atom 대신, SearchQueryIndicator와

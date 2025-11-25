@@ -58,7 +58,7 @@ const SearchResultCard = ({ candidate }) => {
         aria-expanded={isOpen}
         tabIndex={0}
       >
-        <img src="/icons/person-placeholder.svg" alt="" className="summary-icon" />
+        <img src="/profile-default.svg" alt="" className="summary-icon" />
         
         {/* --- [수정] 4. 포맷팅된 변수를 사용합니다. --- */}
         <span className="summary-item name">{name}</span>

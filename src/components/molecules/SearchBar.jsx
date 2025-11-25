@@ -35,7 +35,7 @@ const SearchBar = ({ onSearch, placeholder, disabled = false }) => {
         aria-label="검색"
       >
         {/* (아이콘 경로는 public/icons/search.svg 라고 가정합니다) */}
-        <img src="/icons/search.svg" alt="검색" />
+        <img src="/search.svg" alt="검색" />
       </button>
     </form>
   );
