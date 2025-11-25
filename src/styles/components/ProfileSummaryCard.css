@@ -1,8 +1,7 @@
 /* ProfileSummaryCard.css - Figma 시안 완전 반영 버전 */
 
 .profile-summary-wrap {
-  width: 990px;
-  min-width: 990px;
+  width: 100%;
   border-radius: 16px;
   background: #f6f6f6;
   padding: 0;
@@ -18,10 +17,10 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  width: 990px;
+  width: 100%;
   height: 56px;
   padding: 0 24px 0 18px;  /* 좌측/우측 여백 맞춤 */
-  background: #f6f6f6;
+  background: #fff;
   border-radius: 16px 16px 0 0;
   box-sizing: border-box;
 }
@@ -72,7 +71,7 @@
   flex-direction: row;
   align-items: center;
   gap: 24px;
-  width: 990px;
+  width: 100%;
   min-height: 216px;
   background: #fff;
   border-radius: 0 0 16px 16px;
