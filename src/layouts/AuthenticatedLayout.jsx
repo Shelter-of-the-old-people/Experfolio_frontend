@@ -18,6 +18,16 @@ const AuthenticatedLayout = ({ children, userRole }) => {
     navigate(routes.PROFILE); 
   };
 
+  // [추가] 역할에 따라 로고 클릭 시 이동할 경로를 결정하는 함수
+  const getLogoLink = () => {
+    if (userRole === 'RECRUITER') {
+      return routes.SEARCH;    // 기업 -> 인재 검색
+    } else if (userRole === 'JOB_SEEKER') {
+      return routes.PORTFOLIO; // 학생 -> 포트폴리오
+    }
+    return routes.HOME;        // 그 외(에러 등) -> 홈
+  };
+
   const getSidebarItems = () => {
     if (userRole === 'RECRUITER') {
       return [
@@ -37,7 +47,7 @@ const AuthenticatedLayout = ({ children, userRole }) => {
   return (
     <div className="authenticated-layout">
       <header className="layout-header auth-header">
-        <Link to={routes.HOME} className="header-logo">
+        <Link to={getLogoLink()} className="header-logo">
           Experfolio
         </Link>
         <nav className="header-nav">

@@ -1,5 +1,3 @@
-// shelter-of-the-old-people/experfolio_frontend/Experfolio_frontend--/src/hooks/useApi.js
-
 import { useState, useEffect, useCallback } from 'react';
 
 export const useApi = (apiFunc, dependencies = []) => {
