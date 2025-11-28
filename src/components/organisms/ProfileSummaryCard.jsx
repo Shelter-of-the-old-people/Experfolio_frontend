@@ -2,6 +2,7 @@ import React from 'react';
 import Button from '../atoms/Button';
 import Tag from '../atoms/Tag';
 import LinkCard from '../atoms/LinkCard';
+import KeywordTag from '../atoms/KeywordTag';
 import '../../styles/components/ProfileSummaryCard.css';
 
 const getIconByTypeOrUrl = (type, url) => {
@@ -93,7 +94,7 @@ const ProfileSummaryCard = ({
 
         <div className="profile-keywords-row">
           {keywords.map((kw, i) => (
-            <Tag key={i}>{kw}</Tag>
+            <KeywordTag key={i}>{kw}</KeywordTag>
           ))}
         </div>
       </div>

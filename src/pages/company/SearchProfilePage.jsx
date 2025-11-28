@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import ProfileSummaryCard from '../../components/organisms/ProfileSummaryCard'; 
 import { ProfileCareerCards } from '../../components/organisms';
 import api from '../../services/api';
@@ -127,6 +127,7 @@ const mapApiLangsToCard = (apiLangs) => {
 const SearchProfilePage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   
   const [profile, setProfile] = useState(null);
   const [awards, setAwards] = useState([]);
@@ -135,6 +136,7 @@ const SearchProfilePage = () => {
   
   const [items, setItems] = useState([]); 
   const [isFavorite, setIsFavorite] = useState(false);
+  const searchKeywords = location.state?.searchKeywords || [];
 
   const fetchPortfolio = useCallback(() => api.get(`/portfolios/${id}`), [id]);
   
@@ -225,11 +227,15 @@ const SearchProfilePage = () => {
   return (
     <div className="search-profile-page" >
       <ProfileSummaryCard
-        profile={profile}
+        profile={{
+          ...profile,
+          keywords: searchKeywords 
+        }}
         onClose={handleClose}
         isFavorite={isFavorite}
         onContact={handleContact}
         onToggleFavorite={handleToggleFavorite}
+        
       />
 
       <div style={{ marginTop: '24px' }}>

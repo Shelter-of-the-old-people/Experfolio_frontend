@@ -8,6 +8,8 @@ const formatPercent = (decimal) => {
   return `${(decimal * 100).toFixed(0)}%`;
 };
 const SearchResultCard = ({ candidate }) => {
+  console.log('candidate:', candidate);
+  console.log('keywords:', candidate.keywords);
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -34,7 +36,9 @@ const SearchResultCard = ({ candidate }) => {
 
   const handleProfileView = (e) => {
     e.stopPropagation();
-    navigate(routes.TALENT_DETAIL.replace(':id', userId));
+    navigate(routes.TALENT_DETAIL.replace(':id', userId),{
+      state: { searchKeywords: keywords }
+    });
   };
 
 
