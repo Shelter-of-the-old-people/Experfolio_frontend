@@ -93,21 +93,16 @@ const PortfolioEditPage = () => {
     api.put(`/portfolios/items/${itemId}`, formData)
   );
 
-  // **근본적인 해결책 적용:** Guard Clause에서 dirtySectionId 검사를 완전히 제거
   const executeSave = useCallback(async (sectionIdToSave) => {
-    // 1. 임시 섹션 검사 (변경 없음)
     if (String(sectionIdToSave).startsWith('temp-')) {
       console.log('임시 섹션은 저장하지 않습니다:', sectionIdToSave);
       return;
     }
     
-    // 2. **근본적인 해결:** Guard Clause는 동시성(isUpdating)만 확인합니다.
-    // dirtySectionId가 null이어도 이전에 예약된 저장 요청은 진행되어야 합니다.
     if (isUpdating) { 
       return;
     }
     
-    // 3. 타이머 클리어 (변경 없음)
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
@@ -115,10 +110,8 @@ const PortfolioEditPage = () => {
     
     setSaveStatus('saving');
     
-    // 섹션 찾기: sections 상태를 직접 참조 (useCallback 덕분에 최신 값)
     const sectionToSave = sections.find(s => s.id === sectionIdToSave);
 
-    // 섹션을 찾지 못하면 조용히 리턴 (경고만 표시)
     if (!sectionToSave) {
       console.warn('저장할 섹션을 찾을 수 없습니다. 이미 삭제되었거나 ID가 변경되었을 수 있습니다:', sectionIdToSave);
       setSaveStatus('saved');
@@ -136,7 +129,6 @@ const PortfolioEditPage = () => {
     try {
       const response = await updateItem(sectionIdToSave, formData);
       
-      // 응답에서 업데이트된 전체 portfolioItems를 받아 state 갱신
       const actualData = response.data.data;
       const { portfolioItems } = actualData || {};
       
@@ -146,8 +138,6 @@ const PortfolioEditPage = () => {
       
       setSaveStatus('saved');
       
-      // 4. **조건부 리셋 유지:** 저장된 ID가 dirtySectionId와 일치할 때만 null로 초기화합니다.
-      // 이는 이후 발생할지 모르는 경쟁 조건으로부터 dirty 상태를 보호합니다.
       if (sectionIdToSave === dirtySectionId) {
         setDirtySectionId(null);
       }
@@ -155,7 +145,6 @@ const PortfolioEditPage = () => {
     } catch (err) {
       console.error("섹션 저장 실패:", err);
       setSaveStatus('error');
-      // 실패 시 dirtySectionId는 그대로 유지하여 unload 시 다시 저장 시도
     }
   }, [isUpdating, dirtySectionId, sections, updateItem]);
 
@@ -164,15 +153,11 @@ const PortfolioEditPage = () => {
   );
 
   const handleAddSection = async () => {
-    // dirty 섹션이 있으면 먼저 저장 시도
     if (dirtySectionId) {
-      // 섹션이 실제로 존재하는지 확인
       const sectionExists = sections.some(s => s.id === dirtySectionId);
       if (sectionExists && !String(dirtySectionId).startsWith('temp-')) {
-        // Guard Clause 제거 덕분에 이 호출은 isUpdating이 아니면 항상 진행됩니다.
         await executeSave(dirtySectionId);
       } else {
-        // 섹션이 없으면 dirty 상태만 초기화
         setDirtySectionId(null);
       }
     }
@@ -220,7 +205,6 @@ const PortfolioEditPage = () => {
     }
     
     clearTimeout(saveTimerRef.current);
-    
     // **수정:** 삭제하려는 섹션이 dirtySectionId와 일치할 때만 reset 합니다.
     if (dirtySectionId === sectionId) {
       setDirtySectionId(null);
@@ -229,14 +213,12 @@ const PortfolioEditPage = () => {
     try {
       const response = await deleteItem(sectionId);
       
-      // 응답에서 업데이트된 전체 portfolioItems를 받아 state 갱신
       const actualData = response.data.data;
       const { portfolioItems } = actualData || {};
       
       if (portfolioItems) {
         setSections(portfolioItems);
       } else {
-        // 응답에 portfolioItems가 없으면 로컬에서 제거
         setSections(prevSections => prevSections.filter(section => section.id !== sectionId));
       }
       
@@ -268,7 +250,6 @@ const PortfolioEditPage = () => {
   };
 
   const handleSectionFocusLost = (sectionId) => {
-    // 타이머를 설정하는 조건은 유지
     if (dirtySectionId && dirtySectionId === sectionId) {
       setSaveStatus('waiting'); 
       saveTimerRef.current = setTimeout(() => {
@@ -294,7 +275,6 @@ const PortfolioEditPage = () => {
           clearTimeout(saveTimerRef.current);
           saveTimerRef.current = null;
         }
-        // 이 시점에서는 dirtySectionId에 있는 가장 최근의 ID만 저장됩니다. (언로드 시)
         executeSave(dirtySectionId);
       }
     };

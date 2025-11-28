@@ -10,12 +10,6 @@ const MOCK_TALENTS = [
 ];
 
 const CompanySidebar = () => {
-  // const { data: bookmarksData } = useApi(
-  //   () => api.get('/v1/bookmarks'),
-  //   []
-  // );
-  
-  // const talents = bookmarksData?.data?.bookmarks || [];
 
   return (
     <aside className="company-sidebar">

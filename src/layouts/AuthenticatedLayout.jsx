@@ -2,12 +2,12 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { routes } from '../routes';
 import { Button } from '../components/atoms';
-import { useAuth } from '../hooks/useAuth'; // <--- 이 줄을 추가합니다.
+import { useAuth } from '../hooks/useAuth'; 
 import { CompanySidebar } from '../components/organisms';
 
 const AuthenticatedLayout = ({ children, userRole }) => {
   const navigate = useNavigate();
-  const { logout } = useAuth(); // 이제 'useAuth'가 정의되었습니다.
+  const { logout } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -18,14 +18,13 @@ const AuthenticatedLayout = ({ children, userRole }) => {
     navigate(routes.PROFILE); 
   };
 
-  // [추가] 역할에 따라 로고 클릭 시 이동할 경로를 결정하는 함수
   const getLogoLink = () => {
     if (userRole === 'RECRUITER') {
-      return routes.SEARCH;    // 기업 -> 인재 검색
+      return routes.SEARCH; 
     } else if (userRole === 'JOB_SEEKER') {
-      return routes.PORTFOLIO; // 학생 -> 포트폴리오
+      return routes.PORTFOLIO; 
     }
-    return routes.HOME;        // 그 외(에러 등) -> 홈
+    return routes.HOME;  
   };
 
   const getSidebarItems = () => {
@@ -65,11 +64,6 @@ const AuthenticatedLayout = ({ children, userRole }) => {
           <CompanySidebar />
         ) : userRole === 'JOB_SEEKER' ? (
           <aside className="sidebar">
-            {/* 구직자 사이드바 */}
-          </aside>
-        ) : null}
-
-        <aside className="sidebar">
           <nav className="sidebar-nav">
             {getSidebarItems().map((item, index) => (
               <Link key={index} to={item.path} className="sidebar-item">
@@ -78,6 +72,9 @@ const AuthenticatedLayout = ({ children, userRole }) => {
             ))}
           </nav>
         </aside>
+        ) : null}
+
+        
         
         <main className="main-content">
           {children}
