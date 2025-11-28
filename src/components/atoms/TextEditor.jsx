@@ -40,8 +40,8 @@ const TextEditor = ({
       
       <div className="input-container">
         <textarea
-          value={value} // [복구됨] internalValue -> value
-          onChange={(e) => onChange?.(e.target.value)} // [복구됨] onBlur 제거, onChange 즉시 호출
+          value={value}
+          onChange={(e) => onChange?.(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
           className={getEditorClassName()}

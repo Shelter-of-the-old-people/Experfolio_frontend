@@ -1,5 +1,3 @@
-/* 수정 파일: shelter-of-the-old-people/experfolio_frontend/Experfolio_frontend-kmh/src/pages/company/SearchProfilePage.jsx */
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import ProfileSummaryCard from '../../components/organisms/ProfileSummaryCard'; 
@@ -7,20 +5,18 @@ import { ProfileCareerCards } from '../../components/organisms';
 import api from '../../services/api';
 import { useApi } from '../../hooks/useApi';
 
-// --- 스타일 정의 (간단한 뷰어용) ---
 const viewerStyles = {
   container: {
-    width: '100%',
+    width: '900px',
     marginTop: '24px',
     display: 'flex',
     flexDirection: 'column',
-    gap: '24px',
+    gap: '10px',
+    marginBottom:"200px"
   },
   sectionCard: {
     backgroundColor: '#fff',
-    borderRadius: '16px',
     padding: '32px',
-    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
     border: '1px solid #eee'
   },
   title: {
@@ -34,18 +30,16 @@ const viewerStyles = {
     fontSize: '16px',
     lineHeight: '1.6',
     color: '#333',
-    whiteSpace: 'pre-wrap', // 줄바꿈 보존
+    whiteSpace: 'pre-wrap',
     fontFamily: 'Pretendard Variable'
   },
   divider: {
-    margin: '40px 0 20px 0',
     fontSize: '22px',
     fontWeight: 'bold',
     color: '#000'
   }
 };
 
-// --- 읽기 전용 섹션 뷰어 컴포넌트 ---
 const PortfolioSectionViewer = ({ item }) => {
   return (
     <div style={viewerStyles.sectionCard}>
@@ -62,7 +56,6 @@ const PortfolioSectionViewer = ({ item }) => {
   );
 };
 
-// --- 데이터 매핑 헬퍼 함수 ---
 const getIconByTypeOrUrl = (type, url) => {
   if (type === 'github' || (url && url.includes('github.com')))
     return <img src="/github.svg" alt="GitHub" />;
@@ -94,7 +87,7 @@ const mapBasicInfoToProfile = (basicInfo) => {
     gpa: basicInfo.gpa,
     wishJob: basicInfo.desiredPosition,
     wishArea: null,
-    keywords: basicInfo.keywords || [], // JSON에 keywords가 없어도 안전하게 처리
+    keywords: basicInfo.keywords || [], 
     github,
     notion,
     portfolioLinks,
@@ -153,13 +146,10 @@ const SearchProfilePage = () => {
 
   useEffect(() => {
     if (data) {
-      // [중요 수정] 정규화된 응답(normalizedResponse)에서 실제 데이터를 한 번 더 꺼내야 합니다.
-      // data (axios response) -> data.data (normalized wrapper) -> data.data.data (actual payload)
       const normalizedResponse = data.data; 
       const portfolioData = normalizedResponse.data; 
       
       if (portfolioData) {
-        // 1. 기본 정보 매핑
         if (portfolioData.basicInfo) {
           const { basicInfo } = portfolioData;
           setProfile(mapBasicInfoToProfile(basicInfo));
@@ -168,7 +158,6 @@ const SearchProfilePage = () => {
           setLangs(mapApiLangsToCard(basicInfo.languages));
         }
 
-        // 2. 포트폴리오 아이템 매핑
         if (portfolioData.portfolioItems) {
           const sortedItems = [...portfolioData.portfolioItems].sort((a, b) => a.order - b.order);
           setItems(sortedItems);

@@ -12,13 +12,18 @@ const SearchPage = () => {
 
   return (
     <div className="search-page">
-      <h1>인재 검색</h1>
-      <p>AI 기반 자연어 검색으로 원하는 인재를 찾아보세요.</p>
-      
-      <SearchBar
-        onSearch={handleSearch}
-        placeholder="어떤 인재를 찾고 계세요?"
+      <div className='search-guide'>
+        <h1>서비스 이용 가이드</h1>
+      </div>
+      <div className='search-bar'>
+        <h1>인재 검색</h1>
+        <p>AI 기반 자연어 검색으로 원하는 인재를 찾아보세요.</p>
+        
+        <SearchBar
+          onSearch={handleSearch}
+          placeholder="어떤 인재를 찾고 계세요?"
       />
+      </div>
     </div>
   );
 };

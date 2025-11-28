@@ -24,7 +24,6 @@ const PublicLayout = ({ children }) => {
         {children}
       </main>
       
-      {/* --- 푸터 수정 --- */}
       <footer className="layout-footer public-footer">
         <Link to={routes.HOME} className="footer-logo">
           Experfolio

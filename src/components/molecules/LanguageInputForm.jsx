@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import TextInput from '../atoms/TextInput';
 import Button from '../atoms/Button';
-// 1. Award 폼의 CSS를 재사용하기 위해 임포트
 import '../../styles/components/AwardInputForm.css';
 
 const years = Array.from({ length: 15 }, (_, i) => (2025 - i).toString());
@@ -19,10 +18,8 @@ const LanguageInputForm = ({ onAdd }) => {
   };
 
   return (
-    // 2. 폼 클래스 이름을 Award 폼과 맞추어 CSS가 적용되도록 함
     <div className="award-input-form">
       
-      {/* '시험명'은 이미 TextInput이라 OK */}
       <TextInput 
         label="시험명" 
         placeholder={"시험명"}
@@ -31,7 +28,6 @@ const LanguageInputForm = ({ onAdd }) => {
         required 
       />
 
-      {/* --- ▼ 3. '점수' 섹션 레이아웃 수정 --- */}
       <div className="input-wrapper">
         <div className="input-label-wrapper">
           <label className="input-label">점수</label>
@@ -51,7 +47,6 @@ const LanguageInputForm = ({ onAdd }) => {
         </div>
       </div>
       
-      {/* --- ▼ 4. '취득 연도' 섹션 레이아웃 수정 --- */}
       <div className="input-wrapper">
         <div className="input-label-wrapper">
           <label className="input-label">취득 연도</label>
@@ -75,10 +70,9 @@ const LanguageInputForm = ({ onAdd }) => {
           </select>
         </div>
       </div>
-      {/* --- ▲ 수정 끝 --- */}
       
       <Button 
-        className="award-add-btn" /* Award 폼 CSS 재사용 */
+        className="award-add-btn"
         onClick={handleAdd} 
         size="default" 
         variant="black"

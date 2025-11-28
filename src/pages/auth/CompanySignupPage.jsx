@@ -9,7 +9,6 @@ import api from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 import '../../styles/pages/HomePage.css';
 
-// 1. API 서비스 초기화
 const apiKey = import.meta.env.VITE_BUSINESS_API_KEY;
 const businessNumberService = new BusinessNumberAPIService(apiKey);
 
@@ -24,7 +23,6 @@ const CompanySignupPage = () => {
   const navigate = useNavigate();
   const auth = useAuth();
 
-  // 폼 데이터 상태
   const [formData, setFormData] = useState({
     companyName: '',
     representative: '',
@@ -48,7 +46,6 @@ const CompanySignupPage = () => {
   const [showModal, setShowModal] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // 2. 검증 API 훅 (useLazyApi) - reset 기능 추가
   const { 
     data: validationData, 
     loading: isValidating, 
@@ -57,7 +54,6 @@ const CompanySignupPage = () => {
     reset: resetValidation
   } = useLazyApi(validateApi);
 
-  // 검증 결과 상태 계산
   const isBizValid = validationData?.isValid;
   const validationMsg = validationError 
     ? (validationError.message || '검증 오류') 
@@ -68,7 +64,6 @@ const CompanySignupPage = () => {
     if (errors[field]) setErrors(prev => ({ ...prev, [field]: '' }));
   };
 
-  // 자동 검증 및 상태 초기화 로직
   const handleBizNumChange = (values) => {
     setFormData(prev => ({
       ...prev,
@@ -89,14 +84,11 @@ const CompanySignupPage = () => {
     }
   };
 
-  // --- [추가] 비밀번호 일치 여부 확인 ---
-  // 둘 다 입력되었을 때만 불일치 여부를 판단 (입력 중일 때 에러 표시 방지용 로직은 기호에 따라 조정 가능)
   const isPasswordMismatch = 
     formData.password && 
     formData.confirmPassword && 
     formData.password !== formData.confirmPassword;
 
-  // 폼 유효성 검사 (비밀번호 일치 조건 추가)
   const isFormValid = 
     formData.companyName.trim() !== '' &&
     formData.representative.trim() !== '' &&
@@ -107,11 +99,10 @@ const CompanySignupPage = () => {
     formData.email.trim() !== '' &&
     formData.password.trim() !== '' &&
     formData.confirmPassword.trim() !== '' &&
-    !isPasswordMismatch && // [추가] 비밀번호가 일치해야 함
+    !isPasswordMismatch && 
     authStatus === 'complete' &&
     isBizValid === true; 
 
-  // 이메일 인증 핸들러
   const handleAuthClick = () => {
     if (authStatus === 'request') {
       if (!formData.email) {
@@ -132,7 +123,6 @@ const CompanySignupPage = () => {
     }
   };
 
-  // 회원가입 제출
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -150,8 +140,6 @@ const CompanySignupPage = () => {
       alert('유효한 사업자 등록번호를 입력해주세요.');
       return;
     }
-
-    // [추가] 제출 시 안전 장치
     if (isPasswordMismatch) {
       alert('비밀번호가 일치하지 않습니다.');
       return;
@@ -300,14 +288,12 @@ const CompanySignupPage = () => {
                 showPasswordToggle={false} 
               />
               
-              {/* --- [수정] 비밀번호 불일치 시 에러 표시 --- */}
               <PasswordInput 
                 label="비밀번호 재확인" 
                 placeholder="비밀번호 재확인" 
                 value={formData.confirmPassword} 
                 onChange={handleInputChange('confirmPassword')} 
                 showPasswordToggle={false}
-                // 에러 상태 전달
                 error={!!isPasswordMismatch} 
                 errorMessage="비밀번호가 일치하지 않습니다."
               />

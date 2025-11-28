@@ -17,20 +17,16 @@ const NumberInput = ({
   const handleChange = (e) => {
     let inputValue = e.target.value;
     
-    // 숫자가 아닌 문자 제거
     inputValue = inputValue.replace(/[^0-9]/g, '');
     
-    // 자릿수 제한 (maxLength 속성 지원)
     if (props.maxLength && inputValue.length > props.maxLength) {
       inputValue = inputValue.slice(0, props.maxLength);
     }
     
-    // max 값 제한
     if (max !== undefined && inputValue !== '' && Number(inputValue) > max) {
       inputValue = max.toString();
     }
     
-    // min 값 제한  
     if (min !== undefined && inputValue !== '' && Number(inputValue) < min) {
       inputValue = min.toString();
     }

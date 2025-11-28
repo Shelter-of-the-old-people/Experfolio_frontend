@@ -1,0 +1,15 @@
+.search-page{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--space-40);
+    width:900px;
+    margin: var(--space-40);
+}
+
+.search-bar{
+    display: flex;
+    flex-direction: column;
+    width:100%;
+}

@@ -1,24 +1,20 @@
-/* 수정 파일: shelter-of-the-old-people/experfolio_frontend/Experfolio_frontend-kmh/src/pages/company/SearchResultsPage.jsx */
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import api from '../../services/api';
 import { SearchResultCard, SearchResultHeader } from '../../components/organisms';
-import useSearchStore from '../../stores/useSearchStore'; // [추가] 스토어 임포트
+import useSearchStore from '../../stores/useSearchStore';
 import '../../styles/pages/SearchResultsPage.css';
 
 const SearchResultsPage = () => {
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q'); 
 
-  // [추가] Zustand 스토어에서 상태와 함수 가져오기
   const { lastQuery, cachedResults, setSearchCache } = useSearchStore();
 
-  // [수정] 캐시된 검색어와 현재 검색어가 같으면 캐시된 데이터를 초기값으로 사용
   const hasCache = query && query === lastQuery && cachedResults;
 
   const [searchResult, setSearchResult] = useState(hasCache ? cachedResults : null); 
-  const [loading, setLoading] = useState(!hasCache); // 캐시가 있으면 로딩 안 함
+  const [loading, setLoading] = useState(!hasCache); 
   const [error, setError] = useState(null); 
   
   const [sortConfig, setSortConfig] = useState({ 
@@ -33,7 +29,6 @@ const SearchResultsPage = () => {
       return;
     }
 
-    // [추가] 캐시된 데이터가 있고 검색어가 같으면 API 호출 생략
     if (query === lastQuery && cachedResults) {
       setSearchResult(cachedResults);
       setLoading(false);
@@ -49,7 +44,6 @@ const SearchResultsPage = () => {
         const data = response.data.data;
         setSearchResult(data);
         
-        // [추가] 성공 시 스토어에 검색어와 결과 저장
         setSearchCache(query, data);
         
       } catch (err) {
@@ -60,7 +54,7 @@ const SearchResultsPage = () => {
     };
 
     fetchResults();
-  }, [query, lastQuery, cachedResults, setSearchCache]); // 의존성 배열 업데이트
+  }, [query, lastQuery, cachedResults, setSearchCache]);
   
   const sortedCandidates = useMemo(() => {
     if (!searchResult?.candidates) return [];

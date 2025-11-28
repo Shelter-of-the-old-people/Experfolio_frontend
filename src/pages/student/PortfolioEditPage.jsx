@@ -23,11 +23,9 @@ const TempSideNav = ({ sections, basicInfo }) => (
 const PortfolioEditPage = () => {
   const [sections, setSections] = useState([]);
   const { user } = useAuth();
-  
   const [saveStatus, setSaveStatus] = useState('idle');
   const [dirtySectionId, setDirtySectionId] = useState(null);
   const saveTimerRef = useRef(null);
-  
   const stateForCleanup = useRef();
 
   const fetchApi = useCallback(() => api.get('/portfolios/me'), []);
@@ -205,7 +203,6 @@ const PortfolioEditPage = () => {
     }
     
     clearTimeout(saveTimerRef.current);
-    // **수정:** 삭제하려는 섹션이 dirtySectionId와 일치할 때만 reset 합니다.
     if (dirtySectionId === sectionId) {
       setDirtySectionId(null);
     }

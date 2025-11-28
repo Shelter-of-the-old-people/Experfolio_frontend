@@ -1,7 +1,7 @@
 import React from 'react';
 
 const Button = ({ 
-  as: Component = 'button', // 'as' prop을 Component 변수로 받음 (기본값 'button')
+  as: Component = 'button', 
   variant = 'black',
   size = 'default',
   type = 'button',
@@ -29,7 +29,6 @@ const Button = ({
     return <span className="btn-icon">{icon}</span>;
   };
 
-  // 'button' 태그일 때만 type prop을 전달
   const buttonProps = Component === 'button' ? { type } : {};
 
   return (
@@ -37,8 +36,8 @@ const Button = ({
       className={getClassName()}
       onClick={onClick}
       disabled={disabled}
-      {...buttonProps} // type prop 조건부 전달
-      {...props}       // 'to', 'href' 등 나머지 props 전달
+      {...buttonProps}
+      {...props}     
     >
       {renderIcon()}
       {children && <span className="btn-text">{children}</span>}

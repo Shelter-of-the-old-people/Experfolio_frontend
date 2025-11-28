@@ -1,4 +1,4 @@
-import React from 'react'; // 1. useState, useEffect 임포트 제거
+import React from 'react'; 
 import { ProfileImageUpload, TextInput, LinkCard } from '../atoms';
 import { LinkInputSection } from '../molecules';
 import '../../styles/components/ProfileBasicInfoForm.css';
@@ -14,20 +14,17 @@ const getIconByTypeOrUrl = (type, url) => {
 };
 
 const ProfileBasicInfoForm = ({
-  // 2. Props 변경: initialData/onSubmit -> formData/onFormChange
   formData, 
   onFormChange, 
   disabled = false
 }) => {
-  // 4. 핸들러가 내부 setFormData 대신 부모의 onFormChange를 호출하도록 수정
   const handleInputChange = (field, value) => {
-    onFormChange(field, value); // 부모의 state 업데이트
+    onFormChange(field, value);
   };
 
   const handleAddLink = async (url) => {
     try {
       const linkData = await fetchLinkMetadata(url); 
-      // 5. 부모의 'links' 배열을 업데이트
       onFormChange('links', [...formData.links, linkData]);
     } catch (error) {
       onFormChange('links', [...formData.links, {
@@ -38,7 +35,6 @@ const ProfileBasicInfoForm = ({
     }
   };
 
-  // ... (fetchLinkMetadata 함수는 동일) ...
   const fetchLinkMetadata = async (url) => {
     const urlObj = new URL(url);
     const hostname = urlObj.hostname;
@@ -60,21 +56,16 @@ const ProfileBasicInfoForm = ({
   };
 
   const handleRemoveLink = (index) => {
-    // 6. 부모의 'links' 배열을 업데이트
     onFormChange('links', formData.links.filter((_, i) => i !== index));
   };
 
-  // 7. 내부 handleSubmit 함수 제거 (저장 버튼은 부모에 있음)
-  // const handleSubmit = (e) => { ... };
 
   return (
     <div className="profile-basic-info-form">
       <span className='headline'>프로필</span>
-      {/* 8. <form> 태그에서 onSubmit 제거 */}
       <form className="profile-content"> 
         <div className="profile-side">
           <ProfileImageUpload
-            // 9. value가 내부 state가 아닌 props.formData를 바라보도록 수정
             value={formData.profileImage} 
             onChange={(file) => handleInputChange('profileImage', file)}
             disabled={disabled}
@@ -89,7 +80,7 @@ const ProfileBasicInfoForm = ({
           <div className="profile-form-section">
             <TextInput
               label="이름"
-              value={formData.name} // 9. props.formData 사용
+              value={formData.name} 
               onChange={(value) => handleInputChange('name', value)}
               placeholder="본인의 프로필에 표시될 이름(별칭)을 입력하세요."
               disabled={disabled}
@@ -97,35 +88,34 @@ const ProfileBasicInfoForm = ({
             />
             <TextInput
               label="학교명"
-              value={formData.schoolName} // 9. props.formData 사용
+              value={formData.schoolName} 
               onChange={(value) => handleInputChange('schoolName', value)}
               placeholder="학교명"
               disabled={disabled}
             />
             <TextInput
               label="전공"
-              value={formData.major} // 9. props.formData 사용
+              value={formData.major} 
               onChange={(value) => handleInputChange('major', value)}
               placeholder="전공"
               disabled={disabled}
             />
             <TextInput
               label="성적"
-              value={formData.gpa} // 9. props.formData 사용
+              value={formData.gpa} 
               onChange={(value) => handleInputChange('gpa', value)}
               placeholder="성적"
               disabled={disabled}
             />
             <TextInput
               label="희망 직무"
-              value={formData.desiredJob} // 9. props.formData 사용
+              value={formData.desiredJob}
               onChange={(value) => handleInputChange('desiredJob', value)}
               placeholder="희망 직무"
               disabled={disabled}
             />
           </div>
           <div className="linkcard-section">
-            {/* 9. formData.links도 props에서 옴 */}
             {formData.links.length > 0 && (
               <div className="linkcard-list">
                 {formData.links.map((link, index) => (

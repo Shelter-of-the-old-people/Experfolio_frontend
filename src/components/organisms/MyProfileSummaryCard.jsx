@@ -1,11 +1,9 @@
 import React from 'react';
 import Button from '../atoms/Button';
-// import Tag from '../atoms/Tag'; // <-- 1. 키워드가 없으므로 Tag 임포트 제거
+// import Tag from '../atoms/Tag'; // <-- 1. 키워드가 없므로 Tag 임포트 제거
 import LinkCard from '../atoms/LinkCard';
-// 기존 CSS를 그대로 재사용합니다.
 import '../../styles/components/ProfileSummaryCard.css';
 
-// 아이콘 매핑 로직 (변경 없음)
 const getIconByTypeOrUrl = (type, url) => {
   if (type === 'github' || (url && url.includes('github.com')))
     return <img src="/github.svg" alt="GitHub" />;
@@ -20,20 +18,16 @@ const MyProfileSummaryCard = ({
   profile: {
     name, avatar, school, major, gpa,
     wishJob, wishArea, 
-    // keywords = [], // <-- 2. keywords prop 제거
     github, notion, portfolioLinks = []
   },
-  onEdit // '수정' 버튼 클릭 핸들러
+  onEdit 
 }) => (
   <div className="profile-summary-wrap">
     
-    {/* --- 3. 헤더 수정: '프로필' 텍스트 추가, 'X' 버튼 없음 --- */}
     <div className="profile-header-row"> 
       <span className="profile-title">프로필</span>
-      {/* 'X' 버튼이 없는 헤더입니다. */}
     </div>
 
-    {/* --- 본문 --- */}
     <div className="profile-main-row">
       <div className="profile-img-box">
         <img
@@ -54,7 +48,6 @@ const MyProfileSummaryCard = ({
             </span>
           </div>
 
-          {/* --- 4. '수정' 버튼 위치 수정 (본문 우측 상단) --- */}
           <div className="profile-actions-inline">
             <Button 
               onClick={onEdit}
@@ -65,7 +58,6 @@ const MyProfileSummaryCard = ({
           </div>
         </div>
 
-        {/* --- 나머지 내용 (변경 없음) --- */}
         <div className="profile-wishinfo-row">
           <span className="wish-label">희망 분야</span>
           <span className="wish-value">{wishArea || wishJob}</span>
@@ -94,8 +86,6 @@ const MyProfileSummaryCard = ({
           )}
         </div>
 
-        {/* --- 5. 키워드 섹션(profile-keywords-row) 제거 --- */}
-        
       </div>
     </div>
   </div>

@@ -90,23 +90,14 @@ const PortfolioSection = ({
     onUpdate({ ...section, [field]: value });
   };
 
-  // 이 섹션 내부의 어떤 요소든 포커스를 받으면 호출됨
   const handleFocus = () => {
     onSectionFocusGained(section.id);
   };
 
-  // 이 섹션 내부의 어떤 요소든 포커스를 잃으면 호출됨
   const handleBlur = (e) => {
-    // e.relatedTarget: 새로 포커스되는 요소
-    // e.currentTarget: 이벤트 리스너가 부착된 요소 (sectionRef.current)
-    
-    // 새로 포커스되는 요소가 이 섹션 내부에 포함되어 있지 않다면
-    // (즉, 포커스가 섹션 외부로 나갔다면)
     if (sectionRef.current && !sectionRef.current.contains(e.relatedTarget)) {
       onSectionFocusLost(section.id);
     }
-    // 포커스가 섹션 내부의 다른 요소(예: 제목 -> 본문)로 이동한 것이라면
-    // onSectionFocusLost를 호출하지 않음 (요구사항 2번)
   };
 
   return (

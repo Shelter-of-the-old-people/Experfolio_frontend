@@ -60,13 +60,13 @@ const ProfileImageUpload = ({
                 <img 
                   src={previewUrl} 
                   alt="프로필 이미지" 
-                  className="uploaded-image"  /* 1. 이 클래스 추가 */
+                  className="uploaded-image" 
                 />
               ) : (
                 <img 
                   src="/profile-default.svg" 
                   alt="기본 프로필" 
-                  className="placeholder-image" /* 2. 이 클래스 추가 (이건 하셨네요) */
+                  className="placeholder-image"
                 />
               )}
             </div>

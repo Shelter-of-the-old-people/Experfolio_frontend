@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-
-// 원본 TextEditor의 로직을 복제하여 Debounced 버전을 만듭니다.
 const DebouncedTextEditor = ({
   value = '',
-  onChange, // 이 onChange는 onBlur 시점에 호출됩니다.
+  onChange,
   placeholder,
   disabled = false,
   error = false,
@@ -18,7 +16,6 @@ const DebouncedTextEditor = ({
     if (value !== internalValue) {
       setInternalValue(value);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   const getLabelClassName = () => {
@@ -40,7 +37,7 @@ const DebouncedTextEditor = ({
 
   const handleBlur = () => {
     if (onChange && internalValue !== value) {
-      onChange(internalValue); // 포커스가 떠날 때만 부모에게 알림
+      onChange(internalValue); 
     }
   };
 
@@ -62,7 +59,7 @@ const DebouncedTextEditor = ({
         <textarea
           value={internalValue}
           onChange={handleChange}
-          onBlur={handleBlur} // onBlur 저장 로직
+          onBlur={handleBlur} 
           placeholder={placeholder}
           disabled={disabled}
           className={getEditorClassName()}

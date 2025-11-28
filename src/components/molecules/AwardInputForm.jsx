@@ -34,7 +34,6 @@ const AwardInputForm = ({ onAdd }) => {
   return (
     <div className="award-input-form">
       
-      {/* 1. 대회명 (TextInput - 이미 수직 레이아웃) */}
       <TextInput
         label="대회명"
         value={form.title}
@@ -64,7 +63,6 @@ const AwardInputForm = ({ onAdd }) => {
         </div>
       </div>
       
-      {/* 3. 설명 (TextInput - 이미 수직 레이아웃) */}
       <TextInput
         label="설명"
         value={form.description}
@@ -72,12 +70,10 @@ const AwardInputForm = ({ onAdd }) => {
         placeholder="구체적인 내용을 적어주세요."
       />
 
-      {/* --- ▼ 4. '날짜' 섹션 수정 --- */}
       <div className="input-wrapper">
         <div className="input-label-wrapper">
           <label className="input-label">날짜</label>
         </div>
-        {/* 날짜 선택기들을 감싸는 새 컨테이너 추가 */}
         <div className="input-container award-date-selects">
           <select
             className="award-select"
@@ -101,7 +97,6 @@ const AwardInputForm = ({ onAdd }) => {
           </select>
         </div>
       </div>
-      {/* --- ▲ 수정 끝 --- */}
 
       <button className="award-add-btn" type="button" onClick={handleAdd}>+ 추가하기</button>
     </div>

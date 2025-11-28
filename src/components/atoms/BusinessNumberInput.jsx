@@ -1,28 +1,22 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import NumberInput from './NumberInput.jsx';
 
-/**
- * 사업자 번호 입력 컴포넌트 (3개의 NumberInput으로 구성)
- * - 검증 실패 시 X 아이콘을 클릭하여 초기화하는 기능 추가
- */
 const BusinessNumberInput = ({
   value = { part1: '', part2: '', part3: '' },
   onChange,
   label = '사업자등록번호',
   required = false,
   disabled = false,
-  error = false, // 외부에서 주입된 기본 에러
-  errorMessage, // 외부에서 주입된 기본 에러 메시지
+  error = false,
+  errorMessage, 
   
-  // --- 검증 관련 Props (상위에서 주입) ---
-  isValidating = false, // 검증 API 호출 중인지 여부
-  isValid = false, // 검증이 완료되었고 유효한지 여부
-  validationMessage, // 검증 결과 메시지
-  companyName, // 검증을 통해 확인된 회사명
+  isValidating = false,
+  isValid = false,
+  validationMessage, 
+  companyName, 
   showValidationButton = true,
   showCompanyName = true,
-  onValidate, // '검증' 버튼 클릭 시 호출될 함수
-  // ---
+  onValidate, 
   
   ...props
 }) => {
@@ -32,7 +26,6 @@ const BusinessNumberInput = ({
     part3: value?.part3 || ''
   });
 
-  // 외부 value prop이 변경되면 로컬 상태 업데이트
   useEffect(() => {
     if (value && typeof value === 'object') {
       setLocalValues({
@@ -43,7 +36,6 @@ const BusinessNumberInput = ({
     }
   }, [value]);
 
-  // 개별 필드 변경 핸들러
   const handlePartChange = useCallback((partName, newValue) => {
     const updatedValues = {
       ...localValues,
@@ -52,25 +44,22 @@ const BusinessNumberInput = ({
     
     setLocalValues(updatedValues);
     
-    // 부모 컴포넌트에 변경사항 전달
     if (onChange) {
       onChange(updatedValues);
     }
   }, [localValues, onChange]);
 
-  // [추가] 입력 초기화 핸들러 (X 아이콘 클릭 시 동작)
   const handleReset = useCallback((e) => {
-    e.stopPropagation(); // 버블링 방지
+    e.stopPropagation(); 
     
     const emptyValues = { part1: '', part2: '', part3: '' };
-    setLocalValues(emptyValues); // 로컬 상태 초기화
+    setLocalValues(emptyValues); 
     
     if (onChange) {
-      onChange(emptyValues); // 부모 상태 초기화 (이로 인해 부모의 resetValidation 트리거됨)
+      onChange(emptyValues); 
     }
   }, [onChange]);
 
-  // 검증 버튼 클릭 핸들러
   const handleValidateClick = useCallback(() => {
     if (onValidate) {
       const fullNumber = `${localValues.part1}${localValues.part2}${localValues.part3}`;
@@ -78,16 +67,13 @@ const BusinessNumberInput = ({
     }
   }, [localValues, onValidate]);
 
-  // 전체 에러 상태 결정
   const hasError = error || (validationMessage && !isValid);
   const displayErrorMessage = errorMessage || (hasError ? validationMessage : '');
 
-  // 검증 가능 여부 (10자리를 모두 채웠는지)
   const canValidate = localValues.part1.length === 3 && 
     localValues.part2.length === 2 && 
     localValues.part3.length === 5;
 
-  // [수정] 검증 상태 아이콘 (클릭 기능 추가)
   const getValidationIcon = () => {
     if (isValidating) {
       return <span className="validation-icon validating">⏳</span>;
@@ -97,12 +83,11 @@ const BusinessNumberInput = ({
       if (isValid) {
         return <span className="validation-icon valid">✓</span>;
       } else {
-        // 실패 시 X 아이콘
         return (
           <span 
             className="validation-icon invalid" 
-            onClick={handleReset} // 클릭 시 리셋
-            style={{ cursor: 'pointer' }} // 포인터 커서 추가
+            onClick={handleReset}
+            style={{ cursor: 'pointer' }}
             title="입력 초기화"
           >
             ✗
@@ -124,7 +109,6 @@ const BusinessNumberInput = ({
 
   return (
     <div className="business-number-input-wrapper">
-      {/* 라벨 */}
       <div className="input-label-wrapper">
         {label && (
           <label className={getLabelClassName()}>
@@ -137,7 +121,6 @@ const BusinessNumberInput = ({
         )}
       </div>
 
-      {/* 사업자 번호 입력 필드들 */}
       <div className="business-number-inputs">
         <NumberInput
           value={localValues.part1}
@@ -169,10 +152,8 @@ const BusinessNumberInput = ({
           {...props}
         />
 
-        {/* 검증 아이콘 */}
         {getValidationIcon()}
 
-        {/* 검증 버튼 */}
         {showValidationButton && (
           <button
             type="button"
@@ -185,7 +166,6 @@ const BusinessNumberInput = ({
         )}
       </div>
 
-      {/* 검증 성공 시 회사 정보 표시 */}
       {showCompanyName && isValid && companyName && (
         <div className="business-company-info">
           <span className="company-name">회사명: {companyName}</span>

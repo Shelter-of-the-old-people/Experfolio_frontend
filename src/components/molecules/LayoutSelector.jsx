@@ -37,7 +37,6 @@ const LAYOUT_TYPES = {
     gridArea: 'right'
   },
 };
-// 렌더링 순서 정의 (Grid 배치 순서)
 const LAYOUT_ORDER = ['file-top', 'file-left', 'text-only', 'file-right', 'file-bottom'];
 
 const LayoutSelector = ({ onSelect }) => {
@@ -71,7 +70,6 @@ const LayoutSelector = ({ onSelect }) => {
         })}
       </div>
       
-      {/* 3. 호버 시 변경되는 중앙 텍스트 */}
       <p className="layout-selector-text">
         {currentLabel}
       </p>
