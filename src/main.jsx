@@ -19,6 +19,7 @@ import './styles/components/linkcard.css'
 import './styles/components/LayoutSelector.css'
 import './styles/components/PortfolioEditor.css'
 import './styles/components/SaveStatusIndicator.css'
+import './styles/components/PortfolioSectionViewer.css'
 
 import './styles/components/NewSearchButton.css'
 import './styles/components/BookmarkSection.css'
@@ -29,9 +30,10 @@ import './styles/components/KeywordTag.css'
 import './styles/components/SearchResultCard.css'
 import './styles/pages/SearchResultsPage.css'
 import './styles/pages/SearchPage.css'
-import './styles/pages/SearchProfilePage.css'; 
-
+import './styles/pages/SearchProfilePage.css'
+import './styles/pages/ProfileEditPage.css'
 import './styles/pages/PortfolioEditPage.css'
+import './styles/pages/PortfolioPage.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

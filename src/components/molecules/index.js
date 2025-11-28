@@ -15,3 +15,4 @@ export { default as SearchQueryIndicator } from './SearchQueryIndicator';
 export { default as SearchBar } from './SearchBar';
 export { default as SignupSuccessModal } from './SignupSuccessModal';
 export { default as ServiceGuideCard } from './ServiceGuideCard';
+export { default as PortfolioSectionViewer } from './PortfolioSectionViewer';

@@ -1,43 +1,25 @@
+
 .portfolio-edit-page {
-  display: flex;
-  height: 100%;
+  display:flex;
+  height:fit-content;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  margin-bottom: 120px;
 }
 
 .portfolio-main-editor {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  max-width: 900px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 .portfolio-main-editor header {
   margin-bottom: 30px;
 }
 
-.temp-sidenav {
-  border-right: 1px solid #eee;
-  padding: 20px;
-  min-width: 200px;
-}
-
-.temp-sidenav-header {
-  margin-bottom: 20px;
-}
-
-.temp-sidenav-list {
-}
-
-.temp-sidenav-item {
-  margin-bottom: 10px;
-}
-
-.temp-sidenav-item a {
-  text-decoration: none;
-  color: var(--color-gray-700);
-}
-
-.temp-sidenav-item a:hover {
-  color: var(--color-black);
-  font-weight: var(--font-weight-medium);
+@media (max-width: 768px) {
+  .portfolio-edit-page {
+    max-width: 100%;
+    padding: 0 10px;
+    margin-bottom: 80px;
+  }
 }

@@ -4,28 +4,16 @@ import { useApi, useLazyApi } from '../../hooks/useApi';
 import api from '../../services/api';
 import { useAuth } from '../../hooks/useAuth';
 import SaveStatusIndicator from '../../components/molecules/SaveStatusIndicator';
-
-const TempSideNav = ({ sections, basicInfo }) => ( 
-  <nav className="temp-sidenav">
-    <h4 className="temp-sidenav-header">포트폴리오 목차</h4>
-    <ul className="temp-sidenav-list">
-      {sections.map((section) => (
-        <li key={section.id} className="temp-sidenav-item">
-          <a href={`#section-${section.id}`}>
-            {section.title || '(제목 없음)'}
-          </a>
-        </li>
-      ))}
-    </ul>
-  </nav>
-);
+import '../../styles/pages/PortfolioEditPage.css';
 
 const PortfolioEditPage = () => {
   const [sections, setSections] = useState([]);
   const { user } = useAuth();
+  
   const [saveStatus, setSaveStatus] = useState('idle');
   const [dirtySectionId, setDirtySectionId] = useState(null);
   const saveTimerRef = useRef(null);
+  
   const stateForCleanup = useRef();
 
   const fetchApi = useCallback(() => api.get('/portfolios/me'), []);
@@ -92,26 +80,14 @@ const PortfolioEditPage = () => {
   );
 
   const executeSave = useCallback(async (sectionIdToSave) => {
-    if (String(sectionIdToSave).startsWith('temp-')) {
-      console.log('임시 섹션은 저장하지 않습니다:', sectionIdToSave);
+    if (isUpdating) {
+      console.log('이미 저장 중입니다. 중복 요청을 무시합니다.');
       return;
     }
-    
-    if (isUpdating) { 
-      return;
-    }
-    
-    if (saveTimerRef.current) {
-      clearTimeout(saveTimerRef.current);
-      saveTimerRef.current = null;
-    }
-    
-    setSaveStatus('saving');
     
     const sectionToSave = sections.find(s => s.id === sectionIdToSave);
-
     if (!sectionToSave) {
-      console.warn('저장할 섹션을 찾을 수 없습니다. 이미 삭제되었거나 ID가 변경되었을 수 있습니다:', sectionIdToSave);
+      console.log('섹션을 찾을 수 없습니다. 이미 삭제되었거나 ID가 변경되었을 수 있습니다:', sectionIdToSave);
       setSaveStatus('saved');
       return;
     }
@@ -203,6 +179,7 @@ const PortfolioEditPage = () => {
     }
     
     clearTimeout(saveTimerRef.current);
+    
     if (dirtySectionId === sectionId) {
       setDirtySectionId(null);
     }
@@ -295,9 +272,7 @@ const PortfolioEditPage = () => {
   if (pageLoading && sections.length === 0) {
     return (
       <div className="portfolio-edit-page">
-        <div className="portfolio-main-editor" style={{ textAlign: 'center' }}>
-          <h2>포트폴리오 불러오는 중...</h2>
-        </div>
+        <h2>포트폴리오 불러오는 중...</h2>
       </div>
     );
   }
@@ -305,22 +280,16 @@ const PortfolioEditPage = () => {
   if (fetchError && !portfolioData && !(fetchError || '').includes('포트폴리오를 찾을 수 없습니다')) {
     return (
       <div className="portfolio-edit-page">
-        <div className="portfolio-main-editor" style={{ textAlign: 'center', color: 'var(--color-error)' }}>
-          <h2>오류가 발생했습니다.</h2>
-          <p>{fetchError}</p>
-        </div>
+        <h2 style={{ color: 'var(--color-error)' }}>오류가 발생했습니다.</h2>
+        <p>{fetchError}</p>
       </div>
     );
   }
 
   const isEditorBusy = isCreating || isDeleting || isUpdating;
-  
-  const basicInfo = portfolioData?.data?.data?.basicInfo; 
 
   return (
     <div className="portfolio-edit-page">
-      <TempSideNav sections={sections} basicInfo={basicInfo} />
-
       <div className="portfolio-main-editor">
         <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h2>포트폴리오</h2>

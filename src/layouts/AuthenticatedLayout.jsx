@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { routes } from '../routes';
 import { Button } from '../components/atoms';
 import { useAuth } from '../hooks/useAuth'; 
-import { CompanySidebar } from '../components/organisms';
+import { CompanySidebar, StudentSidebar } from '../components/organisms'; 
 
 const AuthenticatedLayout = ({ children, userRole }) => {
   const navigate = useNavigate();
@@ -27,22 +27,6 @@ const AuthenticatedLayout = ({ children, userRole }) => {
     return routes.HOME;  
   };
 
-  const getSidebarItems = () => {
-    if (userRole === 'RECRUITER') {
-      return [
-        { path: routes.SEARCH, label: '인재 검색' },
-        { path: routes.PROFILE, label: '기업 정보' }
-      ];
-    } else if (userRole === 'JOB_SEEKER') {
-      return [
-        { path: routes.PORTFOLIO, label: '포트폴리오' },
-        { path: routes.PORTFOLIO_EDIT, label: '포트폴리오 수정' },
-        { path: routes.PROFILE, label: '개인 정보' }
-      ];
-    }
-    return [];
-  };
-
   return (
     <div className="authenticated-layout">
       <header className="layout-header auth-header">
@@ -60,21 +44,11 @@ const AuthenticatedLayout = ({ children, userRole }) => {
       </header>
       
       <div className="layout-body">
-         {userRole === 'RECRUITER' ? (
+        {userRole === 'RECRUITER' ? (
           <CompanySidebar />
         ) : userRole === 'JOB_SEEKER' ? (
-          <aside className="sidebar">
-          <nav className="sidebar-nav">
-            {getSidebarItems().map((item, index) => (
-              <Link key={index} to={item.path} className="sidebar-item">
-                {item.label}
-              </Link>
-            ))}
-          </nav>
-        </aside>
+          <StudentSidebar />
         ) : null}
-
-        
         
         <main className="main-content">
           {children}

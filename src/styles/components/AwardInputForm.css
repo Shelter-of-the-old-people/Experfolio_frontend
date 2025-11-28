@@ -1,9 +1,8 @@
 .award-section {
   background: #fff;
-  border-radius: 2px;
-  width: 990px;
+  width: 100%;
   padding: 24px;
-  margin: 24px;
+  margin: 24px 0;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -103,8 +102,6 @@
 }
 
 
-/* --- ▼ 폼 스타일 수정 시작 --- */
-
 .award-input-form {
   display: flex;
   flex-direction: column;
@@ -113,19 +110,16 @@
   background: none;
 }
 
-/* (수정) 라디오 버튼 컨테이너 스타일 */
 .award-radio-options {
   display: flex;
   flex-direction: row;
-  align-items: center; /* (추가) 수직 중앙 정렬 */
+  align-items: center; 
   gap: 10px;
   
-  /* (추가) TextInput의 .input 필드와 높이/패딩을 맞춤 */
   min-height: calc(1rem * var(--line-height-loose, 2)); 
   padding: 0 var(--space-3-5, 0.875rem);
 }
 
-/* (유지) 라디오 버튼 자체의 스타일 */
 .award-radio-btn {
   background: #FFF;
   border: 1px solid #959595;
@@ -139,20 +133,17 @@
   gap: 8px;
 }
 
-/* (추가) 날짜 선택기(select)들을 감싸는 컨테이너 */
 .award-date-selects {
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 10px;
   
-  /* (추가) TextInput의 .input 필드와 높이/패딩을 맞춤 */
   min-height: calc(1rem * var(--line-height-loose, 2)); 
   padding: 0 var(--space-3-5, 0.875rem);
 }
 
 
-/* (유지) 셀렉트 박스 자체의 스타일 */
 .award-select {
   background: #fff;
   border: 1px solid #959595;

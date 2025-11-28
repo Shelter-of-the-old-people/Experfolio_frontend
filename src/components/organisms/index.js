@@ -9,3 +9,4 @@ export { default as CompanySidebar } from './CompanySidebar';
 export { default as SearchResultCard } from './SearchResultCard';
 export { default as SearchResultHeader } from './SearchResultHeader';
 export { default as SearchResultsSidebar } from './SearchResultsSidebar';
+export { default as StudentSidebar } from './StudentSidebar'; 

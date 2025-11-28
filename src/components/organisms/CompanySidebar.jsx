@@ -1,6 +1,4 @@
 import React from 'react';
-import { useApi } from '../../hooks/useApi';
-import api from '../../services/api';
 import { BookmarkSection, NewSearchButton, SearchQueryIndicator } from '../molecules';
 import '../../styles/components/CompanySidebar.css';
 
@@ -10,13 +8,17 @@ const MOCK_TALENTS = [
 ];
 
 const CompanySidebar = () => {
-
   return (
     <aside className="company-sidebar">
-      <h4>메뉴</h4>
-      <NewSearchButton />
-      <SearchQueryIndicator />
-      <BookmarkSection talents={MOCK_TALENTS} />
+      <div className="sidebar-fixed-section">
+        <h4 className="sidebar-section-title">메뉴</h4>
+        <NewSearchButton />
+        <SearchQueryIndicator />
+      </div>
+
+      <div className="sidebar-scrollable-section">
+        <BookmarkSection talents={MOCK_TALENTS} />
+      </div>
     </aside>
   );
 };

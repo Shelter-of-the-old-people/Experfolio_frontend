@@ -1,26 +1,39 @@
+/* Layout.css */
+
+/* ============================================
+   전체 레이아웃 컨테이너
+   ============================================ */
 .public-layout,
 .authenticated-layout {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  min-height: 100vh;
 }
 
 .public-main {
   flex-grow: 1;
+  overflow-y: auto;
 }
 
+/* ============================================
+   Layout Body: 정확히 100vh (화면 전체 높이)
+   ============================================ */
 .layout-body {
   display: flex;
-  flex-grow: 1; 
-  overflow: hidden; 
+  height: 100vh;
+  overflow: hidden;
 }
 
+/* ============================================
+   사이드바 (고정)
+   ============================================ */
 .sidebar {
   width: 340px;
   flex-shrink: 0;
   background: var(--color-gray-50);
   border-right: 1px solid var(--color-gray-200);
   padding: var(--space-6);
+  overflow: hidden;
 }
 
 .sidebar-nav {
@@ -44,15 +57,22 @@
   color: var(--color-black);
 }
 
+/* ============================================
+   메인 콘텐츠 (스크롤 가능)
+   ============================================ */
 .main-content {
+  flex: 1;
   display: flex;
-  width:100%;
   justify-content: center;
-  overflow-y: auto; 
+  overflow-y: auto;
   padding: var(--space-6);
   background-color: #EEEEEE;
+  min-width: 0;
 }
 
+/* ============================================
+   헤더 (고정)
+   ============================================ */
 .layout-header {
   display: flex;
   width: 100%;
@@ -88,6 +108,9 @@
   gap: var(--space-6);
 }
 
+/* ============================================
+   푸터 (Layout Body 밖, 스크롤 시 나타남)
+   ============================================ */
 .layout-footer {
   display: flex;
   width: 100%;
@@ -95,8 +118,9 @@
   justify-content: center;
   align-items: flex-start;
   gap: 4.6875rem;
-  
+  flex-shrink: 0;
   background-color: var(--color-gray-990);
+  padding-top: calc(5.0625rem + 80px); /* ⭐ 상단 여백 추가 */
 }
 
 .footer-logo {
@@ -106,9 +130,22 @@
   text-decoration: none;
 }
 
-.footer-logo {
-  font-size: var(--font-size-2sxl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-white);
-  text-decoration: none;
+/* ============================================
+   반응형
+   ============================================ */
+@media (max-width: 768px) {
+  .layout-body {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .sidebar {
+    width: 100%;
+    max-height: 30vh;
+    overflow-y: auto;
+  }
+  
+  .layout-footer {
+    padding-top: calc(5.0625rem + 40px);
+  }
 }

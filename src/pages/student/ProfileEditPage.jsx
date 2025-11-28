@@ -120,7 +120,6 @@ const ProfileEditPage = () => {
       
       const response = await api.post('/portfolios', initialBasicInfo); 
       
-      // 정규화된 응답에서 실제 데이터 추출
       const actualData = response.data.data;
       
       if (actualData && actualData.basicInfo) {
@@ -139,10 +138,8 @@ const ProfileEditPage = () => {
   
   useEffect(() => {
     if (portfolioData) {
-      // 정규화된 응답: portfolioData.data = { success, message, data, timestamp }
       const normalizedResponse = portfolioData.data;
       
-      // 실제 포트폴리오 데이터는 data.data 안에
       const actualData = normalizedResponse.data;
       
       if (actualData && actualData.basicInfo) {
@@ -218,15 +215,17 @@ const ProfileEditPage = () => {
     );
   }
   
-  return (
-    <div className="profile-edit-page">
-      <h2>프로필 수정</h2>
-      
+return (
+  <div className="profile-edit-page">
+    
+    <div id="profile-section">
       <ProfileBasicInfoForm 
         formData={basicInfo}
         onFormChange={handleBasicInfoChange}
       />
-      
+    </div>
+    
+    <div id="awards-section">
       <AwardListSection 
         awards={awards}
         onAdd={(newAward) => {
@@ -239,7 +238,9 @@ const ProfileEditPage = () => {
           setAwards(prev => prev.filter(award => award.id !== id));
         }}
       />
-      
+    </div>
+    
+    <div id="certifications-section">
       <CertificateListSection 
         certs={certs}
         onAdd={(newCert) => {
@@ -252,7 +253,9 @@ const ProfileEditPage = () => {
           setCerts(prev => prev.filter(cert => cert.id !== id));
         }}
       />
-      
+    </div>
+    
+    <div id="languages-section">
       <LanguageListSection 
         langs={langs}
         onAdd={(newLang) => {
@@ -265,25 +268,26 @@ const ProfileEditPage = () => {
           setLangs(prev => prev.filter(lang => lang.id !== id));
         }}
       />
-      
-      <div style={{ marginTop: '32px', textAlign: 'right' }}>
-        <Button 
-          variant="black" 
-          size="default"
-          onClick={handleSaveAll}
-          disabled={saveLoading}
-        >
-          {saveLoading ? '저장 중...' : '전체 저장'}
-        </Button>
-        
-        {saveError && (
-          <p style={{ color: 'red', marginTop: '8px' }}>
-            저장 실패: {saveError}
-          </p>
-        )}
-      </div>
     </div>
-  );
+    
+    <div>
+      <Button 
+        variant="black" 
+        size="default"
+        onClick={handleSaveAll}
+        disabled={saveLoading}
+      >
+        {saveLoading ? '저장 중...' : '전체 저장'}
+      </Button>
+      
+      {saveError && (
+        <p style={{ color: 'red', marginTop: '8px' }}>
+          저장 실패: {saveError}
+        </p>
+      )}
+    </div>
+  </div>
+);
 };
 
 export default ProfileEditPage;

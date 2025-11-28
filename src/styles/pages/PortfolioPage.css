@@ -1,0 +1,89 @@
+/* PortfolioPage.css */
+
+.portfolio-page {
+    display:flex;
+    flex-direction: column;
+    height:fit-content;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* 포트폴리오 상세 섹션 */
+.portfolio-sections-container {
+  width: 100%;
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 120px;
+}
+
+.portfolio-sections-divider {
+  font-size: 22px;
+  font-weight: bold;
+  color: #000;
+  font-family: 'Pretendard Variable', sans-serif;
+  margin-bottom: 16px;
+}
+
+/* 빈 상태 메시지 */
+.no-sections-message {
+  text-align: center;
+  padding: 60px 20px;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  margin-top: 24px;
+}
+
+.no-sections-text {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 20px;
+  font-family: 'Pretendard Variable', sans-serif;
+}
+
+.edit-button {
+  padding: 12px 24px;
+  background: #1e1e1e;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  font-family: 'Pretendard Variable', sans-serif;
+  transition: background-color 0.2s;
+}
+
+.edit-button:hover {
+  background-color: #333;
+}
+
+/* 에러/로딩 상태 */
+.portfolio-page-loading,
+.portfolio-page-error {
+  padding: 40px;
+  text-align: center;
+}
+
+.portfolio-page-error p {
+  color: red;
+  margin-bottom: 12px;
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .portfolio-page {
+    max-width: 100%;
+    padding: 0 16px;
+  }
+  
+  .portfolio-sections-container {
+    margin-bottom: 80px;
+  }
+  
+  .no-sections-message {
+    padding: 40px 16px;
+  }
+}
