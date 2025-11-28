@@ -29,6 +29,7 @@ import './styles/components/KeywordTag.css'
 import './styles/components/SearchResultCard.css'
 import './styles/pages/SearchResultsPage.css'
 import './styles/pages/SearchPage.css'
+import './styles/pages/SearchProfilePage.css'; 
 
 import './styles/pages/PortfolioEditPage.css'
 

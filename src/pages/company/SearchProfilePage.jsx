@@ -2,17 +2,20 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import ProfileSummaryCard from '../../components/organisms/ProfileSummaryCard'; 
 import { ProfileCareerCards } from '../../components/organisms';
+import SearchResultsSidebar from '../../components/organisms/SearchResultsSidebar';
 import api from '../../services/api';
 import { useApi } from '../../hooks/useApi';
+import useSearchStore from '../../stores/useSearchStore';
+import { routes } from '../../routes';
 
 const viewerStyles = {
   container: {
-    width: '900px',
+    width: '100%',
     marginTop: '24px',
     display: 'flex',
     flexDirection: 'column',
     gap: '10px',
-    marginBottom:"200px"
+    marginBottom: '200px'
   },
   sectionCard: {
     backgroundColor: '#fff',
@@ -129,6 +132,8 @@ const SearchProfilePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
+  const { lastQuery } = useSearchStore();
+  
   const [profile, setProfile] = useState(null);
   const [awards, setAwards] = useState([]);
   const [certs, setCerts] = useState([]);
@@ -169,7 +174,11 @@ const SearchProfilePage = () => {
   }, [data]);
 
   const handleClose = () => {
-    navigate(-1);
+    if (lastQuery) {
+      navigate(`${routes.SEARCH_RESULTS}?q=${encodeURIComponent(lastQuery)}`);
+    } else {
+      navigate(routes.SEARCH);
+    }
   };
 
   const handleContact = () => {
@@ -225,38 +234,41 @@ const SearchProfilePage = () => {
   }
 
   return (
-    <div className="search-profile-page" >
-      <ProfileSummaryCard
-        profile={{
-          ...profile,
-          keywords: searchKeywords 
-        }}
-        onClose={handleClose}
-        isFavorite={isFavorite}
-        onContact={handleContact}
-        onToggleFavorite={handleToggleFavorite}
-        
-      />
-
-      <div style={{ marginTop: '24px' }}>
-        <ProfileCareerCards
-          awards={awards}
-          certificates={certs}
-          languages={langs}
+    <div className="search-profile-page-container">
+      <div className="profile-main-content">
+        <ProfileSummaryCard
+          profile={{
+            ...profile,
+            keywords: searchKeywords 
+          }}
+          onClose={handleClose}
+          isFavorite={isFavorite}
+          onContact={handleContact}
+          onToggleFavorite={handleToggleFavorite}
         />
-      </div>
-      
-      {items.length > 0 && (
-        <div style={viewerStyles.container}>
-          <h3 style={viewerStyles.divider}>포트폴리오 상세</h3>
-          {items.map((item) => (
-            <PortfolioSectionViewer 
-              key={item.id || item.order} 
-              item={item} 
-            />
-          ))}
+
+        <div style={{ marginTop: '24px' }}>
+          <ProfileCareerCards
+            awards={awards}
+            certificates={certs}
+            languages={langs}
+          />
         </div>
-      )}
+        
+        {items.length > 0 && (
+          <div style={viewerStyles.container}>
+            <h3 style={viewerStyles.divider}>포트폴리오 상세</h3>
+            {items.map((item) => (
+              <PortfolioSectionViewer 
+                key={item.id || item.order} 
+                item={item} 
+              />
+            ))}
+          </div>
+        )}
+      </div>
+
+      <SearchResultsSidebar currentUserId={id} />
     </div>
   );
 };

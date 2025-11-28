@@ -1,0 +1,21 @@
+.search-profile-page-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  min-height: calc(100vh - 80px);
+  gap: 0;
+  position: relative;
+}
+
+.profile-main-content {
+  display:flex;
+  flex-direction: column;
+  width: 100%;
+  padding: 24px;
+  overflow-y: auto;
+  max-width: calc(100% - 320px);
+}
+.search-profile-page {
+  width: 100%;
+}

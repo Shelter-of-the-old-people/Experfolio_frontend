@@ -2,23 +2,24 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../../routes';
 import { KeywordTag, Button } from '../atoms';
+import useSearchStore from '../../stores/useSearchStore';
 import '../../styles/components/SearchResultCard.css';
 
 const formatPercent = (decimal) => {
   return `${(decimal * 100).toFixed(0)}%`;
 };
+
 const SearchResultCard = ({ candidate }) => {
-  console.log('candidate:', candidate);
-  console.log('keywords:', candidate.keywords);
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const { setSelectedUserId } = useSearchStore();
 
   const {
     userId,
     matchScore,
     keywords,
     matchReason,
-    userInfo 
+    userInfo
   } = candidate;
 
   const {
@@ -27,20 +28,21 @@ const SearchResultCard = ({ candidate }) => {
     gpa = 0.0,
     major = "(학과 정보 없음)",
     awardsCount = 0
-  } = userInfo || {}; 
+  } = userInfo || {};
 
   const accuracy = formatPercent(matchScore);
-
   const displayGrade = typeof gpa === 'number' ? gpa.toFixed(2) : '-';
   const displayAwards = typeof awardsCount === 'number' ? `${awardsCount}회` : '-';
 
   const handleProfileView = (e) => {
     e.stopPropagation();
-    navigate(routes.TALENT_DETAIL.replace(':id', userId),{
+    
+    setSelectedUserId(userId);
+    
+    navigate(routes.TALENT_DETAIL.replace(':id', userId), {
       state: { searchKeywords: keywords }
     });
   };
-
 
   return (
     <div className={`search-card ${isOpen ? 'open' : ''}`}>
