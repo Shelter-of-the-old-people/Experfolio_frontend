@@ -2,62 +2,13 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import ProfileSummaryCard from '../../components/organisms/ProfileSummaryCard'; 
 import { ProfileCareerCards } from '../../components/organisms';
+import { PortfolioSectionViewer } from '../../components/molecules';
 import SearchResultsSidebar from '../../components/organisms/SearchResultsSidebar';
 import api from '../../services/api';
 import { useApi } from '../../hooks/useApi';
 import useSearchStore from '../../stores/useSearchStore';
 import { routes } from '../../routes';
-
-const viewerStyles = {
-  container: {
-    width: '100%',
-    marginTop: '24px',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '10px',
-    marginBottom: '200px'
-  },
-  sectionCard: {
-    backgroundColor: '#fff',
-    padding: '32px',
-    border: '1px solid #eee'
-  },
-  title: {
-    fontSize: '20px',
-    fontWeight: '700',
-    marginBottom: '16px',
-    color: '#1a1a1a',
-    fontFamily: 'Pretendard Variable'
-  },
-  content: {
-    fontSize: '16px',
-    lineHeight: '1.6',
-    color: '#333',
-    whiteSpace: 'pre-wrap',
-    fontFamily: 'Pretendard Variable'
-  },
-  divider: {
-    fontSize: '22px',
-    fontWeight: 'bold',
-    color: '#000'
-  }
-};
-
-const PortfolioSectionViewer = ({ item }) => {
-  return (
-    <div style={viewerStyles.sectionCard}>
-      <h4 style={viewerStyles.title}>{item.title}</h4>
-      <div style={viewerStyles.content}>
-        {item.content}
-      </div>
-      {item.attachments && item.attachments.length > 0 && (
-        <div style={{ marginTop: '20px' }}>
-          <p style={{ fontSize: '14px', color: '#666' }}>📎 첨부파일 {item.attachments.length}개</p>
-        </div>
-      )}
-    </div>
-  );
-};
+import '../../styles/pages/SearchProfilePage.css';
 
 const getIconByTypeOrUrl = (type, url) => {
   if (type === 'github' || (url && url.includes('github.com')))
@@ -138,7 +89,6 @@ const SearchProfilePage = () => {
   const [awards, setAwards] = useState([]);
   const [certs, setCerts] = useState([]);
   const [langs, setLangs] = useState([]);
-  
   const [items, setItems] = useState([]); 
   const [isFavorite, setIsFavorite] = useState(false);
   const searchKeywords = location.state?.searchKeywords || [];
@@ -208,7 +158,7 @@ const SearchProfilePage = () => {
 
   if (loading) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
+      <div className="search-profile-loading">
         <p>프로필 정보를 불러오는 중입니다...</p>
       </div>
     );
@@ -216,13 +166,10 @@ const SearchProfilePage = () => {
 
   if (error) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-error)' }}>
+      <div className="search-profile-error">
         <p>프로필을 불러오는데 실패했습니다.</p>
-        <p style={{ fontSize: '14px', marginTop: '8px' }}>{error}</p>
-        <button 
-          onClick={handleClose}
-          style={{ marginTop: '20px', padding: '8px 16px', background: '#eee', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
-        >
+        <p className="error-message">{error}</p>
+        <button onClick={handleClose} className="back-button">
           돌아가기
         </button>
       </div>
@@ -247,7 +194,7 @@ const SearchProfilePage = () => {
           onToggleFavorite={handleToggleFavorite}
         />
 
-        <div style={{ marginTop: '24px' }}>
+        <div className="profile-career-section">
           <ProfileCareerCards
             awards={awards}
             certificates={certs}
@@ -256,8 +203,8 @@ const SearchProfilePage = () => {
         </div>
         
         {items.length > 0 && (
-          <div style={viewerStyles.container}>
-            <h3 style={viewerStyles.divider}>포트폴리오 상세</h3>
+          <div className="portfolio-sections-container">
+            <h3 className="portfolio-sections-divider">포트폴리오 상세</h3>
             {items.map((item) => (
               <PortfolioSectionViewer 
                 key={item.id || item.order} 

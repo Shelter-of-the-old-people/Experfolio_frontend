@@ -25,6 +25,16 @@ const PortfolioSectionViewer = ({ item }) => {
     return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
   };
 
+  const getPdfHeightClass = () => {
+    if (type === 'file-top' || type === 'file-bottom') {
+      return 'pdf-landscape';
+    }
+    if (type === 'file-left' || type === 'file-right') {
+      return 'pdf-portrait';
+    }
+    return 'pdf-portrait';
+  };
+
   const renderAttachment = (attachment, index) => {
     const fileUrl = getFileUrl(attachment.objectKey);
     const { originalFilename, contentType, fileSize } = attachment;
@@ -61,13 +71,19 @@ const PortfolioSectionViewer = ({ item }) => {
     }
 
     if (isPdf) {
+      const pdfHeightClass = getPdfHeightClass();
+      
       return (
-        <div key={index}>
-          <embed 
-            src={fileUrl} 
-            type="application/pdf" 
-            className="pdf-embed"
-          />
+        <div key={index} className="file-display-container">
+          <div className="file-upload-wrapper">
+            <div className="preview-container">
+              <embed 
+                src={fileUrl + '#toolbar=0'} 
+                type="application/pdf" 
+                className={`file-preview pdf-preview ${pdfHeightClass}`}
+              />
+            </div>
+          </div>
           <div className="file-item">
             <span className="file-icon">{getFileIcon(contentType)}</span>
             <div className="file-info">
@@ -108,24 +124,69 @@ const PortfolioSectionViewer = ({ item }) => {
     return null;
   }
 
+  const contentElement = content ? (
+    <div className="section-content">
+      {content}
+    </div>
+  ) : null;
+
+  const filesElement = (attachments && attachments.length > 0) ? (
+    <div className="attachment-container">
+      {attachments.map((attachment, index) => renderAttachment(attachment, index))}
+    </div>
+  ) : null;
+
+  const renderLayout = () => {
+    switch (type) {
+      case 'text-only':
+        return contentElement;
+      
+      case 'file-top':
+        return (
+          <div className="layout-vertical">
+            {filesElement}
+            {contentElement}
+          </div>
+        );
+      
+      case 'file-bottom':
+        return (
+          <div className="layout-vertical">
+            {contentElement}
+            {filesElement}
+          </div>
+        );
+      
+      case 'file-left':
+        return (
+          <div className="layout-horizontal">
+            <div className="layout-column">{filesElement}</div>
+            <div className="layout-column">{contentElement}</div>
+          </div>
+        );
+      
+      case 'file-right':
+        return (
+          <div className="layout-horizontal">
+            <div className="layout-column">{contentElement}</div>
+            <div className="layout-column">{filesElement}</div>
+          </div>
+        );
+      
+      default:
+        return (
+          <>
+            {contentElement}
+            {filesElement}
+          </>
+        );
+    }
+  };
+
   return (
     <div className="portfolio-section-viewer" id={`section-${id}`}>
       <h4 className="section-title">{title || '(제목 없음)'}</h4>
-      
-      {content && (
-        <div className="section-content">
-          {content}
-        </div>
-      )}
-      
-      {attachments && attachments.length > 0 && (
-        <div className="attachment-container">
-          <div className="attachment-title">
-            📎 첨부파일 {attachments.length}개
-          </div>
-          {attachments.map((attachment, index) => renderAttachment(attachment, index))}
-        </div>
-      )}
+      {renderLayout()}
     </div>
   );
 };

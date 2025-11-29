@@ -6,7 +6,8 @@ import FileUpload from './FileUpload';
 const SectionContent = ({ 
   layout, 
   content, 
-  file, 
+  file,
+  attachments,
   onContentChange, 
   onFileChange,
   onChangeLayoutClick
@@ -21,7 +22,11 @@ const SectionContent = ({
   );
 
   const fileElement = (
-    <FileUpload file={file} onFileChange={onFileChange} />
+    <FileUpload 
+      file={file} 
+      attachments={attachments}
+      onFileChange={onFileChange} 
+    />
   );
 
   const renderLayout = () => {
@@ -66,7 +71,6 @@ const SectionContent = ({
       {renderLayout()}
       
       <div className="section-controls-footer">
-
         <Button variant="trans" onClick={onChangeLayoutClick}>
           레이아웃 변경
         </Button>
@@ -126,18 +130,19 @@ const PortfolioSection = ({
         </div>
 
         <div className="section-content-wrapper">
-            {section.layout === 'unselected' ? (
+            {section.type === 'unselected' ? (
             <LayoutSelector
-                onSelect={(value) => handleUpdate('layout', value)}
+                onSelect={(value) => handleUpdate('type', value)}
             />
             ) : (
             <SectionContent
-                layout={section.layout}
+                layout={section.type}
                 content={section.content}
                 file={section.file}
+                attachments={section.attachments}
                 onContentChange={(value) => handleUpdate('content', value)}
                 onFileChange={(value) => handleUpdate('file', value)}
-                onChangeLayoutClick={() => handleUpdate('layout', 'unselected')}
+                onChangeLayoutClick={() => handleUpdate('type', 'unselected')}
             />
             )}
             

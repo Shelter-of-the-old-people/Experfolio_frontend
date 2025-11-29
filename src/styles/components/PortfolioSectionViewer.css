@@ -1,5 +1,3 @@
-/* PortfolioSectionViewer.css */
-
 .portfolio-section-viewer {
   background-color: #fff;
   padding: 32px;
@@ -7,28 +5,24 @@
   margin-bottom: 10px;
 }
 
-.portfolio-section-viewer .section-title {
+.section-title {
   font-size: 20px;
   font-weight: 700;
   margin-bottom: 16px;
   color: #1a1a1a;
-  font-family: 'Pretendard Variable', sans-serif;
+  font-family: 'Pretendard Variable';
 }
 
-.portfolio-section-viewer .section-content {
+.section-content {
   font-size: 16px;
   line-height: 1.6;
   color: #333;
   white-space: pre-wrap;
-  font-family: 'Pretendard Variable', sans-serif;
+  font-family: 'Pretendard Variable';
 }
 
-/* 첨부파일 컨테이너 */
 .attachment-container {
-  margin-top: 24px;
-  padding: 16px;
   background-color: #f8f8f8;
-  border-radius: 4px;
 }
 
 .attachment-title {
@@ -38,21 +32,18 @@
   margin-bottom: 12px;
 }
 
-/* 파일 아이템 */
 .file-item {
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 12px;
-  background-color: #fff;
-  border: 1px solid #e0e0e0;
+  background-color: white;
   border-radius: 4px;
   margin-bottom: 8px;
 }
 
 .file-icon {
   font-size: 24px;
-  flex-shrink: 0;
 }
 
 .file-info {
@@ -60,16 +51,12 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 0;
 }
 
 .file-name {
   font-size: 14px;
   font-weight: 500;
-  color: #333;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  color: #1a1a1a;
 }
 
 .file-size {
@@ -78,17 +65,14 @@
 }
 
 .download-button {
-  padding: 6px 12px;
+  padding: 8px 16px;
   background-color: #1e1e1e;
-  color: #fff;
+  color: white;
   border: none;
   border-radius: 4px;
-  font-size: 13px;
-  font-weight: 600;
   cursor: pointer;
+  font-size: 14px;
   text-decoration: none;
-  display: inline-block;
-  white-space: nowrap;
   transition: background-color 0.2s;
 }
 
@@ -96,25 +80,62 @@
   background-color: #333;
 }
 
-/* 이미지 미리보기 */
 .image-preview {
   width: 100%;
   max-height: 500px;
   object-fit: contain;
-  border: 1px solid #e0e0e0;
   border-radius: 4px;
-  margin-top: 12px;
-  display: block;
+  margin-bottom: 12px;
 }
 
-/* PDF 임베드 */
-.pdf-embed {
+/* FileUpload 스타일 */
+.file-upload-wrapper {
   width: 100%;
-  height: 600px;
-  border: 1px solid #e0e0e0;
+}
+
+.preview-container {
+  position: relative;
+  width: 100%;
+}
+
+.file-preview {
+  width: 100%;
   border-radius: 4px;
-  margin-top: 12px;
-  display: block;
+}
+
+/* PDF 높이: 레이아웃별 */
+.pdf-preview {
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+/* file-top, file-bottom: 가로 PDF (landscape) */
+.pdf-preview.pdf-landscape {
+  height: 465px;
+}
+
+/* file-left, file-right: 세로 PDF (portrait) */
+.pdf-preview.pdf-portrait {
+  height: 900px;
+}
+
+/* 레이아웃 스타일 */
+.layout-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.layout-horizontal {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.layout-column {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 /* 반응형 */
@@ -123,7 +144,13 @@
     padding: 20px;
   }
   
-  .pdf-embed {
-    height: 400px;
+  .layout-horizontal {
+    grid-template-columns: 1fr;
+  }
+  
+  /* 모바일에서는 모든 PDF를 같은 높이로 */
+  .pdf-preview.pdf-landscape,
+  .pdf-preview.pdf-portrait {
+    height: 600px;
   }
 }

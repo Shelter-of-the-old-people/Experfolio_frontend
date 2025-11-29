@@ -65,7 +65,7 @@ const PortfolioEditPage = () => {
       setSections([{ 
         id: `temp-${Date.now()}`, 
         title: '', 
-        layout: 'unselected', 
+        type: 'unselected', 
         content: '', 
         file: null 
       }]);
@@ -136,7 +136,7 @@ const PortfolioEditPage = () => {
       }
     }
     
-    const defaultItemDto = { type: 'other', title: '', content: '' };
+    const defaultItemDto = { type: 'unselected', title: '', content: '' };
     const formData = new FormData();
     formData.append('item', new Blob([JSON.stringify(defaultItemDto)], { type: 'application/json' }));
     

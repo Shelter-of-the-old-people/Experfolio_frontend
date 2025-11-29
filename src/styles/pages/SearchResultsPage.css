@@ -3,8 +3,10 @@
 .search-results-page {
   display:flex;
   flex-direction: column;
+  height:fit-content;
   width:900px;
   padding: var(--space-6);
+  margin-bottom: 120px;
 }
 
 .search-results-page h1 {

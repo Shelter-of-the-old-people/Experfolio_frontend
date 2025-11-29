@@ -1,21 +1,86 @@
 .search-profile-page-container {
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  gap: 24px;
   width: 100%;
-  min-height: calc(100vh - 80px);
-  gap: 0;
-  position: relative;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px;
 }
 
 .profile-main-content {
-  display:flex;
-  flex-direction: column;
-  width: 100%;
-  padding: 24px;
-  overflow-y: auto;
-  max-width: calc(100% - 320px);
+  flex: 1;
+  max-width: 900px;
 }
-.search-profile-page {
+
+.profile-career-section {
+  margin-top: 24px;
+}
+
+.portfolio-sections-container {
   width: 100%;
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 200px;
+}
+
+.portfolio-sections-divider {
+  font-size: 22px;
+  font-weight: bold;
+  color: #000;
+  margin-bottom: 16px;
+}
+
+/* 로딩 상태 */
+.search-profile-loading {
+  padding: 40px;
+  text-align: center;
+}
+
+/* 에러 상태 */
+.search-profile-error {
+  padding: 40px;
+  text-align: center;
+  color: var(--color-error);
+}
+
+.search-profile-error .error-message {
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+.search-profile-error .back-button {
+  margin-top: 20px;
+  padding: 8px 16px;
+  background: #eee;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.search-profile-error .back-button:hover {
+  background: #ddd;
+}
+
+/* 반응형 */
+@media (max-width: 1024px) {
+  .search-profile-page-container {
+    flex-direction: column;
+  }
+  
+  .profile-main-content {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .search-profile-page-container {
+    padding: 16px;
+  }
+  
+  .portfolio-sections-container {
+    margin-bottom: 100px;
+  }
 }
