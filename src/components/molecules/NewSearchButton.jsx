@@ -10,15 +10,14 @@ const NewSearchButton = () => {
   const handleClick = () => {
     navigate(routes.SEARCH);
   };
-  const iconSrc = "/search.svg"; 
 
   return (
     <button 
       type="button" 
-      className="search-query-indicator inactive"
+      className="sidebar-nav-link inactive"
       onClick={handleClick}
     >
-      <img src={iconSrc} alt="" className="indicator-icon" />
+      <div className='icon-container'><img src="/search.svg" className="sidebar-icon" /></div>
       <span className="indicator-text">새 검색</span>
     </button>
   );

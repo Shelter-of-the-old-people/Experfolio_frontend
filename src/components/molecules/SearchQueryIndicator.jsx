@@ -23,10 +23,10 @@ const SearchQueryIndicator = () => {
   return (
     <button 
       type="button" 
-      className={`search-query-indicator ${stateClassName}`}
+      className={`sidebar-nav-link ${stateClassName}`}
       onClick={handleClick}
     >
-      <img src={iconSrc} alt="" className="indicator-icon" />
+      <div className='icon-container'><img src="/public/dashboard.svg" className="sidebar-icon" /></div>
       <span className="indicator-text">{displayText}</span>
     </button>
   );

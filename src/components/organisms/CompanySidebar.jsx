@@ -13,7 +13,6 @@ const CompanySidebar = () => {
       <div className="sidebar-fixed-section">
         <h4 className="sidebar-section-title">메뉴</h4>
         <NewSearchButton />
-        <SearchQueryIndicator />
       </div>
 
       <div className="sidebar-scrollable-section">
