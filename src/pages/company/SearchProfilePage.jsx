@@ -6,8 +6,11 @@ import SearchResultsSidebar from '../../components/organisms/SearchResultsSideba
 import api from '../../services/api';
 import { useApi } from '../../hooks/useApi';
 import useSearchStore from '../../stores/useSearchStore';
+import useFavoriteStore from '../../stores/useFavoriteStore'; // [추가]
 import { routes } from '../../routes';
+import '../../styles/pages/SearchProfilePage.css';
 
+// --- 스타일 정의 (뷰어용) ---
 const viewerStyles = {
   container: {
     width: '100%',
@@ -20,7 +23,8 @@ const viewerStyles = {
   sectionCard: {
     backgroundColor: '#fff',
     padding: '32px',
-    border: '1px solid #eee'
+    border: '1px solid #eee',
+    borderRadius: '16px' // 디자인 통일성을 위해 radius 추가 추천
   },
   title: {
     fontSize: '20px',
@@ -39,7 +43,8 @@ const viewerStyles = {
   divider: {
     fontSize: '22px',
     fontWeight: 'bold',
-    color: '#000'
+    color: '#000',
+    marginBottom: '16px'
   }
 };
 
@@ -128,11 +133,13 @@ const mapApiLangsToCard = (apiLangs) => {
 };
 
 const SearchProfilePage = () => {
-  const { id } = useParams();
+  const { id } = useParams(); // id === jobSeekerId
   const navigate = useNavigate();
   const location = useLocation();
   
   const { lastQuery } = useSearchStore();
+  // [추가] 즐겨찾기 스토어 함수 사용
+  const { addFavorite, removeFavorite, checkIsFavorite } = useFavoriteStore();
   
   const [profile, setProfile] = useState(null);
   const [awards, setAwards] = useState([]);
@@ -151,6 +158,7 @@ const SearchProfilePage = () => {
     error 
   } = useApi(fetchPortfolio, [fetchPortfolio]);
 
+  // 1. 포트폴리오 데이터 로드
   useEffect(() => {
     if (data) {
       const normalizedResponse = data.data; 
@@ -173,6 +181,17 @@ const SearchProfilePage = () => {
     }
   }, [data]);
 
+  // 2. [추가] 페이지 진입 시 해당 구직자가 즐겨찾기 되어있는지 확인
+  useEffect(() => {
+    const checkStatus = async () => {
+      if (id) {
+        const exists = await checkIsFavorite(id);
+        setIsFavorite(exists);
+      }
+    };
+    checkStatus();
+  }, [id, checkIsFavorite]);
+
   const handleClose = () => {
     if (lastQuery) {
       navigate(`${routes.SEARCH_RESULTS}?q=${encodeURIComponent(lastQuery)}`);
@@ -189,26 +208,32 @@ const SearchProfilePage = () => {
     }
   };
 
+  // 3. [수정] 즐겨찾기 토글 핸들러 (실제 API 연동)
   const handleToggleFavorite = async () => {
+    // 낙관적 업데이트 (UI 먼저 반영)
+    const previousState = isFavorite;
     const newState = !isFavorite;
     setIsFavorite(newState);
 
     try {
       if (newState) {
-        await api.post(`/bookmarks/${id}`);
+        // 추가: POST /api/v1/favorites
+        await addFavorite(id);
       } else {
-        await api.delete(`/bookmarks/${id}`);
+        // 삭제: DELETE /api/v1/favorites/{id}
+        await removeFavorite(id);
       }
     } catch (err) {
+      // 실패 시 롤백 및 알림
       console.error('즐겨찾기 변경 실패:', err);
-      setIsFavorite(!newState);
-      alert('즐겨찾기 설정에 실패했습니다.');
+      setIsFavorite(previousState);
+      alert('즐겨찾기 설정 중 오류가 발생했습니다.');
     }
   };
 
   if (loading) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
+      <div className="search-profile-loading">
         <p>프로필 정보를 불러오는 중입니다...</p>
       </div>
     );
@@ -216,12 +241,12 @@ const SearchProfilePage = () => {
 
   if (error) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center', color: 'var(--color-error)' }}>
+      <div className="search-profile-error">
         <p>프로필을 불러오는데 실패했습니다.</p>
-        <p style={{ fontSize: '14px', marginTop: '8px' }}>{error}</p>
+        <p className="error-message">{error}</p>
         <button 
           onClick={handleClose}
-          style={{ marginTop: '20px', padding: '8px 16px', background: '#eee', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+          className="back-button"
         >
           돌아가기
         </button>
