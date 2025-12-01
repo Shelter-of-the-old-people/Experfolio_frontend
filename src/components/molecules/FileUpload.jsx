@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
+import api from '../../services/api';
 import '../../styles/components/FileUpload.css';
 
 const R2_PUBLIC_URL = "https://pub-281f6f108f6e4b379ad70e053b5d6c34.r2.dev/";
 
-const FileUpload = ({ file, attachments, onFileChange }) => {
+const FileUpload = ({ sectionId, section, file, attachments, onFileChange, onFileUpload, onUpdate }) => {
   const [preview, setPreview] = useState(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (!file) {
@@ -25,7 +27,9 @@ const FileUpload = ({ file, attachments, onFileChange }) => {
 
   const onDrop = (acceptedFiles) => {
     if (acceptedFiles.length > 0) {
-      onFileChange(acceptedFiles[0]);
+      const selectedFile = acceptedFiles[0];
+      onFileChange(selectedFile);
+      onFileUpload(sectionId, selectedFile);
     }
   };
 
@@ -39,13 +43,49 @@ const FileUpload = ({ file, attachments, onFileChange }) => {
     multiple: false,
   });
 
-  const removeFile = (e) => {
+  const removeFile = async (e) => {
     e.stopPropagation();
+    
+    if (attachments && attachments.length > 0) {
+      const attachment = attachments[0];
+      const objectKey = attachment.objectKey;
+      
+      if (!window.confirm('파일을 삭제하시겠습니까?')) {
+        return;
+      }
+      
+      setIsDeleting(true);
+      
+      try {
+        await api.delete(
+          `/portfolios/items/${sectionId}/attachments?objectKey=${encodeURIComponent(objectKey)}`
+        );
+        
+        onUpdate({ ...section, file: null, attachments: [] });
+        
+      } catch (err) {
+        console.error('파일 삭제 실패:', err);
+        alert('파일 삭제에 실패했습니다.');
+      } finally {
+        setIsDeleting(false);
+      }
+      return;
+    }
+    
     onFileChange(null);
     setPreview(null);
   };
 
-  // 업로드 전 파일 (File 객체)
+  if (isDeleting) {
+    return (
+      <div className="file-upload-wrapper">
+        <div className="dropzone">
+          <p>파일 삭제 중...</p>
+        </div>
+      </div>
+    );
+  }
+
   if (file instanceof File) {
     return (
       <div className="file-upload-wrapper">
@@ -66,7 +106,6 @@ const FileUpload = ({ file, attachments, onFileChange }) => {
     );
   }
 
-  // 업로드 완료 파일 (attachments)
   if (attachments && attachments.length > 0) {
     const attachment = attachments[0];
     const fileUrl = R2_PUBLIC_URL + attachment.objectKey;
@@ -75,7 +114,7 @@ const FileUpload = ({ file, attachments, onFileChange }) => {
     return (
       <div className="file-upload-wrapper">
         <div className="preview-container">
-          <button onClick={removeFile} className="remove-file-btn" title="파일 변경">X</button>
+          <button onClick={removeFile} className="remove-file-btn" title="파일 삭제">X</button>
           
           {isImage ? (
             <img 
@@ -95,7 +134,6 @@ const FileUpload = ({ file, attachments, onFileChange }) => {
     );
   }
 
-  // 파일 없음 (업로드 입력)
   return (
     <div className="file-upload-wrapper">
       <div {...getRootProps()} className={`dropzone ${isDragActive ? 'active' : ''}`}>

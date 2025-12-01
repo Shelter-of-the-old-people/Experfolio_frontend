@@ -79,7 +79,7 @@ const PortfolioEditPage = () => {
     api.put(`/portfolios/items/${itemId}`, formData)
   );
 
-  const executeSave = useCallback(async (sectionIdToSave) => {
+  const executeSave = useCallback(async (sectionIdToSave, options = {}) => {
     if (isUpdating) {
       console.log('이미 저장 중입니다. 중복 요청을 무시합니다.');
       return;
@@ -93,6 +93,15 @@ const PortfolioEditPage = () => {
     }
     
     const { file, ...itemDto } = sectionToSave;
+    
+    if (options.isPageUnload) {
+      if (!file && (!itemDto.attachments || itemDto.attachments.length === 0)) {
+        if (itemDto.type !== 'text-only' && itemDto.type !== 'unselected') {
+          itemDto.type = 'text-only';
+        }
+      }
+    }
+    
     const formData = new FormData();
     formData.append('item', new Blob([JSON.stringify(itemDto)], { type: 'application/json' }));
     
@@ -213,6 +222,43 @@ const PortfolioEditPage = () => {
     setSaveStatus('unsaved');
   };
 
+  const handleFileUpload = async (sectionId, file) => {
+    if (!file) return;
+    
+    const sectionToSave = sections.find(s => s.id === sectionId);
+    if (!sectionToSave) return;
+    
+    clearTimeout(saveTimerRef.current);
+    setSaveStatus('saving');
+    
+    const { file: oldFile, ...itemDto } = sectionToSave;
+    const formData = new FormData();
+    formData.append('item', new Blob([JSON.stringify(itemDto)], { type: 'application/json' }));
+    formData.append('files', file);
+    
+    try {
+      const response = await updateItem(sectionId, formData);
+      
+      const actualData = response.data.data;
+      const { portfolioItems } = actualData || {};
+      
+      if (portfolioItems) {
+        setSections(portfolioItems);
+      }
+      
+      setSaveStatus('saved');
+      
+      if (sectionId === dirtySectionId) {
+        setDirtySectionId(null);
+      }
+      
+    } catch (err) {
+      console.error("파일 업로드 실패:", err);
+      setSaveStatus('error');
+      alert('파일 업로드에 실패했습니다.');
+    }
+  };
+
   const handleSectionFocusGained = (sectionId) => {
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
@@ -249,7 +295,7 @@ const PortfolioEditPage = () => {
           clearTimeout(saveTimerRef.current);
           saveTimerRef.current = null;
         }
-        executeSave(dirtySectionId);
+        executeSave(dirtySectionId, { isPageUnload: true });
       }
     };
     
@@ -301,6 +347,7 @@ const PortfolioEditPage = () => {
           onUpdateSection={handleUpdateSection}
           onDeleteSection={handleDeleteSection}
           onAddSection={handleAddSection}
+          onFileUpload={handleFileUpload}
           onSectionFocusGained={handleSectionFocusGained}
           onSectionFocusLost={handleSectionFocusLost}
           disabled={isEditorBusy}

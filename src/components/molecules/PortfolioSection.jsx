@@ -4,12 +4,15 @@ import LayoutSelector from './LayoutSelector';
 import FileUpload from './FileUpload';
 
 const SectionContent = ({ 
+  section,
   layout, 
   content, 
   file,
   attachments,
   onContentChange, 
   onFileChange,
+  onFileUpload,
+  onUpdate,
   onChangeLayoutClick
 }) => {
   
@@ -23,9 +26,13 @@ const SectionContent = ({
 
   const fileElement = (
     <FileUpload 
+      sectionId={section.id}
+      section={section}
       file={file} 
       attachments={attachments}
-      onFileChange={onFileChange} 
+      onFileChange={onFileChange}
+      onFileUpload={onFileUpload}
+      onUpdate={onUpdate}
     />
   );
 
@@ -83,7 +90,8 @@ const SectionContent = ({
 const PortfolioSection = ({ 
   section, 
   onUpdate, 
-  onDelete, 
+  onDelete,
+  onFileUpload,
   onSectionFocusGained, 
   onSectionFocusLost 
 }) => {
@@ -136,12 +144,15 @@ const PortfolioSection = ({
             />
             ) : (
             <SectionContent
+                section={section}
                 layout={section.type}
                 content={section.content}
                 file={section.file}
                 attachments={section.attachments}
                 onContentChange={(value) => handleUpdate('content', value)}
                 onFileChange={(value) => handleUpdate('file', value)}
+                onFileUpload={onFileUpload}
+                onUpdate={onUpdate}
                 onChangeLayoutClick={() => handleUpdate('type', 'unselected')}
             />
             )}

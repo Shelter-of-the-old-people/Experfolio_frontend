@@ -7,6 +7,7 @@ const PortfolioEditor = ({
   onUpdateSection, 
   onDeleteSection, 
   onAddSection,
+  onFileUpload,
   onSectionFocusGained,
   onSectionFocusLost,
   disabled = false 
@@ -21,6 +22,7 @@ const PortfolioEditor = ({
             section={section}
             onUpdate={onUpdateSection}
             onDelete={onDeleteSection}
+            onFileUpload={onFileUpload}
             onSectionFocusGained={onSectionFocusGained}
             onSectionFocusLost={onSectionFocusLost} 
           />
