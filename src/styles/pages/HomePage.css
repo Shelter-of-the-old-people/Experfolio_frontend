@@ -19,10 +19,10 @@ align-self: stretch;
 /* === 좌측 메인 콘텐츠 (Frame 112) === */
 .main-section {
 display: flex;
-padding: 72px;
+padding: 20px 72px;
 flex-direction: column;
 align-items: flex-start;
-gap: 48px;
+gap: 24px;
 flex: 1 0 0;
 align-self: stretch;
 }
@@ -30,7 +30,7 @@ align-self: stretch;
 .main-title {
 color: #000;
 font-family: "Pretendard Variable";
-font-size: 48px;
+font-size: 36px;
 font-style: normal;
 font-weight: 700;
 line-height: normal;
@@ -46,7 +46,7 @@ background-color: #000000;
 .service-intro-area {
 display: flex;
 flex-direction: column;
-padding: 24px;
+padding: 0 24px;
 align-items: flex-start;
 gap: 10px;
 align-self: stretch;
@@ -96,7 +96,7 @@ align-self: stretch;
 .intro-text {
 color: #000;
 font-family: "Pretendard Variable";
-font-size: 24px;
+font-size: 18px;
 font-style: normal;
 font-weight: 700;
 line-height: normal;
@@ -107,7 +107,7 @@ line-height: normal;
 display: flex;
 width: 100%;
 max-width: 1376px;
-padding: 24px;
+padding: 0 24px;
 align-items: flex-start;
 gap: 10px;
 flex: none;
@@ -118,7 +118,7 @@ flex: none;
 display: flex;
 width: 316px;
 height: 100%;
-padding: 210px 0;
+padding-top: 20px;
 flex-direction: column;
 align-items: center;
 gap: 24px;

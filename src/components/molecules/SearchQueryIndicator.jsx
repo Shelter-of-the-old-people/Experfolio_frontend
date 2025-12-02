@@ -9,8 +9,6 @@ const SearchQueryIndicator = () => {
   const isSearchPage = location.pathname === routes.SEARCH;
   const stateClassName = isSearchPage ? 'inactive' : 'active';
   const displayText = isSearchPage ? '검색창' : '대시보드';
-  
-  const iconSrc = "/icons/dashboard-grid.svg"; 
 
   const handleClick = () => {
     if (isSearchPage) {
@@ -26,7 +24,7 @@ const SearchQueryIndicator = () => {
       className={`sidebar-nav-link ${stateClassName}`}
       onClick={handleClick}
     >
-      <div className='icon-container'><img src="/public/dashboard.svg" className="sidebar-icon" /></div>
+      <div className='icon-container'><img src="/dashboard.svg" className="sidebar-icon" /></div>
       <span className="indicator-text">{displayText}</span>
     </button>
   );

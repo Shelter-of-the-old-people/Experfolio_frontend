@@ -19,13 +19,10 @@ const SignupPage = () => {
         <div className="divider"></div>
 
         <div className="service-intro-area">
-          <h2 className="section-label">서비스 소개</h2>
+          <h3 className="section-label">서비스 소개</h3>
           <p className="intro-text">
-              Experfolio는 인재와 기업을 잇는 <br />
-              AI 기반 스마트 포트폴리오 플랫폼입니다. <br />
-              <br />
-              복잡한 채용 과정은 이제 그만. <br />
-              AI가 당신의 경험을 분석하여 최적의 기회를 연결해 드립니다.
+             Experfolio는 AI 분석을 통해 인재와 기업을 가장 스마트하게 연결하는 포트폴리오 플랫폼입니다.<br /> 
+             당신의 경험이 최고의 기회가 될 수 있도록 최적의 매칭을 제공합니다.
             </p>
         </div>
 
@@ -44,10 +41,12 @@ const SignupPage = () => {
 
       {/* === 우측 회원가입 사이드바 (변경됨) === */}
       <aside className="login-sidebar">
+         <div className='sidebar-title-area'>
         <h2 className="sidebar-title">Experfolio</h2>
-        
+        </div>
+
         <div className="login-form-container" style={{ gap: '20px' }}>
-          <h3 className="login-label" style={{ fontSize: '16px' }}>회원가입</h3>
+          <h3 className="login-label" style={{ fontSize: '18px' }}>회원가입</h3>
           
           {/* 학생 회원가입 버튼 */}
           <Button 

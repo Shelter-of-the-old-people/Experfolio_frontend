@@ -4,12 +4,12 @@
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 24px;
+  padding: 22px;
 }
 
 .profile-main-content {
   flex: 1;
-  max-width: 900px;
+  min-width: 700px;
 }
 
 .profile-career-section {
