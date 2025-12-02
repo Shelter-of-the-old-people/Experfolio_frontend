@@ -1,20 +1,26 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { routes } from '../../routes';
+import useSearchStore from '../../stores/useSearchStore';
 import '../../styles/components/SearchQueryIndicator.css';
 
 const SearchQueryIndicator = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { lastQuery } = useSearchStore();
   const isSearchPage = location.pathname === routes.SEARCH;
+
   const stateClassName = isSearchPage ? 'inactive' : 'active';
-  const displayText = isSearchPage ? '검색창' : '대시보드';
+  const displayText = isSearchPage 
+  ? (lastQuery ? '이전 검색' : '검색창') 
+  : '대시보드';
+  
 
   const handleClick = () => {
-    if (isSearchPage) {
+if (lastQuery) {
+      navigate(`${routes.SEARCH_RESULTS}?q=${encodeURIComponent(lastQuery)}`);
+    } else if (isSearchPage) {
       navigate(routes.SEARCH);
-    } else {
-      navigate(routes.HOME);
     }
   };
 
