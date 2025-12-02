@@ -21,7 +21,7 @@ const StudentSidebar = () => {
                 to={routes.PORTFOLIO} 
                 className={`sidebar-nav-link ${location.pathname === routes.PORTFOLIO ? 'active' : ''}`}
                 >
-                <div className='icon-container'><img src="/public/deshboard.svg" className="sidebar-icon" /></div>
+                <div className='icon-container'><img src="/dashboard.svg" className="sidebar-icon" /></div>
                 포트폴리오
             </Link>
 
