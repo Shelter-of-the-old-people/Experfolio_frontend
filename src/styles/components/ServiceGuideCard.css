@@ -38,3 +38,23 @@
   font-size: 24px;
   font-weight: 700;
 }
+.guide-content-wrapper {
+  width: 100%;
+  font-size: 15px;
+  line-height: 1.6;
+  color: #333;
+  text-align: left;
+}
+
+.guide-content-wrapper strong {
+  display: block;
+  margin-bottom: 4px;
+  color: #000;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.guide-content-wrapper p {
+  margin: 0;
+  word-break: keep-all;
+}

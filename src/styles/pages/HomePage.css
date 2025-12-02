@@ -45,6 +45,7 @@ background-color: #000000;
 /* 서비스 소개 영역 */
 .service-intro-area {
 display: flex;
+flex-direction: column;
 padding: 24px;
 align-items: flex-start;
 gap: 10px;

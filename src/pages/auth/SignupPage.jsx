@@ -21,24 +21,23 @@ const SignupPage = () => {
         <div className="service-intro-area">
           <h2 className="section-label">서비스 소개</h2>
           <p className="intro-text">
-            서비스 소개글<br/>
-            (여기에 서비스에 대한 구체적인 설명이 들어갑니다.)
-          </p>
+              Experfolio는 인재와 기업을 잇는 <br />
+              AI 기반 스마트 포트폴리오 플랫폼입니다. <br />
+              <br />
+              복잡한 채용 과정은 이제 그만. <br />
+              AI가 당신의 경험을 분석하여 최적의 기회를 연결해 드립니다.
+            </p>
         </div>
 
         <div className="divider"></div>
 
         <div className="guide-area">
           <div className="guide-column"> {/* 만약 레이아웃 유지를 위해 guide-column이 필요하다면 남겨두셔도 됩니다 */}
-            <ServiceGuideCard title="기업 / 회사">
-              기업 / 회사 사용자 서비스 이용 가이드
-            </ServiceGuideCard>
+            <ServiceGuideCard type="company" />
           </div>
 
           <div className="guide-column">
-            <ServiceGuideCard title="학생">
-              학생 사용자 서비스 이용 가이드
-            </ServiceGuideCard>
+            <ServiceGuideCard type="student" />
           </div>
         </div>
       </section>

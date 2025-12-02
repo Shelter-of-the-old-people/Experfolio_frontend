@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../../routes';
-import { SearchBar } from '../../components/molecules';
+import { SearchBar, ServiceGuideCard  } from '../../components/molecules';
 
 const SearchPage = () => {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ const SearchPage = () => {
   return (
     <div className="search-page">
       <div className='search-guide'>
-        <h1>서비스 이용 가이드</h1>
+        <ServiceGuideCard type="search" />
       </div>
       <div className='search-bar'>
         <h1>인재 검색</h1>

@@ -165,13 +165,8 @@ const StudentSignupPage = () => {
         <section className="main-section">
           <h1 className="main-title">Experfolio</h1>
           <div className="divider"></div>
-          <div className="service-intro-area">
-            <h2 className="section-label" style={{ fontSize: '24px' }}>학생</h2>
-          </div>
-          <div className="guide-area" style={{ justifyContent: 'center', paddingTop: '100px' }}>
-            <ServiceGuideCard style={{ width: '100%', maxWidth: '600px', flex: 'none' }}>
-              학생 사용자 서비스 이용 가이드
-            </ServiceGuideCard>
+          <div className="guide-area">
+            <ServiceGuideCard type="student" />
           </div>
         </section>
 

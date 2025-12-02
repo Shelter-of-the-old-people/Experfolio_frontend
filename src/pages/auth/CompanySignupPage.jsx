@@ -208,13 +208,8 @@ const CompanySignupPage = () => {
         <section className="main-section">
           <h1 className="main-title">Experfolio</h1>
           <div className="divider"></div>
-          <div className="service-intro-area">
-            <h2 className="section-label" style={{ fontSize: '24px' }}>기업 / 회사</h2>
-          </div>
           <div className="guide-area" style={{ justifyContent: 'center', paddingTop: '100px' }}>
-            <ServiceGuideCard style={{ width: '100%', maxWidth: '600px', flex: 'none' }}>
-              기업 / 회사 사용자 서비스 이용 가이드
-            </ServiceGuideCard>
+            <ServiceGuideCard type="company" />
           </div>
         </section>
 
