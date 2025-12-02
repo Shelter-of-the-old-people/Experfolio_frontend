@@ -3,13 +3,20 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: var(--space-40);
+    gap: var(--space-10);
     width:900px;
-    margin: var(--space-40);
+    margin: var(--space-10) auto;
 }
 
 .search-bar{
     display: flex;
     flex-direction: column;
     width:100%;
+}
+.search-guide {
+  width: 100%;               /* 너비를 꽉 채워서 */
+  display: flex;             /* 내부 요소 정렬을 위해 flex 선언 */
+  justify-content: flex-start; /* 내용을 왼쪽(시작점)으로 정렬 */
+  /* 필요하다면 상단 여백 추가 */
+  margin-top: var(--space-6); 
 }

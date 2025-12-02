@@ -208,7 +208,7 @@ const CompanySignupPage = () => {
         <section className="main-section">
           <h1 className="main-title">Experfolio</h1>
           <div className="divider"></div>
-          <div className="guide-area" style={{ justifyContent: 'center', paddingTop: '100px' }}>
+          <div className="guide-area">
             <ServiceGuideCard type="company" />
           </div>
         </section>

@@ -102,8 +102,6 @@ font-weight: 700;
 line-height: normal;
 }
 
-
-
 /* 이용 가이드 영역 (기업/학생) */
 .guide-area {
 display: flex;
@@ -112,52 +110,8 @@ max-width: 1376px;
 padding: 24px;
 align-items: flex-start;
 gap: 10px;
-flex: 1 0 0;
+flex: none;
 }
-
-.guide-column {
-display: flex;
-align-items: flex-start;
-gap: 10px;
-flex: 1 0 0;
-align-self: stretch;
-}
-.guide-content-box {
-display: flex;
-flex-direction: column;
-align-items: flex-start;
-gap: 10px;
-flex: 1 0 0;
-align-self: stretch;
-}
-
-.guide-label {
-color: #000;
-font-family: "Pretendard Variable";
-font-size: 24px;
-font-style: normal;
-font-weight: 700;
-line-height: normal;
-}
-
-.guide-box {
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-gap: 24px;
-flex: 1 0 0;
-align-self: stretch;
-}
-.guide-text {
-color: #000;
-font-family: "Pretendard Variable";
-font-size: 24px;
-font-style: normal;
-font-weight: 700;
-line-height: normal;
-}
-
 
 /* === 우측 로그인 사이드바 (로그인 섹션) === */
 .login-sidebar {

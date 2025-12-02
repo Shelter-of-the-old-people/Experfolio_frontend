@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { routes } from '../../routes';
 import { SearchBar, ServiceGuideCard  } from '../../components/molecules';
+import '../../styles/pages/SearchPage.css';
 
 const SearchPage = () => {
   const navigate = useNavigate();
@@ -12,9 +13,7 @@ const SearchPage = () => {
 
   return (
     <div className="search-page">
-      <div className='search-guide'>
-        <ServiceGuideCard type="search" />
-      </div>
+      
       <div className='search-bar'>
         <h1>인재 검색</h1>
         <p>AI 기반 자연어 검색으로 원하는 인재를 찾아보세요.</p>
@@ -22,7 +21,11 @@ const SearchPage = () => {
         <SearchBar
           onSearch={handleSearch}
           placeholder="어떤 인재를 찾고 계세요?"
-      />
+        />
+      </div>
+      
+      <div className='search-guide'>
+        <ServiceGuideCard type="search" />
       </div>
     </div>
   );
