@@ -13,6 +13,31 @@ const getIconByTypeOrUrl = (type, url) => {
   return null; 
 };
 
+const getLabelFromUrl = (url) => {
+  if (!url) return '페이지 링크';
+  try {
+    const urlObj = new URL(url);
+    const { hostname, pathname } = urlObj;
+
+    if (hostname.includes('github.com')) {
+      const parts = pathname.split('/').filter(Boolean);
+      // [수정] parts[0]은 유저명, parts[1]은 레포지토리명입니다.
+      // 레포지토리명이 있으면 parts[1]만 반환합니다.
+      if (parts.length >= 2) return parts[1];
+      // 레포지토리명이 없으면(프로필 링크 등) 마지막 경로(유저명)를 반환합니다.
+      return parts[parts.length - 1] || 'GitHub Repository';
+    }
+
+    if (hostname.includes('notion')) {
+      return 'Notion Page';
+    }
+
+    return hostname;
+  } catch (e) {
+    return url;
+  }
+};
+
 const ProfileBasicInfoForm = ({
   formData, 
   onFormChange, 
@@ -23,37 +48,14 @@ const ProfileBasicInfoForm = ({
   };
 
   const handleAddLink = async (url) => {
-    try {
-      const linkData = await fetchLinkMetadata(url); 
-      onFormChange('links', [...formData.links, linkData]);
-    } catch (error) {
-      onFormChange('links', [...formData.links, {
-        url,
-        label: new URL(url).hostname,
-        icon: getIconByTypeOrUrl(null, url)
-      }]);
-    }
+    const linkData = {
+      url,
+      label: getLabelFromUrl(url), // 하드코딩 대신 함수 사용
+      icon: getIconByTypeOrUrl(null, url)
+    };
+    onFormChange('links', [...formData.links, linkData]);
   };
 
-  const fetchLinkMetadata = async (url) => {
-    const urlObj = new URL(url);
-    const hostname = urlObj.hostname;
-    let icon = getIconByTypeOrUrl(null, url); 
-    let label = hostname;
-    
-    if (hostname.includes('github.com')) {
-      const pathParts = urlObj.pathname.split('/').filter(Boolean);
-      label = pathParts[1] || 'Repository_Name';
-    } else if (hostname.includes('notion')) {
-      label = '페이지_이름';
-    } else if (hostname.includes('velog')) {
-      label = '페이지_이름';
-    } else {
-      label = '페이지_이름';
-    }
-    
-    return { url, label, icon };
-  };
 
   const handleRemoveLink = (index) => {
     onFormChange('links', formData.links.filter((_, i) => i !== index));
@@ -123,7 +125,6 @@ const ProfileBasicInfoForm = ({
                     key={index}
                     icon={link.icon}
                     label={link.label}
-                    url={link.url}
                     onRemove={() => handleRemoveLink(index)}
                     disabled={disabled}
                   />

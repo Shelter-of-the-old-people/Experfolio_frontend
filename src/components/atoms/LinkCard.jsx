@@ -16,7 +16,9 @@ const LinkCard = ({
   };
 
   return (
-    <div className={`link-card${disabled ? ' link-card-disabled' : ''}`}>
+    <div className={`link-card${disabled ? ' link-card-disabled' : ''}`}
+    onClick={handleClick}
+    >
       <div className="link-card-main-row">
         <span className="link-card-icon">{icon ||
           <span style={{ width: 22, height: 21, display: 'inline-block' }}></span>}

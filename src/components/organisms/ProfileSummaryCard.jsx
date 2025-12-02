@@ -15,6 +15,31 @@ const getIconByTypeOrUrl = (type, url) => {
   return null; 
 };
 
+const getLabelFromUrl = (url) => {
+  if (!url) return '페이지 링크';
+  try {
+    const urlObj = new URL(url);
+    const { hostname, pathname } = urlObj;
+
+    if (hostname.includes('github.com')) {
+      const parts = pathname.split('/').filter(Boolean);
+      // [수정] parts[0]은 유저명, parts[1]은 레포지토리명입니다.
+      // 레포지토리명이 있으면 parts[1]만 반환합니다.
+      if (parts.length >= 2) return parts[1];
+      // 레포지토리명이 없으면(프로필 링크 등) 마지막 경로(유저명)를 반환합니다.
+      return parts[parts.length - 1] || 'GitHub Repository';
+    }
+
+    if (hostname.includes('notion')) {
+      return 'Notion Page';
+    }
+
+    return hostname;
+  } catch (e) {
+    return url;
+  }
+};
+
 const ProfileSummaryCard = ({
   profile: {
     name, avatar, school, major, gpa,
@@ -73,20 +98,20 @@ const ProfileSummaryCard = ({
           {github &&
             <LinkCard
               icon={getIconByTypeOrUrl('github', github)}
-              label="Repository_Name"
+              label={getLabelFromUrl(github)} // [수정] 하드코딩 제거 및 동적 라벨 적용
               url={github}
             />}
           {notion &&
             <LinkCard
               icon={getIconByTypeOrUrl('notion', notion)}
-              label="페이지_이름"
+              label={getLabelFromUrl(notion)} // [수정] 하드코딩 제거 및 동적 라벨 적용
               url={notion}
             />}
           {portfolioLinks.map(link =>
             <LinkCard
               key={link.url}
               icon={getIconByTypeOrUrl(link.icon, link.url)}
-              label={link.label}
+              label={link.label || getLabelFromUrl(link.url)} // label이 없으면 URL에서 추출
               url={link.url}
             />
           )}
